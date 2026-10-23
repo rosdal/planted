@@ -3,6 +3,6 @@ import { PROTOCOL_VERSION } from './index';
 
 describe('PROTOCOL_VERSION', () => {
   it('is 1', () => {
-    expect(PROTOCOL_VERSION).toBe(1);
+    expect(PROTOCOL_VERSION).toBe(2);
   });
 });
