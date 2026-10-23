@@ -92,7 +92,7 @@ Built from [the v0.4 todo](todo/v0.4.md); the access model is [ADR 0005](adr/000
 - [x] Limits: 256 KB frame cap, per-socket frames and bytes per second, 20k objects and 5 MB per doc, 50 sockets per room, rate limits per IP
 - [x] Server validates every changed object with Zod after applying, corrects it in the same broadcast, and disconnects the sender
 - [x] Guest rooms expire after 30 days idle (daily job)
-- [ ] Chaos test: bots through Toxiproxy (150 ms ± 50 ms, 256 KB/s, sliced frames, random resets, two server restarts) for 30 minutes
+- [x] Chaos test: bots through Toxiproxy (150 ms ± 50 ms, 256 KB/s, sliced frames, random resets, two server restarts) for 30 minutes
 
 **Exit check:** draw, restart the server, reload: everything is there. A view link cannot change the board even with a hand-crafted socket client.
 
