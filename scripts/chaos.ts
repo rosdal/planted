@@ -30,6 +30,8 @@ const { values: args } = parseArgs({
     minutes: { type: 'string', default: '30' },
     bots: { type: 'string', default: '20' },
     restarts: { type: 'string', default: '2' },
+    /** KB/s per connection and direction; 0 leaves the bandwidth toxic out. */
+    bandwidth: { type: 'string', default: '256' },
   },
 });
 
@@ -83,7 +85,7 @@ async function setUpProxy(): Promise<void> {
         attributes,
       });
     await toxic('latency', { latency: 150, jitter: 50 });
-    await toxic('bandwidth', { rate: 256 });
+    if (Number(args.bandwidth) > 0) await toxic('bandwidth', { rate: Number(args.bandwidth) });
     await toxic('slicer', { average_size: 512, size_variation: 256, delay: 0 });
   }
 }
@@ -215,9 +217,12 @@ for (let i = 1; i <= restarts; i++) {
   await startServer();
   log('server back');
 }
+// The bots stop editing at the end of the run and then wait for agreement; the resets stop
+// with them, so the check runs on a quiet network as the pass criterion says.
+await sleep(Math.max(0, runMs - (restarts * runMs) / (restarts + 1)));
+resets.stop();
 
 const botExit = await botsExited;
-resets.stop();
 
 // "ok      <room> <hash>×20": every bot agreed on one hash.
 const line = botOutput

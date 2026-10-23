@@ -35,6 +35,8 @@ export class EvilClient {
   /** A local doc for crafting updates; it learns the room's state from sync-2 and updates. */
   readonly doc = new Y.Doc();
   readonly closed: Promise<Closed>;
+  /** False makes the server see this socket as hopelessly behind. */
+  answerPings = true;
   #seq = 1;
   #listeners = new Set<() => void>();
 
@@ -49,7 +51,14 @@ export class EvilClient {
     socket.on('message', (data: Buffer) => {
       const frame = decodeFrame(new Uint8Array(data));
       this.frames.push(frame);
-      if (frame.channel === 0) this.controls.push(decodeControl(frame));
+      if (frame.channel === 0) {
+        const control = decodeControl(frame);
+        this.controls.push(control);
+        // Like a real client, unless told to play dead.
+        if (control.kind === 'ping' && this.answerPings) {
+          this.send(controlFrame({ kind: 'pong', seq: control.seq, body: control.body }));
+        }
+      }
       if (frame.channel === 1 && frame.type !== YjsType.Sync1) {
         Y.applyUpdate(this.doc, frame.payload, 'server');
       }
