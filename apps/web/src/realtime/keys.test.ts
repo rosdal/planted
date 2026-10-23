@@ -56,6 +56,13 @@ describe('room keys in storage', () => {
     expect(readViewKey('room2')).toBe('view');
   });
 
+  it('keeps the edit key when the creator opens their own view link', () => {
+    vi.stubGlobal('localStorage', memoryStorage());
+    saveKeys('room5', { editKey: key, viewKey: 'view' });
+    takeKeyFromHash('room5', '#k=view');
+    expect(readKey('room5')).toBe(key);
+  });
+
   it('keeps working for this tab when storage throws', () => {
     vi.stubGlobal('localStorage', throwingStorage);
     takeKeyFromHash('room3', `#k=${key}`);

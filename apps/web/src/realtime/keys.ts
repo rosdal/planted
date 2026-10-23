@@ -56,11 +56,14 @@ export function keyFromHash(hash: string): string | null {
 
 /**
  * Stores the key from a share URL's fragment, if it has one. A link someone opened replaces
- * whatever key was stored: it's the access they asked for.
+ * whatever key was stored: it's the access they asked for. The exception is this browser's own
+ * view link, which the creator may open to check it: that would lose their edit key for good.
  */
 export function takeKeyFromHash(roomId: string, hash: string): void {
   const key = keyFromHash(hash);
-  if (key && key !== readKey(roomId)) write(keyName(roomId), key);
+  if (!key || key === readKey(roomId)) return;
+  if (key === readViewKey(roomId) && readKey(roomId)) return;
+  write(keyName(roomId), key);
 }
 
 /** Drops `#k=…` from the address bar, so it doesn't linger in screenshots or history. */
