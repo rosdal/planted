@@ -28,16 +28,18 @@ From an empty folder to a monorepo where `pnpm install && pnpm check` passes loc
 ## 0.1 App skeletons
 
 All four workspaces exist and talk to each other: the web app calls the server, the server reads Postgres, both share types.
-- [ ] `packages/schema`: Zod schemas for `BoardObject`, room ids, API DTOs; built with tsup
-- [ ] `packages/db`: Drizzle config, first migration with `users`, `rooms`, `strat_docs`; `db:migrate` and `db:studio` scripts
-- [ ] `docker-compose.dev.yml`: Postgres 17 (+ Adminer optional), named volume
-- [ ] `apps/server`: Fastify with typed env (`@fastify/env` or Zod), pino logger, `GET /health`, CORS, graceful shutdown
-- [ ] Server route `POST /rooms` → creates a room row, returns `{ roomId }` (128-bit, base62)
-- [ ] `apps/web`: Vite + React 19 + TanStack Router + Tailwind + Geist; routes `/` and `/r/$roomId`
-- [ ] Typed API client in `apps/web` using the shared schemas
-- [ ] Landing page button "New room" → `POST /rooms` → navigate to `/r/<id>` showing the id
-- [ ] `pnpm dev` at the root starts Postgres, server and web in one command
-- [ ] CI: add a Postgres service, run migrations, one server integration test (create room, read it back)
+
+Built from [the v0.1 todo](todo/v0.1.md), which narrowed a few items below: no `users` table yet (better-auth creates its own in 0.8), `room_docs` instead of `strat_docs`, `BoardObject` deferred to 0.3, and `packages/schema` ships as source rather than a tsup build.
+- [x] `packages/schema`: Zod schemas for `BoardObject`, room ids, API DTOs; built with tsup
+- [x] `packages/db`: Drizzle config, first migration with `users`, `rooms`, `strat_docs`; `db:migrate` and `db:studio` scripts
+- [x] `docker-compose.dev.yml`: Postgres 17 (+ Adminer optional), named volume
+- [x] `apps/server`: Fastify with typed env (`@fastify/env` or Zod), pino logger, `GET /health`, CORS, graceful shutdown
+- [x] Server route `POST /rooms` → creates a room row, returns `{ roomId }` (128-bit, base62)
+- [x] `apps/web`: Vite + React 19 + TanStack Router + Tailwind + Geist; routes `/` and `/r/$roomId`
+- [x] Typed API client in `apps/web` using the shared schemas
+- [x] Landing page button "New room" → `POST /rooms` → navigate to `/r/<id>` showing the id
+- [x] `pnpm dev` at the root starts Postgres, server and web in one command
+- [x] CI: add a Postgres service, run migrations, one server integration test (create room, read it back)
 
 **Exit check:** click "New room" in the browser, land on `/r/<id>`, and the row is in Postgres.
 
