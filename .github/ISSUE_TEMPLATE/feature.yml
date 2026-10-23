@@ -1,0 +1,21 @@
+name: Feature
+description: Suggest something Planted should do
+labels: ["type:feat"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do in your strats or scrims, and what gets in the way?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Idea
+      description: How you would like it to work. Sketches and screenshots welcome.
+  - type: input
+    id: map
+    attributes:
+      label: Which map/site?
+      description: If the idea is about a specific map.
