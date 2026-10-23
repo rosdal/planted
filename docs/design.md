@@ -455,7 +455,7 @@ Privacy-friendly analytics only (self-hosted Plausible or Umami), no third-party
 
 The spike is the riskiest part: if Yjs over the Fastify relay can't hold 10 users at 60 fps, change the approach before building anything else. No dates yet; set them once the spike is done.
 
-Step-by-step versions from an empty folder: Roadmap
+Step-by-step versions from an empty folder: [Roadmap](roadmap.md)
 
 ## Open questions and risks
 
@@ -466,7 +466,7 @@ Step-by-step versions from an empty folder: Roadmap
 | Hosting cost growth (Battle Planner's fate) | Shutdown                     | One-process rooms, R2 for assets, unload idle rooms, optional supporter tier |
 | Yjs doc bloat from long sessions            | Slow loads                   | Commit simplified strokes only, periodic snapshot + GC, cap history length   |
 | Griefing in public rooms                    | Bad first impressions        | Signed edit links, rate limits, owner can kick and lock room                 |
-- [ ] Product name decided: Planted (repo planted, packages @planted/\*).
+- [x] Product name decided: Planted (repo planted, packages @planted/\*).
 - [ ] Build the relay on Fastify or on Sworn once it supports WebSockets?
 - [ ] Hocuspocus vs custom relay: spike both for a day.
 - [ ] Redraw maps by hand, or trace from blueprints with a vector tool pipeline?
