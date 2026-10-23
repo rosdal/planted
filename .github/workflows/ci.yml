@@ -12,6 +12,21 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: planted
+          POSTGRES_PASSWORD: planted
+          POSTGRES_DB: planted_test
+        ports: ["5433:5432"]
+        options: >-
+          --health-cmd "pg_isready -U planted"
+          --health-interval 2s --health-retries 15
+    env:
+      DATABASE_URL: postgres://planted:planted@localhost:5433/planted_test
+      TEST_DATABASE_URL: postgres://planted:planted@localhost:5433/planted_test
+      VITE_API_URL: http://localhost:3000
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
@@ -25,4 +40,10 @@ jobs:
           key: turbo-${{ runner.os }}-${{ github.sha }}
           restore-keys: turbo-${{ runner.os }}-
       - run: pnpm install --frozen-lockfile
+      - name: No ungenerated migrations
+        run: |
+          pnpm db:generate
+          git add --intent-to-add packages/db/migrations
+          git diff --exit-code packages/db/migrations
+      - run: pnpm db:migrate
       - run: pnpm check
