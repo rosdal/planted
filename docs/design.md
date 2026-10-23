@@ -190,19 +190,21 @@ One binary WebSocket per client, every frame starts with a 1-byte channel and a 
 channel 0 = control   channel 1 = yjs sync   channel 2 = awareness   channel 3 = app
 ```
 
-| Channel   | Type                     | Direction | Payload                                        | Notes                                                 |
-| --------- | ------------------------ | --------- | ---------------------------------------------- | ----------------------------------------------------- |
-| control   | hello                    | C→S       | { protocol: 1, token, clientId, stateVector? } | First frame; server closes with 4401 if token invalid |
-| control   | welcome                  | S→C       | { role, serverTime, roomEpoch, limits }        | roomEpoch bumps when the doc is restored from history |
-| control   | error                    | S→C       | { code, message, fatal }                       | 4401 auth, 4403 role, 4409 epoch, 4429 rate limit     |
-| control   | ping / pong              | both      | { t }                                          | Every 15 s; 2 missed = reconnect                      |
-| yjs       | sync-1 / sync-2 / update | both      | y-protocols bytes                              | Unchanged from y-protocols                            |
-| awareness | update                   | both      | y-protocols awareness                          | Cursors, tool, viewport, live stroke points           |
-| app       | follow                   | C→S→C     | { target \| null }                             | Presenter follow in live mode                         |
-| app       | phase                    | C→S→C     | { phaseId }                                    | Presenter only                                        |
-| app       | ping-map                 | C→S→C     | { at, floor, kind }                            | Short-lived map ping, never stored                    |
-| app       | kick / lock              | S→C       | { userId } / { locked }                        | Owner moderation                                      |
-- Versioning: `protocol` in hello; server supports current and previous version, refuses older with `error` + `upgrade` hint.
+`seq` (big-endian) is on control frames only; a reply carries its request's seq. Yjs and awareness frames are header + payload, app frames header + CBOR. The protocol is frozen at v1 from 0.4: any change bumps `protocol` and keeps v1 working for one version.
+
+| Channel   | Type                     | Direction | Payload                                          | Notes                                                                                                                             |
+| --------- | ------------------------ | --------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| control   | hello                    | C→S       | { protocol: 1, token, clientName, stateVector? } | First frame, within 5 s; 4401 if the token is bad                                                                                 |
+| control   | welcome                  | S→C       | { role, serverTime, roomEpoch, limits }          | roomEpoch bumps when the doc is restored from history                                                                             |
+| control   | error                    | S→C       | { code, message, fatal }                         | Close codes: 4400 bad frame, 4401 token, 4403 role, 4404 room, 4409 epoch, 4413 doc limit, 4426 protocol too old, 4429 rate limit |
+| control   | ping / pong              | both      | { t }                                            | Every 15 s; 2 missed = reconnect                                                                                                  |
+| yjs       | sync-1 / sync-2 / update | both      | y-protocols bytes                                | Unchanged from y-protocols                                                                                                        |
+| awareness | update                   | both      | y-protocols awareness                            | Cursors, tool, viewport, live stroke points                                                                                       |
+| app       | follow                   | C→S→C     | { target \| null }                               | Presenter follow in live mode                                                                                                     |
+| app       | phase                    | C→S→C     | { phaseId }                                      | Presenter only                                                                                                                    |
+| app       | ping-map                 | C→S→C     | { at, floor, kind }                              | Short-lived map ping, never stored                                                                                                |
+| app       | kick / lock              | S→C       | { userId } / { locked }                          | Owner moderation                                                                                                                  |
+- Versioning: `protocol` in hello; the server speaks v1 only for now and answers anything older with `error { code: 'upgrade' }` and 4426. From v2 on it keeps the previous version working for one release.
 - Backpressure: if a socket's `bufferedAmount` passes 1 MB, the server drops its awareness frames first, then closes it with 4429; Yjs updates are never dropped.
 - Reconnect: exponential backoff 250 ms → 10 s with jitter; resend hello with the local state vector so only the diff comes back.
 - Epoch: a restore from history changes `roomEpoch`; clients on an old epoch discard local state and resync instead of merging stale edits back in.
@@ -410,7 +412,7 @@ Start on one VPS with Docker Compose; the design scales out later without a rewr
 Collaboration bugs only show up with many clients and bad networks, so the test suite simulates both from day one.
 - **Convergence fuzzing**: property tests (fast-check) spin up 2–8 in-memory Y.Docs, apply random edits, shuffle and delay delivery, then assert every doc ends identical and passes the BoardObject schema.
 - **Bot load test**: a Node script opens N headless clients per room that draw, move stamps and stream cursors at real rates. Target: 500 rooms × 6 clients on one 4 vCPU box, p95 update fan-out under 50 ms.
-- **Chaos network**: run the bot test through toxiproxy with 150 ms latency, 2% loss and random disconnects; no lost committed strokes allowed.
+- **Chaos network**: run the drawing bots through Toxiproxy with 150 ms ± 50 ms latency, 256 KB/s bandwidth, frames sliced into small TCP segments and `reset_peer` on random connections every 30–90 s, restarting the server twice (`scripts/chaos.ts`). Toxiproxy is a TCP proxy, so it can't drop packets; these stand in for loss. Every bot and the doc reloaded from Postgres must end with the same hash.
 - **Rules engine**: unit tests per rule against fixture strats.
 - **Rendering**: Playwright screenshots of fixture strats per map and floor, diffed per PR; catches broken map data after content updates.
 - **E2E**: Playwright with two browser contexts in one room: draw in A, assert visible in B; undo in A does not undo B's work.
