@@ -1,0 +1,10 @@
+packages:
+  - apps/*
+  - packages/*
+allowBuilds:
+  esbuild: true
+  lefthook: true
+catalog:
+  typescript: ^5
+  vitest: ^3
+  "@types/node": ^24
