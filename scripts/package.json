@@ -18,6 +18,7 @@
     "@planted/db": "workspace:*",
     "@planted/protocol": "workspace:*",
     "@planted/schema": "workspace:*",
+    "drizzle-orm": "^0.45.4",
     "ws": "catalog:",
     "yjs": "catalog:"
   },

@@ -1,0 +1,9 @@
+# Toxiproxy between the bots and the server, for `pnpm --filter @planted/scripts chaos`.
+# The proxy listens on 3100 and forwards to the server on the host's port 3101; the script
+# configures the toxics through the API on 8474.
+services:
+  toxiproxy:
+    image: ghcr.io/shopify/toxiproxy:2.12.0
+    ports: ["8474:8474", "3100:3100"]
+    # Linux needs this mapping; Docker Desktop provides host.docker.internal on its own.
+    extra_hosts: ["host.docker.internal:host-gateway"]

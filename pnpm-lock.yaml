@@ -518,6 +518,9 @@ importers:
       '@planted/schema':
         specifier: workspace:*
         version: link:../packages/schema
+      drizzle-orm:
+        specifier: ^0.45.4
+        version: 0.45.4(postgres@3.4.9)
       ws:
         specifier: 'catalog:'
         version: 8.22.0
