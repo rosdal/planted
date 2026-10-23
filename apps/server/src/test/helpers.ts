@@ -19,17 +19,20 @@ export function testDatabaseUrl(): string {
 
 export type TestApp = { app: App; db: Db; close: () => Promise<void> };
 
-/** A fresh app on an emptied `planted_test`. Call `close` in `afterEach`. */
+/**
+ * A fresh app on an emptied `planted_test`. Call `close` in `afterEach`; it closes whichever app
+ * `t.app` holds by then, so a test may swap in a new one (e.g. to simulate a restart).
+ */
 export async function makeTestApp(): Promise<TestApp> {
   const { db, close: closeDb } = createDb(testDatabaseUrl());
   await resetDb(db);
-  const app = await buildApp({ db, env: testEnv });
-  return {
-    app,
+  const t: TestApp = {
+    app: await buildApp({ db, env: testEnv }),
     db,
     close: async () => {
-      await app.close();
+      await t.app.close();
       await closeDb();
     },
   };
+  return t;
 }

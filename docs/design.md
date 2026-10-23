@@ -206,7 +206,7 @@ channel 0 = control   channel 1 = yjs sync   channel 2 = awareness   channel 3 =
 - Backpressure: if a socket's `bufferedAmount` passes 1 MB, the server drops its awareness frames first, then closes it with 4429; Yjs updates are never dropped.
 - Reconnect: exponential backoff 250 ms → 10 s with jitter; resend hello with the local state vector so only the diff comes back.
 - Epoch: a restore from history changes `roomEpoch`; clients on an old epoch discard local state and resync instead of merging stale edits back in.
-- Message size cap 256 KB per frame; image uploads go over HTTP to R2, never through the socket.
+- Message size cap 256 KB per frame, except sync-2, which can carry a whole doc and is capped at the 5 MB doc limit (ADR 0004); image uploads go over HTTP to R2, never through the socket.
 
 ## Data model
 

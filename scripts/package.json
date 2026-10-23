@@ -1,0 +1,23 @@
+{
+  "name": "@planted/scripts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "bots": "tsx bots.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@planted/client": "workspace:*",
+    "@planted/db": "workspace:*",
+    "@planted/schema": "workspace:*",
+    "ws": "catalog:",
+    "yjs": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/ws": "catalog:",
+    "tsx": "^4.23.15",
+    "typescript": "catalog:"
+  }
+}

@@ -46,16 +46,18 @@ Built from [the v0.1 todo](todo/v0.1.md), which narrowed a few items below: no `
 ## 0.2 Relay spike
 
 Prove Yjs sync over your own Fastify WebSocket before any drawing exists. If this is shaky, try Hocuspocus now, not later.
-- [ ] Add `@fastify/websocket`, `yjs`, `y-protocols`, `lib0`
-- [ ] Route `GET /rooms/:id/ws`: on connect, get or create an in-memory `Room { doc, awareness, sockets }`
-- [ ] Implement frame header `[channel][type]` from the wire protocol; channels 1 (yjs) and 2 (awareness) only
-- [ ] Server handles sync-step-1/2 and updates, fans out to the other sockets in the room
-- [ ] Client `RoomProvider` in `apps/web`: connect, sync, expose `doc` and `awareness` via React context
-- [ ] Debug page: a shared `Y.Array` of strings with an input box, plus a list of connected users from awareness
-- [ ] Reconnect with exponential backoff and jitter; resync from the state vector
-- [ ] Unload a room 60 s after its last socket leaves
-- [ ] Convergence fuzz test (fast-check): 2–8 in-memory docs, random edits, shuffled delivery, all end equal
-- [ ] Bot script `scripts/bots.ts`: N headless clients per room sending updates at drawing rates
+
+Built from [the v0.2 todo](todo/v0.2.md). Hocuspocus was compared and the custom relay kept ([ADR 0004](adr/0004-custom-relay.md)); the frame codec lives in `packages/protocol` and the client in `packages/client`, so the bots share it.
+- [x] Add `@fastify/websocket`, `yjs`, `y-protocols`, `lib0`
+- [x] Route `GET /rooms/:id/ws`: on connect, get or create an in-memory `Room { doc, awareness, sockets }`
+- [x] Implement frame header `[channel][type]` from the wire protocol; channels 1 (yjs) and 2 (awareness) only
+- [x] Server handles sync-step-1/2 and updates, fans out to the other sockets in the room
+- [x] Client `RoomProvider` in `apps/web`: connect, sync, expose `doc` and `awareness` via React context
+- [x] Debug page: a shared `Y.Array` of strings with an input box, plus a list of connected users from awareness
+- [x] Reconnect with exponential backoff and jitter; resync from the state vector
+- [x] Unload a room 60 s after its last socket leaves
+- [x] Convergence fuzz test (fast-check): 2–8 in-memory docs, random edits, shuffled delivery, all end equal
+- [x] Bot script `scripts/bots.ts`: N headless clients per room sending updates at drawing rates
 
 **Exit check:** two browsers and 20 bots in one room stay in sync for 10 minutes, including killing and restarting the server mid-session (state is lost on restart for now, but clients reconnect cleanly).
 

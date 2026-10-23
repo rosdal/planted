@@ -1,6 +1,7 @@
 packages:
   - apps/*
   - packages/*
+  - scripts
 allowBuilds:
   esbuild: true
   lefthook: true
@@ -10,3 +11,10 @@ catalog:
   "@vitest/coverage-v8": ^3
   "@types/node": ^24
   zod: ^4.6.7
+  # One copy of Yjs across the workspace: two copies break its `instanceof` checks.
+  yjs: ^13.6.33
+  y-protocols: ^1.0.7
+  lib0: ^0.2.119
+  fast-check: ^4.10.2
+  ws: ^8.22.0
+  "@types/ws": ^8.18.2

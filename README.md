@@ -5,7 +5,7 @@ A free, real-time multiplayer strat board for Rainbow Six Siege: your whole team
 ![status: pre-alpha](https://img.shields.io/badge/status-pre--alpha-lightgrey)
 [![ci](https://github.com/rosdal/planted/actions/workflows/ci.yml/badge.svg)](https://github.com/rosdal/planted/actions/workflows/ci.yml)
 
-This repo is at v0.1: the web app creates a room through the API and lands on its page. There is no board yet. See the [roadmap](docs/roadmap.md) for what comes next.
+This repo is at v0.2: rooms sync a shared Yjs document over the server's WebSocket relay. There is no board yet, only a sync debug page at `/r/<id>/debug` (linked from the room page in dev builds). See the [roadmap](docs/roadmap.md) for what comes next.
 
 ## Prerequisites
 
@@ -38,7 +38,10 @@ pnpm db:up       # start Postgres (db:down stops it, db:reset wipes the volume)
 pnpm db:generate # write a migration after changing packages/db/src/schema.ts
 pnpm db:migrate  # apply migrations to DATABASE_URL
 pnpm db:studio   # browse the dev database
+pnpm bots --room <id> --count 20 --rate 5   # headless load; --chaos drops sockets, Ctrl+C checks hashes
 ```
+
+`pnpm bots --rooms 10 --count 10 --duration 60` makes its own rooms and stops by itself. `GET /debug/realtime` (not in production) lists the rooms in memory. `FUZZ_RUNS=10000 pnpm test` runs the convergence fuzz for longer than CI's 200 cases.
 
 Tests run against a separate `planted_test` database (`TEST_DATABASE_URL`), never the dev one. It is created on the first start of the Postgres volume; if your volume predates it, run `pnpm db:reset`. Migrations are append-only: never edit one that is committed.
 
@@ -46,13 +49,16 @@ Commits must follow [Conventional Commits](https://www.conventionalcommits.org/)
 
 ## Layout
 
-| Path              | What                                                                                    |
-| ----------------- | --------------------------------------------------------------------------------------- |
-| `apps/web`        | React client: Vite, TanStack Router, Tailwind                                           |
-| `apps/server`     | Fastify HTTP API (WebSocket relay from v0.2)                                            |
-| `packages/schema` | Types shared by client and server: board objects, wire messages, API                    |
-| `packages/db`     | Drizzle schema, migrations and client factory                                           |
-| `docs/`           | [Design doc](docs/design.md), [roadmap](docs/roadmap.md), [decision records](docs/adr/) |
+| Path                | What                                                                                        |
+| ------------------- | ------------------------------------------------------------------------------------------- |
+| `apps/web`          | React client: Vite, TanStack Router, Tailwind                                               |
+| `apps/server`       | Fastify HTTP API and the WebSocket relay (`src/realtime`)                                   |
+| `packages/schema`   | Types shared by client and server: board objects, wire messages, API                        |
+| `packages/protocol` | Binary frame codec shared by server and clients ([ADR 0004](docs/adr/0004-custom-relay.md)) |
+| `packages/client`   | Framework-free room client: sync, awareness, reconnect; used by the web app and bots        |
+| `scripts`           | `bots.ts` load script                                                                       |
+| `packages/db`       | Drizzle schema, migrations and client factory                                               |
+| `docs/`             | [Design doc](docs/design.md), [roadmap](docs/roadmap.md), [decision records](docs/adr/)     |
 
 Internal packages export their TypeScript source directly; only apps have a build step. The server build bundles them with tsup.
 

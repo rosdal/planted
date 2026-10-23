@@ -1,6 +1,6 @@
 # 0003. Yjs for real-time sync
 
-Status: accepted, 2026-10-23; confirmed or reversed by the 0.2 relay spike
+Status: accepted, 2026-10-23; confirmed by the 0.2 relay spike, which kept the custom relay ([ADR 0004](0004-custom-relay.md))
 
 ## Context
 
