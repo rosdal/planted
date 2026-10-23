@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@planted/protocol": "workspace:*",
+    "@planted/schema": "workspace:*",
     "y-protocols": "catalog:",
     "yjs": "catalog:"
   },

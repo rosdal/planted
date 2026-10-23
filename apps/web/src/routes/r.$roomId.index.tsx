@@ -1,9 +1,18 @@
+import type { RoomId } from '@planted/schema';
 import { createFileRoute, getRouteApi, Link } from '@tanstack/react-router';
-import { useState } from 'react';
-import { NewRoomButton } from '../components/new-room-button';
+import { useCallback, useMemo, useState } from 'react';
+import { BoardCanvas } from '../board/BoardCanvas';
+import type { Board } from '../board/board';
+import { IdentityDialog } from '../board/identity-dialog';
+import { DevOverlay, perfEnabled } from '../board/overlay';
+import {
+  type GuestIdentity,
+  loadGuestIdentity,
+  readStoredIdentity,
+  saveGuestIdentity,
+} from '../realtime/identity';
+import { RoomProvider, usePeers, useRoomClient, useSyncStatus } from '../realtime/react';
 import { Button } from '../ui/button';
-
-const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' });
 
 const roomRoute = getRouteApi('/r/$roomId');
 
@@ -12,32 +21,118 @@ export const Route = createFileRoute('/r/$roomId/')({
 });
 
 function RoomPage() {
-  const room = roomRoute.useLoaderData();
+  const { roomId } = roomRoute.useLoaderData();
+  return (
+    <RoomProvider roomId={roomId}>
+      <BoardRoom roomId={roomId} />
+    </RoomProvider>
+  );
+}
+
+function BoardRoom({ roomId }: { roomId: RoomId }) {
+  const client = useRoomClient();
+  const peers = usePeers();
+  const [identity, setIdentity] = useState<GuestIdentity>(loadGuestIdentity);
+  const [dialog, setDialog] = useState<'welcome' | 'edit' | null>(() =>
+    readStoredIdentity() ? null : 'welcome',
+  );
+  const [board, setBoard] = useState<Board | null>(null);
+  const taken = useMemo(
+    () => new Set(peers.flatMap((p) => (p.user ? [p.user.colour] : []))),
+    [peers],
+  );
+  // Read by the pen at stroke start and commit; stable so the canvas never remounts.
+  const identityGetter = useCallback(() => loadGuestIdentity(), []);
+
+  function save(next: GuestIdentity) {
+    saveGuestIdentity(next);
+    setIdentity(next);
+    client.awareness.setLocalStateField('user', next);
+    setDialog(null);
+  }
 
   return (
-    <section className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <p className="text-xs text-muted">Room</p>
-        <h1 className="font-mono text-lg font-medium break-all">{room.roomId}</h1>
-        <p className="text-sm text-muted">
-          Created{' '}
-          <time dateTime={room.createdAt}>{dateFormat.format(new Date(room.createdAt))}</time>
-        </p>
-      </div>
-      <div className="flex flex-wrap items-start gap-3">
-        <CopyLinkButton />
-        <NewRoomButton variant="secondary" />
-      </div>
-      {import.meta.env.DEV && (
-        <Link
-          to="/r/$roomId/debug"
-          params={{ roomId: room.roomId }}
-          className="self-start rounded-control text-sm text-muted underline underline-offset-4 hover:text-fg"
+    // The board fills everything under the header; the root layout's centred column is for pages.
+    <div className="fixed inset-x-0 top-14 bottom-0 bg-bg">
+      <BoardCanvas identity={identityGetter} onBoard={setBoard} />
+      {perfEnabled() && <DevOverlay board={board} />}
+      <div className="absolute top-3 right-3 flex flex-wrap items-center justify-end gap-2">
+        <StatusPill />
+        <PeerDots peers={peers.length} />
+        <Button
+          onClick={() => setDialog('edit')}
+          className="bg-bg"
+          aria-label={`You are ${identity.name}. Change name or colour`}
         >
-          Sync debug page
-        </Link>
-      )}
-    </section>
+          <span
+            aria-hidden="true"
+            className="size-2.5 rounded-full"
+            style={{ backgroundColor: identity.colour }}
+          />
+          {identity.name}
+        </Button>
+        <CopyLinkButton />
+        {import.meta.env.DEV && (
+          <Link
+            to="/r/$roomId/debug"
+            params={{ roomId }}
+            className="rounded-control px-1 text-sm text-muted underline underline-offset-4 hover:text-fg"
+          >
+            Debug
+          </Link>
+        )}
+      </div>
+      <p className="pointer-events-none absolute bottom-3 left-3 hidden text-xs text-muted sm:block">
+        Draw with the mouse · <Kbd>Space</Kbd> drag or middle drag to pan · scroll to zoom ·{' '}
+        <Kbd>0</Kbd> fit · <Kbd>Ctrl</Kbd>+<Kbd>Z</Kbd> undo
+      </p>
+      <IdentityDialog
+        open={dialog !== null}
+        mode={dialog ?? 'edit'}
+        initial={identity}
+        taken={taken}
+        onSave={save}
+        onClose={() => setDialog(null)}
+      />
+    </div>
+  );
+}
+
+function Kbd({ children }: { children: string }) {
+  return (
+    <kbd className="rounded-[4px] border border-border bg-surface-1 px-1 font-mono text-[11px]">
+      {children}
+    </kbd>
+  );
+}
+
+function StatusPill() {
+  const { status } = useSyncStatus();
+  const label = {
+    connecting: 'Connecting',
+    syncing: 'Syncing',
+    synced: 'Live',
+    offline: 'Offline',
+  }[status];
+  return (
+    <span
+      role="status"
+      className="inline-flex h-8 items-center gap-2 rounded-full border border-border bg-bg px-3 text-sm"
+    >
+      <span
+        aria-hidden="true"
+        className={`size-2 rounded-full ${status === 'synced' ? 'bg-green' : status === 'offline' ? 'border border-muted' : 'bg-muted'}`}
+      />
+      {label}
+    </span>
+  );
+}
+
+function PeerDots({ peers }: { peers: number }) {
+  return (
+    <span className="inline-flex h-8 items-center rounded-full border border-border bg-bg px-3 text-sm text-muted tabular-nums">
+      {peers === 0 ? 'Just you' : `${peers + 1} here`}
+    </span>
   );
 }
 
@@ -45,25 +140,22 @@ type CopyState = 'idle' | 'copied' | 'failed';
 
 function CopyLinkButton() {
   const [state, setState] = useState<CopyState>('idle');
-  const url = window.location.href;
 
   async function copy() {
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(window.location.href);
       setState('copied');
     } catch {
       setState('failed');
     }
+    setTimeout(() => setState('idle'), 2000);
   }
 
   return (
-    <div className="flex flex-col items-start gap-2">
-      <Button variant="primary" onClick={copy}>
-        {state === 'copied' ? 'Copied' : 'Copy link'}
-      </Button>
-      <p role="status" className="min-h-4 max-w-full text-xs break-all text-muted">
-        {state === 'failed' && <>Couldn't copy. Select the link instead: {url}</>}
-      </p>
-    </div>
+    <Button variant="primary" onClick={copy}>
+      <span aria-live="polite">
+        {state === 'copied' ? 'Copied' : state === 'failed' ? 'Copy failed' : 'Copy link'}
+      </span>
+    </Button>
   );
 }

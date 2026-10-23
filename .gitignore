@@ -9,3 +9,8 @@ coverage/
 .DS_Store
 
 .vercel
+test-results/
+playwright-report/
+# scripts/gate1.ts output
+gate1-*.png
+trace-*.json

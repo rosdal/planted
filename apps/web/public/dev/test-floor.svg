@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4096 4096" width="4096" height="4096">
+  <!-- Fictional test floor for Planted 0.3: 8 rooms, a hallway, doors as gaps, windows as double lines.
+       Drawn in white; the board tints it with the theme text colour. Not based on any real map.
+       Every element sets its own stroke: the Pixi SVG parser ignores stroke-width without it. -->
+  <rect x="448" y="448" width="3200" height="3200" fill="#ffffff" fill-opacity="0.035"/>
+  <rect x="448" y="1536" width="3200" height="320" fill="#ffffff" fill-opacity="0.025"/>
+  <g fill="none" stroke="#ffffff" stroke-linecap="square">
+    <path d="M448 448H800M1100 448H1900M2200 448H3000M3300 448H3648M448 3648H700M1000 3648H1650M1950 3648H2700M3300 3648H3648M448 448V900M448 1200V1600M448 1800V2400M448 2700V3648M3648 448V800M3648 1100V1620M3648 1780V2500M3648 2800V3648" stroke="#ffffff" stroke-width="40"/>
+    <path d="M448 1536H900M1060 1536H1980M2140 1536H3000M3160 1536H3648M1600 448V900M1600 1060V1536M2560 448V1100M2560 1260V1536M448 1856H800M960 1856H1700M1860 1856H2800M3000 1856H3648M1408 1856V2300M1408 2460V3648M2304 1856V2200M2304 2360V3648M1408 2752H1780M1940 2752H2304" stroke="#ffffff" stroke-width="16"/>
+    <path d="M800 438H1100M800 458H1100M1900 438H2200M1900 458H2200M3000 438H3300M3000 458H3300M700 3638H1000M700 3658H1000M1650 3638H1950M1650 3658H1950M438 900V1200M458 900V1200M438 2400V2700M458 2400V2700M3638 800V1100M3658 800V1100M3638 2500V2800M3658 2500V2800" stroke="#ffffff" stroke-width="6" stroke-linecap="butt"/>
+    <path d="M2600 1576V1816M2640 1576V1816M2680 1576V1816M2720 1576V1816M2760 1576V1816M2800 1576V1816M2840 1576V1816" stroke="#ffffff" stroke-width="6" stroke-linecap="butt" stroke-opacity="0.6"/>
+    <rect x="2700" y="3600" width="600" height="48" stroke="#ffffff" stroke-width="6" stroke-dasharray="24 16" stroke-opacity="0.6"/>
+    <circle cx="1856" cy="2304" r="96" stroke="#ffffff" stroke-width="8" stroke-opacity="0.7"/>
+    <path d="M1788 2236L1924 2372M1924 2236L1788 2372" stroke="#ffffff" stroke-width="6" stroke-opacity="0.7"/>
+    <rect x="2700" y="560" width="800" height="120" stroke="#ffffff" stroke-width="8" stroke-opacity="0.5"/>
+    <rect x="560" y="2000" width="120" height="1500" stroke="#ffffff" stroke-width="8" stroke-opacity="0.5"/>
+    <rect x="1760" y="700" width="480" height="300" stroke="#ffffff" stroke-width="8" stroke-opacity="0.5"/>
+  </g>
+</svg>
