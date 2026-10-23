@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RRoomIdRouteImport } from './routes/r.$roomId'
+import { Route as RRoomIdIndexRouteImport } from './routes/r.$roomId.index'
+import { Route as RRoomIdDebugRouteImport } from './routes/r.$roomId.debug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +24,46 @@ const RRoomIdRoute = RRoomIdRouteImport.update({
   path: '/r/$roomId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RRoomIdIndexRoute = RRoomIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RRoomIdRoute,
+} as any)
+const RRoomIdDebugRoute = RRoomIdDebugRouteImport.update({
+  id: '/debug',
+  path: '/debug',
+  getParentRoute: () => RRoomIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/r/$roomId': typeof RRoomIdRoute
+  '/r/$roomId': typeof RRoomIdRouteWithChildren
+  '/r/$roomId/debug': typeof RRoomIdDebugRoute
+  '/r/$roomId/': typeof RRoomIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/r/$roomId': typeof RRoomIdRoute
+  '/r/$roomId/debug': typeof RRoomIdDebugRoute
+  '/r/$roomId': typeof RRoomIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/r/$roomId': typeof RRoomIdRoute
+  '/r/$roomId': typeof RRoomIdRouteWithChildren
+  '/r/$roomId/debug': typeof RRoomIdDebugRoute
+  '/r/$roomId/': typeof RRoomIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/r/$roomId'
+  fullPaths: '/' | '/r/$roomId' | '/r/$roomId/debug' | '/r/$roomId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/r/$roomId'
-  id: '__root__' | '/' | '/r/$roomId'
+  to: '/' | '/r/$roomId/debug' | '/r/$roomId'
+  id: '__root__' | '/' | '/r/$roomId' | '/r/$roomId/debug' | '/r/$roomId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  RRoomIdRoute: typeof RRoomIdRoute
+  RRoomIdRoute: typeof RRoomIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +82,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RRoomIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/r/$roomId/': {
+      id: '/r/$roomId/'
+      path: '/'
+      fullPath: '/r/$roomId/'
+      preLoaderRoute: typeof RRoomIdIndexRouteImport
+      parentRoute: typeof RRoomIdRoute
+    }
+    '/r/$roomId/debug': {
+      id: '/r/$roomId/debug'
+      path: '/debug'
+      fullPath: '/r/$roomId/debug'
+      preLoaderRoute: typeof RRoomIdDebugRouteImport
+      parentRoute: typeof RRoomIdRoute
+    }
   }
 }
 
+interface RRoomIdRouteChildren {
+  RRoomIdDebugRoute: typeof RRoomIdDebugRoute
+  RRoomIdIndexRoute: typeof RRoomIdIndexRoute
+}
+
+const RRoomIdRouteChildren: RRoomIdRouteChildren = {
+  RRoomIdDebugRoute: RRoomIdDebugRoute,
+  RRoomIdIndexRoute: RRoomIdIndexRoute,
+}
+
+const RRoomIdRouteWithChildren =
+  RRoomIdRoute._addFileChildren(RRoomIdRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  RRoomIdRoute: RRoomIdRoute,
+  RRoomIdRoute: RRoomIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
