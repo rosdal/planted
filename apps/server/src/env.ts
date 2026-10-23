@@ -1,5 +1,13 @@
 import { z } from 'zod';
 
+/**
+ * At least 32 random bytes, as the base64url string `crypto.randomBytes(32).toString('base64url')`
+ * prints (43 characters). Randomness can't be checked, but a short or placeholder secret can.
+ */
+const TokenSecret = z
+  .string()
+  .regex(/^[A-Za-z0-9_-]{43,}$/, 'must be at least 32 random bytes as base64url (43+ characters)');
+
 const Env = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   DATABASE_URL: z.url({ protocol: /^postgres(ql)?$/ }),
@@ -7,6 +15,10 @@ const Env = z.object({
   SERVER_HOST: z.string().min(1).default('0.0.0.0'),
   WEB_ORIGIN: z.url(),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
+  /** Signs room tokens (ADR 0005). */
+  ROOM_TOKEN_SECRET: TokenSecret,
+  /** The secret before the last rotation; tokens it signed stay valid until they expire. */
+  ROOM_TOKEN_SECRET_PREVIOUS: TokenSecret.optional(),
 });
 export type Env = z.infer<typeof Env>;
 

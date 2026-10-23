@@ -13,9 +13,11 @@ export const Route = createFileRoute('/r/$roomId/debug')({
 });
 
 function DebugPage() {
-  const { roomId } = roomRoute.useLoaderData();
+  const access = roomRoute.useLoaderData();
+  if (access.status !== 'ok') return null;
+  const { roomId } = access;
   return (
-    <RoomProvider roomId={roomId}>
+    <RoomProvider roomId={roomId} initialToken={access.token}>
       <section className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
           <Link

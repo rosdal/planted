@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto';
 import { createDb, type Db } from '@planted/db';
 import { resetDb } from '@planted/db/testing';
 import { type App, buildApp } from '../app';
@@ -6,6 +7,8 @@ export const testEnv = {
   NODE_ENV: 'test',
   WEB_ORIGIN: 'http://localhost:5173',
   LOG_LEVEL: 'silent',
+  // Fresh per test run: tokens only have to verify within this process.
+  ROOM_TOKEN_SECRET: randomBytes(32).toString('base64url'),
 } as const;
 
 export function testDatabaseUrl(): string {

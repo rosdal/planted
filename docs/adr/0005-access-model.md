@@ -14,13 +14,12 @@ Access comes from two kinds of secret, and nothing else.
 
 **Room tokens** are short-lived. `POST /rooms/:roomId/token { key }` exchanges a key for a 5-minute HS256 JWT carrying `sub` (room id), `role` and `lid` (link id). Every HTTP call that needs access sends it as `Authorization: Bearer`, and the socket sends it in `hello`.
 
-| Who | Holds | Can |
-| --- | --- | --- |
-| Room creator | Edit link key, saved in localStorage | Edit, copy both links |
-| Anyone with the edit link | Edit link key | Edit |
-| Anyone with the view link | View link key | View, cursors visible, no edits |
-| Anyone with only the room id | Nothing | Nothing: 403 |
-
+| Who                          | Holds                                | Can                             |
+| ---------------------------- | ------------------------------------ | ------------------------------- |
+| Room creator                 | Edit link key, saved in localStorage | Edit, copy both links           |
+| Anyone with the edit link    | Edit link key                        | Edit                            |
+| Anyone with the view link    | View link key                        | View, cursors visible, no edits |
+| Anyone with only the room id | Nothing                              | Nothing: 403                    |
 - **Role comes only from a verified token.** The server never trusts a role the client states.
 - **Rotation** (`POST /rooms/:roomId/links/rotate`, edit role) revokes both links, issues new ones and closes every open socket with 4401. On `hello` the server re-checks that the token's `lid` isn't revoked, so a token minted from an old link can't get back in during its last five minutes.
 - **A wrong key and a missing room look the same**: 403, the same query, and a constant-time compare over the room's links.

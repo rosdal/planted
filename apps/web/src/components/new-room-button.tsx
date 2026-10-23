@@ -1,6 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { ApiClientError, api } from '../lib/api';
+import { saveKeys } from '../realtime/keys';
 import { Button, type ButtonProps } from '../ui/button';
 
 function errorMessage(error: unknown): string {
@@ -25,7 +26,9 @@ export function NewRoomButton({
     setPending(true);
     setError(null);
     try {
-      const { roomId } = await api.createRoom();
+      const { roomId, editKey, viewKey } = await api.createRoom();
+      // The keys come back only now; without them nobody, the creator included, gets back in.
+      saveKeys(roomId, { editKey, viewKey });
       await navigate({ to: '/r/$roomId', params: { roomId } });
     } catch (e) {
       setError(errorMessage(e));

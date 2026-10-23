@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useRoomClient } from '../realtime/react';
-import { Board, type BoardIdentity } from './board';
+import { Board, type BoardIdentity, type BoardReadOnly } from './board';
 import { perfEnabled } from './overlay';
 
 declare global {
@@ -24,15 +24,20 @@ declare global {
  */
 export function BoardCanvas({
   identity,
+  readOnly,
   onBoard,
 }: {
   identity: BoardIdentity;
+  /** Viewers can pan, zoom and point, but not draw or undo. */
+  readOnly: boolean;
   onBoard?: (board: Board | null) => void;
 }) {
   const client = useRoomClient();
   const host = useRef<HTMLDivElement>(null);
   const identityRef = useRef(identity);
   identityRef.current = identity;
+  const readOnlyRef = useRef(readOnly);
+  readOnlyRef.current = readOnly;
   const onBoardRef = useRef(onBoard);
   onBoardRef.current = onBoard;
 
@@ -42,7 +47,8 @@ export function BoardCanvas({
     // StrictMode mounts, unmounts and mounts again: the first board may still be initialising
     // when it is destroyed, and then tears itself down as soon as `init` resolves.
     let disposed = false;
-    const board = new Board(element, client, () => identityRef.current());
+    const isReadOnly: BoardReadOnly = () => readOnlyRef.current;
+    const board = new Board(element, client, () => identityRef.current(), isReadOnly);
     void board
       .init()
       .then(() => {

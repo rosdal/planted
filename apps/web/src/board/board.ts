@@ -28,6 +28,8 @@ const FRAME_WINDOW_MS = 5000;
 const WARMUP_MS = 1000;
 
 export type BoardIdentity = () => { name: string; colour: string };
+/** True for viewers: no pen, no undo. Read on every input, so a role change applies at once. */
+export type BoardReadOnly = () => boolean;
 
 export type BoardStats = {
   fps: number;
@@ -145,6 +147,7 @@ export class Board {
   readonly #client: RoomClient;
   readonly #host: HTMLElement;
   readonly #identity: BoardIdentity;
+  readonly #readOnly: BoardReadOnly;
   readonly #app = new Application();
   readonly #frames = new FrameStats();
   readonly #presence: Presence;
@@ -159,10 +162,16 @@ export class Board {
   #rate = { at: performance.now(), in: 0, out: 0, inPerSec: 0, outPerSec: 0 };
   #docBytes = { at: 0, bytes: 0 };
 
-  constructor(host: HTMLElement, client: RoomClient, identity: BoardIdentity) {
+  constructor(
+    host: HTMLElement,
+    client: RoomClient,
+    identity: BoardIdentity,
+    readOnly: BoardReadOnly,
+  ) {
     this.#host = host;
     this.#client = client;
     this.#identity = identity;
+    this.#readOnly = readOnly;
     this.#presence = new Presence(client);
     this.undo = createUndoManager(client.doc);
   }
@@ -320,7 +329,7 @@ export class Board {
       setLive: (live) => this.#presence.setLive(live),
     });
     this.#bindInput(canvas, camera, pen, toScreen, measure);
-    this.#cleanups.push(bindUndoKeys(this.undo, () => pen.drawing));
+    this.#cleanups.push(bindUndoKeys(this.undo, () => pen.drawing || this.#readOnly()));
 
     let viewport = { width: 0, height: 0 };
     app.ticker.add((ticker: Ticker) => {
@@ -356,7 +365,7 @@ export class Board {
       measure();
       const screen = toScreen(e.clientX, e.clientY);
       if (camera.pointerDown(e, screen)) return;
-      pen.pointerDown(e, canvas);
+      if (!this.#readOnly()) pen.pointerDown(e, canvas);
     };
     const onMove = (e: PointerEvent) => {
       const screen = toScreen(e.clientX, e.clientY);
