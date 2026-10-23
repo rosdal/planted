@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+/* Neutrals from docs/design.md, "Visual design". Dark is the default; light follows the OS. */
+:root {
+  color-scheme: dark;
+  --bg: #0a0a0a;
+  --surface-1: #111111;
+  --surface-2: #1a1a1a;
+  --fg: #ededed;
+  --muted: #a1a1a1;
+  --border: #2e2e2e;
+  --green: #3fb950;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --bg: #ffffff;
+    --surface-1: #fafafa;
+    --surface-2: #f2f2f2;
+    --fg: #171717;
+    --muted: #636363;
+    --border: #e5e5e5;
+    --green: #1a7f37;
+  }
+}
+
+@theme inline {
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* Monochrome chrome: only these colours exist, so nothing tinted sneaks in. */
+  --color-*: initial;
+  --color-bg: var(--bg);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  /* Brand accent and the "live" dot, nothing else. */
+  --color-green: var(--green);
+
+  /* 12 / 13 / 14 / 16 / 20 / 24 / 32; UI body is 14, panels 13, captions 12. */
+  --text-*: initial;
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+  --text-sm: 13px;
+  --text-sm--line-height: 18px;
+  --text-base: 14px;
+  --text-base--line-height: 20px;
+  --text-md: 16px;
+  --text-md--line-height: 24px;
+  --text-lg: 20px;
+  --text-lg--line-height: 28px;
+  --text-xl: 24px;
+  --text-xl--line-height: 32px;
+  --text-2xl: 32px;
+  --text-2xl--line-height: 40px;
+
+  --radius-control: 6px;
+  --radius-panel: 8px;
+  --radius-dialog: 12px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  body {
+    @apply bg-bg font-sans text-base text-fg antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.02em;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-fg;
+  }
+}

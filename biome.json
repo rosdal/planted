@@ -7,7 +7,12 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!pnpm-lock.yaml"]
+    "includes": [
+      "**",
+      "!pnpm-lock.yaml",
+      "!apps/web/src/routeTree.gen.ts",
+      "!packages/db/migrations"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -35,6 +40,11 @@
       "source": {
         "organizeImports": "on"
       }
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
     }
   }
 }
