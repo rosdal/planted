@@ -4,11 +4,17 @@
  *   pnpm bots --room <id> --count 20 --rate 5
  *   pnpm bots --rooms 10 --count 10 --duration 60     # new rooms, stop on its own
  *   pnpm bots --room <id> --chaos                      # sockets drop every 30–90 s
+ *   pnpm bots --room <id> --count 8 --mode draw        # draw and undo real strokes
  *
  * Each bot moves a fake cursor over awareness at 30 Hz and inserts or deletes `debug-items` at
  * `--rate` ops/s. One bot per room writes `{ t, by }` into the `latency` map every second; the
  * others record how long it took to arrive. On Ctrl+C (or after `--duration`) every bot's doc
  * hash is compared, and the script exits 1 if any room diverged.
+ *
+ * `--mode draw` (0.3) replaces the list edits with real pen strokes: a wandering cursor, live
+ * strokes over awareness, commits through the shared builder, and an undo for 10% of strokes.
+ * At the end it also checks that no stroke was lost: the room's object count must be at least
+ * the bots' strokes minus their undos (equal when only bots drew).
  *
  * Rooms are spread over worker threads (`--workers`, default: one per core, minus two for the
  * server and Postgres), because a single thread runs out of CPU applying fan-out before the
@@ -36,6 +42,7 @@ const { values: args } = parseArgs({
     'chaos-every': { type: 'string', default: '30-90' },
     duration: { type: 'string' },
     workers: { type: 'string' },
+    mode: { type: 'string', default: 'list' },
   },
 });
 
@@ -45,6 +52,11 @@ const opsPerSec = Number(args.rate);
 const roomCount = args.room ? 1 : Number(args.rooms);
 const [chaosMinS, chaosMaxS] = args['chaos-every'].split('-').map(Number) as [number, number];
 const REPORT_EVERY_MS = 5000;
+if (args.mode !== 'list' && args.mode !== 'draw') {
+  console.error(`--mode must be list or draw, not ${args.mode}`);
+  process.exit(2);
+}
+const mode = args.mode;
 
 function percentile(sorted: number[], p: number): number {
   if (sorted.length === 0) return Number.NaN;
@@ -111,6 +123,7 @@ const workers = Array.from({ length: workerCount }, (_, w) => {
     botsPerRoom,
     opsPerSec,
     chaos: args.chaos ? { minS: chaosMinS, maxS: chaosMaxS } : null,
+    mode,
   };
   return new Worker(new URL('./bot-worker.ts', import.meta.url), { workerData: config });
 });
@@ -147,10 +160,12 @@ for (const worker of workers) {
 }
 
 console.log(
-  `${roomIds.length * botsPerRoom} bots in ${roomIds.length} room(s) on ${workerCount} worker(s), ${opsPerSec} ops/s each${args.chaos ? `, chaos every ${args['chaos-every']} s` : ''}`,
+  `${roomIds.length * botsPerRoom} bots in ${roomIds.length} room(s) on ${workerCount} worker(s), ${mode === 'draw' ? 'drawing' : `${opsPerSec} ops/s each`}${args.chaos ? `, chaos every ${args['chaos-every']} s` : ''}`,
 );
 if (!args.room && roomIds[0]) {
-  console.log(`watch: ${process.env.WEB_ORIGIN ?? 'http://localhost:5173'}/r/${roomIds[0]}/debug`);
+  console.log(
+    `watch: ${process.env.WEB_ORIGIN ?? 'http://localhost:5173'}/r/${roomIds[0]}${mode === 'draw' ? '' : '/debug'}`,
+  );
 }
 
 const startedAt = Date.now();
@@ -163,7 +178,7 @@ async function report(): Promise<void> {
   if (finishing) return;
   const now = Date.now();
   const seconds = (now - last.at) / 1000;
-  const sum = (key: 'bots' | 'ops' | 'frames') =>
+  const sum = (key: 'bots' | 'ops' | 'frames' | 'strokes' | 'undos') =>
     samples.reduce((total, s: WorkerSample) => total + s[key], 0);
   const statuses: Record<string, number> = {};
   for (const s of samples) {
@@ -196,7 +211,9 @@ async function report(): Promise<void> {
       `frames/s in ${Math.round((frames - last.frames) / seconds)}`,
       `latency p50 ${percentile(sorted, 50)} p95 ${p95} max ${sorted.at(-1) ?? Number.NaN} ms`,
       `bot loop p99 ${Math.round(Math.max(...samples.map((s) => s.loopP99Ms)))} ms`,
-      `items ${first?.items ?? 0}`,
+      mode === 'draw'
+        ? `strokes ${sum('strokes')} undos ${sum('undos')}`
+        : `items ${first?.items ?? 0}`,
       `doc ${((first?.docBytes ?? 0) / 1024).toFixed(1)} kB`,
       cpuPct === null
         ? 'server n/a'
@@ -212,13 +229,18 @@ async function finish(): Promise<never> {
   console.log('\nstopping bots, waiting for sync to settle…');
   const done = await ask({ type: 'finish' }, 'done');
   let diverged = false;
-  for (const { roomId, hashes } of done.flatMap((d) => d.rooms)) {
-    const ok = Object.keys(hashes).length === 1;
-    diverged ||= !ok;
+  for (const { roomId, hashes, objects, botStrokes } of done.flatMap((d) => d.rooms)) {
+    const converged = Object.keys(hashes).length === 1;
+    // Humans may draw too, so the doc can hold more than the bots drew, never less.
+    const lost = mode === 'draw' && objects < botStrokes;
+    diverged ||= !converged || lost;
     const detail = Object.entries(hashes)
       .map(([hash, n]) => `${hash}×${n}`)
       .join(', ');
-    console.log(`${ok ? 'ok      ' : 'DIVERGED'} ${roomId} ${detail}`);
+    const status = !converged ? 'DIVERGED' : lost ? 'LOST    ' : 'ok      ';
+    const counts =
+      mode === 'draw' ? ` objects ${objects}, bot strokes minus undos ${botStrokes}` : '';
+    console.log(`${status} ${roomId} ${detail}${counts}`);
   }
   console.log(`settled in ${(Math.max(...done.map((d) => d.settleMs)) / 1000).toFixed(1)} s`);
   console.log(

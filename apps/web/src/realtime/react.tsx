@@ -119,26 +119,37 @@ export function useSyncStatus(): SyncState {
 
 export type Peer = { clientId: number; user: GuestIdentity | null };
 
-/** Everyone in the room's awareness except this tab. */
+/**
+ * Everyone in the room's awareness except this tab. Awareness changes on every cursor move
+ * (30 Hz per peer), but this only produces a new list, and so a re-render, when someone joins,
+ * leaves, or changes name or colour.
+ */
 export function usePeers(): Peer[] {
   const client = useRoomClient();
-  const store = useMemo(
-    () =>
-      derivedStore(
-        (onChange) => {
-          client.awareness.on('change', onChange);
-          return () => client.awareness.off('change', onChange);
-        },
-        () =>
-          [...client.awareness.getStates()]
-            .filter(([clientId]) => clientId !== client.doc.clientID)
-            .map(([clientId, state]) => ({
-              clientId,
-              user: (state.user as GuestIdentity | undefined) ?? null,
-            })),
-      ),
-    [client],
-  );
+  const store = useMemo(() => {
+    let key = '';
+    let peers: Peer[] = [];
+    const read = () => {
+      const next = [...client.awareness.getStates()]
+        .filter(([clientId]) => clientId !== client.doc.clientID)
+        .map(([clientId, state]) => ({
+          clientId,
+          user: (state.user as GuestIdentity | undefined) ?? null,
+        }));
+      const nextKey = next
+        .map((p) => `${p.clientId}:${p.user?.name ?? ''}:${p.user?.colour ?? ''}`)
+        .join('|');
+      if (nextKey !== key) {
+        key = nextKey;
+        peers = next;
+      }
+      return peers;
+    };
+    return derivedStore((onChange) => {
+      client.awareness.on('change', onChange);
+      return () => client.awareness.off('change', onChange);
+    }, read);
+  }, [client]);
   return useStore(store);
 }
 

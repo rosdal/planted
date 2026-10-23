@@ -26,6 +26,7 @@
     "@planted/client": "workspace:*",
     "@planted/schema": "workspace:*",
     "@tanstack/react-router": "^1.170.45",
+    "pixi.js": "catalog:",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "y-protocols": "catalog:",

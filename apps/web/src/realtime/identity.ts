@@ -1,19 +1,11 @@
-/**
- * User cursor colours: 8 hues kept away from the attack, defence and lineup-slot colours (see
- * docs/design.md, "Visual design"), each readable on both the dark and light canvas.
- */
-export const USER_COLOURS = [
-  '#e5534b',
-  '#f69d50',
-  '#c69026',
-  '#57ab5a',
-  '#39c5cf',
-  '#6cb6ff',
-  '#b083f0',
-  '#ec6cb9',
-] as const;
+import { USER_COLOURS } from '@planted/schema';
+
+export { USER_COLOURS };
 
 export type GuestIdentity = { name: string; colour: string };
+
+export const NAME_MIN = 2;
+export const NAME_MAX = 20;
 
 const STORAGE_KEY = 'planted.guest';
 
@@ -28,19 +20,50 @@ function randomIdentity(): GuestIdentity {
   return { name: `Guest ${Math.floor(1000 + Math.random() * 9000)}`, colour };
 }
 
-/** Kept in localStorage so a reload keeps your name; storage can be missing or throw. */
-export function loadGuestIdentity(): GuestIdentity {
+/** One fallback per tab, so every caller agrees until the user picks a name. */
+let fallback: GuestIdentity | null = null;
+
+/** The identity saved by the name dialog, or null on a first visit. Storage can be missing or throw. */
+export function readStoredIdentity(): GuestIdentity | null {
   try {
     const stored: unknown = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null');
     if (isIdentity(stored)) return stored;
   } catch {
-    // Private mode, blocked storage or a corrupt value: fall through to a fresh identity.
+    // Private mode, blocked storage or a corrupt value: treat it as a first visit.
   }
-  const identity = randomIdentity();
+  return null;
+}
+
+/** The saved identity, or this tab's "Guest 1234" with a random colour. */
+export function loadGuestIdentity(): GuestIdentity {
+  const stored = readStoredIdentity();
+  if (stored) return stored;
+  fallback ??= randomIdentity();
+  return fallback;
+}
+
+/** Returns false when storage refused it; the identity still holds for this tab. */
+export function saveGuestIdentity(identity: GuestIdentity): boolean {
+  fallback = identity;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(identity));
+    return true;
   } catch {
-    // Not persisted; this tab still uses it.
+    return false;
   }
-  return identity;
+}
+
+export function normaliseName(name: string): string {
+  return name.trim().replace(/\s+/g, ' ');
+}
+
+export function isValidName(name: string): boolean {
+  const length = normaliseName(name).length;
+  return length >= NAME_MIN && length <= NAME_MAX;
+}
+
+/** `preferred` if nobody else has it, else the first free palette colour (or `preferred`). */
+export function firstFreeColour(preferred: string, taken: ReadonlySet<string>): string {
+  if (!taken.has(preferred)) return preferred;
+  return USER_COLOURS.find((colour) => !taken.has(colour)) ?? preferred;
 }

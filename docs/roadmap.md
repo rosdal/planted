@@ -64,16 +64,18 @@ Built from [the v0.2 todo](todo/v0.2.md). Hocuspocus was compared and the custom
 ## 0.3 Canvas spike
 
 A real board on top of the relay: pan, zoom, draw, see each other. This is the first gate from the design doc.
-- [ ] PixiJS v8 mounted in a React component; React never re-renders per frame
-- [ ] Camera: wheel zoom to cursor, drag to pan, clamp to map bounds, coordinates normalised 0..1
-- [ ] Placeholder map: one hand-drawn vector floor (a simple test layout is fine)
-- [ ] `objects` Y.Map bound to a Pixi scene store (`observeDeep`, only touch changed ids)
-- [ ] Pen tool: live points over awareness at 30 Hz, Ramer–Douglas–Peucker on pointer-up, commit one stroke
-- [ ] Remote cursors with name tags and interpolation to 60 fps
-- [ ] Per-user undo with `Y.UndoManager` scoped to the local origin
-- [ ] Guest name + colour prompt on first join, kept in localStorage (wrapped in try/catch)
-- [ ] FPS + object-count overlay in dev builds
-- [ ] Bots now draw real strokes and move cursors
+
+Built from [the v0.3 todo](todo/v0.3.md); the gate measurement is in progress, with numbers and open items in [docs/perf/v0.3.md](perf/v0.3.md).
+- [x] PixiJS v8 mounted in a React component; React never re-renders per frame
+- [x] Camera: wheel zoom to cursor, drag to pan, clamp to map bounds, coordinates normalised 0..1
+- [x] Placeholder map: one hand-drawn vector floor (a simple test layout is fine)
+- [x] `objects` Y.Map bound to a Pixi scene store (`observeDeep`, only touch changed ids)
+- [x] Pen tool: live points over awareness at 30 Hz, Ramer–Douglas–Peucker on pointer-up, commit one stroke
+- [x] Remote cursors with name tags and interpolation to 60 fps
+- [x] Per-user undo with `Y.UndoManager` scoped to the local origin
+- [x] Guest name + colour prompt on first join, kept in localStorage (wrapped in try/catch)
+- [x] FPS + object-count overlay in dev builds
+- [x] Bots now draw real strokes and move cursors
 
 **Exit check (gate 1):** 10 people (or 2 humans + 8 bots) drawing for 5 minutes on a mid laptop, 60 fps, no lost strokes, undo only undoes your own work.
 

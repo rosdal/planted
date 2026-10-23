@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "bots": "tsx bots.ts",
+    "gate1": "tsx gate1.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -15,6 +16,7 @@
     "yjs": "catalog:"
   },
   "devDependencies": {
+    "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "@types/ws": "catalog:",
     "tsx": "^4.23.15",

@@ -11,7 +11,8 @@
       "**",
       "!pnpm-lock.yaml",
       "!apps/web/src/routeTree.gen.ts",
-      "!packages/db/migrations"
+      "!packages/db/migrations",
+      "!apps/web/public/dev/*.svg"
     ]
   },
   "formatter": {
