@@ -9,19 +9,19 @@ If a gate fails, fix it inside that version rather than moving on. 0.5 (drawing 
 ## 0.0 Repo bootstrap
 
 From an empty folder to a monorepo where `pnpm install && pnpm check` passes locally and in CI. No product code yet.
-- [ ] `git init -b main`
-- [ ] Pin Node LTS with `.nvmrc`, enable Corepack, `pnpm init`, set `packageManager` in the root package.json
-- [ ] `pnpm-workspace.yaml` with `apps/*` and `packages/*`; create the empty folders
-- [ ] Turborepo: `turbo.json` with build, dev, lint, typecheck and test pipelines
-- [ ] `tsconfig.base.json`: strict, `noUncheckedIndexedAccess`, bundler module resolution, path aliases
-- [ ] Biome for lint + format (one tool, fast); `biome.json` at the root
-- [ ] Lefthook pre-commit: Biome on staged files; commit-msg check for Conventional Commits
-- [ ] Vitest workspace config at the root
-- [ ] `.gitignore`, `.editorconfig`, `.env.example`
-- [ ] README (one-paragraph pitch + dev setup), LICENSE (pick before the first push: MIT or AGPL-3.0), `docs/` with this design doc exported
-- [ ] Create the GitHub repo (your account or the Rosdal org), push `main`, protect it: PRs only, CI required
-- [ ] GitHub Actions `ci.yml`: install with cache, then `turbo lint typecheck test build`
-- [ ] Renovate or Dependabot for dependency updates
+- [x] `git init -b main`
+- [x] Pin Node LTS with `.nvmrc`, enable Corepack, `pnpm init`, set `packageManager` in the root package.json
+- [x] `pnpm-workspace.yaml` with `apps/*` and `packages/*`; create the empty folders
+- [x] Turborepo: `turbo.json` with build, dev, lint, typecheck and test pipelines
+- [x] `tsconfig.base.json`: strict, `noUncheckedIndexedAccess`, bundler module resolution, path aliases
+- [x] Biome for lint + format (one tool, fast); `biome.json` at the root
+- [x] Lefthook pre-commit: Biome on staged files; commit-msg check for Conventional Commits
+- [x] Vitest workspace config at the root
+- [x] `.gitignore`, `.editorconfig`, `.env.example`
+- [x] README (one-paragraph pitch + dev setup), LICENSE (pick before the first push: MIT or AGPL-3.0), `docs/` with this design doc exported
+- [x] Create the GitHub repo (your account or the Rosdal org), push `main`, protect it: PRs only, CI required
+- [x] GitHub Actions `ci.yml`: install with cache, then `turbo lint typecheck test build`
+- [x] Renovate or Dependabot for dependency updates (Renovate config; needs the Renovate app installed on the org)
 
 **Exit check:** a fresh clone on WSL2 runs `pnpm install && pnpm check` with zero errors, and the first PR goes green in CI.
 
