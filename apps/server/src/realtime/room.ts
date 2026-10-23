@@ -25,6 +25,34 @@ export const SERVER_ORIGIN = Symbol('planted.server');
 
 type AwarenessChange = { added: number[]; updated: number[]; removed: number[] };
 
+/** What one socket's update did, collected while it is applied. */
+type Held = {
+  origin: Connection;
+  /** The socket's own update(s), and the server's corrections, held back from broadcast. */
+  updates: Uint8Array[];
+  fixes: Uint8Array[];
+  /** Root types the update changed anything under. */
+  roots: Set<string>;
+  /** New structs were integrated (not only deletions). */
+  inserted: boolean;
+};
+
+/** Any shared type, as Yjs types the values of `doc.share`. */
+type SharedType = Y.Doc['share'] extends Map<string, infer T> ? T : never;
+
+/** The root type `type` sits under. */
+function rootOf(type: SharedType): SharedType {
+  let current = type;
+  while (current._item) current = current._item.parent as SharedType;
+  return current;
+}
+
+/** Deletes everything a root type holds, whatever kind of type it is. */
+function clearRoot(root: SharedType, transaction: Y.Transaction): void {
+  for (const item of root._map.values()) if (!item.deleted) item.delete(transaction);
+  for (let item = root._start; item; item = item.right) if (!item.deleted) item.delete(transaction);
+}
+
 export type RoomOptions = {
   id: RoomId;
   epoch: number;
@@ -35,6 +63,8 @@ export type RoomOptions = {
   /** Allows the dev-only root types. */
   dev: boolean;
   onIdle: (room: Room) => void;
+  /** The room's row was deleted while it was loaded; the manager drops it. */
+  onGone: (room: Room) => void;
 };
 
 /**
@@ -56,32 +86,42 @@ export class Room {
   readonly log: FastifyBaseLogger;
 
   #unloadTimer: ReturnType<typeof setTimeout> | null = null;
-  /** Updates held back while one socket's update is applied and checked. */
-  #held: { origin: Connection; updates: Uint8Array[]; fixes: Uint8Array[] } | null = null;
+  /** One socket's update while it is applied and checked. */
+  #held: Held | null = null;
   readonly #objects: Y.Map<unknown>;
   readonly #tracker: ObjectTracker;
   readonly #roots: ReadonlySet<string>;
   readonly #onIdle: (room: Room) => void;
-  /** Over the doc-size limit at the last save: new objects are refused until something goes. */
+  readonly #onGone: (room: Room) => void;
+  /** Over the doc-size limit: new objects are refused until something goes. */
   #full = false;
+  /**
+   * The encoded doc size: exact at load and at every save, plus the bytes of every update since.
+   * Deletes make it overestimate, which only means the exact check at the next save corrects it.
+   */
+  #approxBytes = 0;
   #closed = false;
 
-  constructor({ id, epoch, state, store, log, dev, onIdle }: RoomOptions) {
+  constructor({ id, epoch, state, store, log, dev, onIdle, onGone }: RoomOptions) {
     this.id = id;
     this.epoch = epoch;
     this.log = log.child({ roomId: id });
     this.#onIdle = onIdle;
+    this.#onGone = onGone;
     this.#roots = allowedRoots(dev);
     // The server is a relay, not a user: it must never show up in anyone's peer list.
     this.awareness.setLocalState(null);
     this.#objects = this.doc.getMap('objects');
     if (state) Y.applyUpdate(this.doc, state, SERVER_ORIGIN);
+    this.#approxBytes = state?.byteLength ?? 0;
+    this.#full = this.#approxBytes > MAX_DOC_BYTES;
     this.#tracker = new ObjectTracker(this.#objects, (origin) => origin === this.#held?.origin);
     this.saver = new DocSaver({
       save: () => this.#save(store),
       log: this.log,
     });
     this.doc.on('update', this.#onDocUpdate);
+    this.doc.on('afterTransaction', this.#onAfterTransaction);
     this.awareness.on('update', this.#onAwarenessUpdate);
   }
 
@@ -134,15 +174,29 @@ export class Room {
     this.#unloadTimer = setTimeout(() => this.#onIdle(this), UNLOAD_AFTER_MS);
   }
 
+  /** Refuses joins (they're told to retry) until `reopen`; set before any await in a clear. */
+  close(): void {
+    this.#closed = true;
+    if (this.#unloadTimer) clearTimeout(this.#unloadTimer);
+    this.#unloadTimer = null;
+  }
+
+  /** Undoes `close` after a clear that failed: the room carries on with its doc. */
+  reopen(): void {
+    this.#closed = false;
+    this.scheduleIdleCheck();
+  }
+
   /** Sockets still open keep their connection, but closing them no longer touches the room. */
   destroy(): void {
-    this.#closed = true;
+    this.close();
     this.conns.clear();
     if (this.#unloadTimer) clearTimeout(this.#unloadTimer);
     this.#unloadTimer = null;
     void this.saver.stop();
     this.#tracker.destroy();
     this.doc.off('update', this.#onDocUpdate);
+    this.doc.off('afterTransaction', this.#onAfterTransaction);
     this.awareness.off('update', this.#onAwarenessUpdate);
     this.awareness.destroy();
     this.doc.destroy();
@@ -150,13 +204,24 @@ export class Room {
 
   async #save(store: RoomStore): Promise<void> {
     const state = Y.encodeStateAsUpdate(this.doc);
-    await store.save(this.id, state);
-    const full = state.byteLength > MAX_DOC_BYTES;
-    if (full !== this.#full) {
-      this.#full = full;
-      this.log.warn({ bytes: state.byteLength, full }, 'room.doc_limit');
-      if (full) for (const conn of this.conns) if (conn.role === 'edit') this.#sendDocLimit(conn);
+    if ((await store.save(this.id, state)) === 'gone') {
+      this.log.warn('room.gone: deleted while loaded');
+      this.close();
+      for (const conn of [...this.conns]) {
+        conn.fail(CloseCode.RoomNotFound, 'room_not_found', 'This board no longer exists');
+      }
+      this.#onGone(this);
+      return;
     }
+    this.#approxBytes = state.byteLength;
+    this.#setFull(state.byteLength > MAX_DOC_BYTES);
+  }
+
+  #setFull(full: boolean): void {
+    if (full === this.#full) return;
+    this.#full = full;
+    this.log.warn({ approxBytes: this.#approxBytes, full }, 'room.doc_limit');
+    if (full) for (const conn of this.conns) if (conn.role === 'edit') this.#sendDocLimit(conn);
   }
 
   #sendDocLimit(conn: Connection): void {
@@ -220,22 +285,20 @@ export class Room {
   }
 
   #applyUpdate(conn: Connection, update: Uint8Array): void {
-    const rootsBefore = new Set(this.doc.share.keys());
-    this.#held = { origin: conn, updates: [], fixes: [] };
+    const held: Held = { origin: conn, updates: [], fixes: [], roots: new Set(), inserted: false };
+    this.#held = held;
+    let decodeError: unknown = null;
     try {
       Y.applyUpdate(this.doc, update, conn);
     } catch (err) {
-      this.#held = null;
-      this.#tracker.take();
-      conn.log.warn({ roomId: this.id, err }, 'bad update');
-      conn.fail(CloseCode.BadFrame, 'bad_update', 'Update does not decode');
-      return;
+      // Yjs integrates the structs before it reads the delete set, so a malformed update can
+      // throw with part of it already in the doc. Everything below runs either way.
+      decodeError = err;
     }
     const { touched, added } = this.#tracker.take();
+    this.#approxBytes += update.byteLength;
 
-    const unknownRoots = [...this.doc.share.keys()].filter(
-      (name) => !rootsBefore.has(name) && !this.#roots.has(name),
-    );
+    const unknownRoots = [...held.roots].filter((name) => !this.#roots.has(name));
     const invalid = [...touched].flatMap((id) => {
       const value = this.#objects.get(id);
       // Gone again by the end of the transaction (or a delete): nothing to check.
@@ -248,13 +311,19 @@ export class Room {
     if (fresh.length > 0 && this.#full) warning = 'doc_limit';
     else if (fresh.length > 0 && this.#objects.size > MAX_OBJECTS) warning = 'object_limit';
     if (warning) for (const id of fresh) remove.add(id);
+    // While full, growing anything but a new object (which is removed above) can't be undone
+    // cleanly, so the sender is closed: at most one frame per connection gets through.
+    const growsFullDoc = this.#full && held.inserted && fresh.length === 0;
 
-    if (remove.size > 0) {
-      this.doc.transact(() => {
+    if (remove.size > 0 || unknownRoots.length > 0) {
+      this.doc.transact((transaction) => {
         for (const id of remove) this.#objects.delete(id);
+        for (const name of unknownRoots) {
+          const root = this.doc.share.get(name);
+          if (root) clearRoot(root, transaction);
+        }
       }, SERVER_ORIGIN);
     }
-    const held = this.#held;
     this.#held = null;
 
     // The others get the update and its correction as one frame. The sender gets only the
@@ -265,6 +334,11 @@ export class Room {
       this.#broadcast(updateFrame(merged), conn);
     }
 
+    if (decodeError) {
+      conn.log.warn({ roomId: this.id, err: decodeError, ids: [...remove] }, 'bad update');
+      conn.fail(CloseCode.BadFrame, 'bad_update', 'Update does not decode');
+      return;
+    }
     if (invalid.length > 0 || unknownRoots.length > 0) {
       conn.log.warn(
         { roomId: this.id, ids: invalid.map((i) => i.id), issues: invalid, unknownRoots },
@@ -275,6 +349,11 @@ export class Room {
         'invalid_object',
         unknownRoots.length > 0 ? `Unknown root type ${unknownRoots[0]}` : 'Invalid board object',
       );
+      return;
+    }
+    if (growsFullDoc) {
+      conn.log.warn({ roomId: this.id }, 'update grew a full doc');
+      conn.fail(CloseCode.DocLimit, 'doc_limit', 'This board is full. Delete something first.');
       return;
     }
     if (warning) {
@@ -288,6 +367,7 @@ export class Room {
         fatal: false,
       });
     }
+    if (this.#approxBytes > MAX_DOC_BYTES) this.#setFull(true);
   }
 
   #applyAwareness(conn: Connection, payload: Uint8Array): void {
@@ -310,6 +390,18 @@ export class Room {
       return;
     }
     this.#broadcast(updateFrame(update), origin);
+  };
+
+  #onAfterTransaction = (transaction: Y.Transaction): void => {
+    const held = this.#held;
+    if (!held || transaction.origin !== held.origin) return;
+    for (const type of transaction.changed.keys()) {
+      const root = rootOf(type);
+      for (const [name, shared] of this.doc.share) if (shared === root) held.roots.add(name);
+    }
+    for (const [client, clock] of transaction.afterState) {
+      if (clock > (transaction.beforeState.get(client) ?? 0)) held.inserted = true;
+    }
   };
 
   #onAwarenessUpdate = ({ added, updated, removed }: AwarenessChange, origin: unknown): void => {

@@ -15,6 +15,11 @@ const Env = z.object({
   SERVER_HOST: z.string().min(1).default('0.0.0.0'),
   WEB_ORIGIN: z.url(),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
+  /**
+   * Behind a reverse proxy (Caddy in production), take the client address from
+   * `X-Forwarded-For`; otherwise every user shares the proxy's rate-limit bucket.
+   */
+  TRUST_PROXY: z.stringbool().default(false),
   /** Signs room tokens (ADR 0005). */
   ROOM_TOKEN_SECRET: TokenSecret,
   /** The secret before the last rotation; tokens it signed stay valid until they expire. */

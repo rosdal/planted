@@ -42,11 +42,15 @@ export class RoomManager {
    */
   async getOrCreate(roomId: RoomId): Promise<Room | null> {
     for (;;) {
+      // A clear in flight is waited out first: its room is closed and about to be replaced.
+      const pending = this.#pending.get(roomId);
+      if (pending) {
+        await pending.catch(() => {});
+        continue;
+      }
       const room = this.#rooms.get(roomId);
       if (room) return room;
-      const pending = this.#pending.get(roomId);
-      if (!pending) break;
-      await pending.catch(() => {});
+      break;
     }
     const load = this.#load(roomId);
     this.#pending.set(roomId, load);
@@ -69,6 +73,7 @@ export class RoomManager {
       log: this.log,
       dev: this.#dev,
       onIdle: (idle) => void this.unload(idle),
+      onGone: (gone) => this.#drop(gone),
     });
     this.#rooms.set(roomId, room);
     this.log.info(
@@ -102,27 +107,51 @@ export class RoomManager {
     this.log.info({ roomId: room.id, rooms: this.#rooms.size }, 'room.unloaded');
   }
 
+  /** Forgets a room whose row no longer exists; nothing left to save. */
+  #drop(room: Room): void {
+    if (this.#rooms.get(room.id) !== room) return;
+    this.#rooms.delete(room.id);
+    room.destroy();
+    this.log.info({ roomId: room.id, rooms: this.#rooms.size }, 'room.dropped');
+  }
+
   /** Closes every socket in the room with `code`, if it's loaded. */
   disconnectAll(roomId: RoomId, code: number, reason: string): void {
     this.#rooms.get(roomId)?.disconnectAll(code, reason);
   }
 
   /**
-   * Empties the room's doc and bumps its epoch: sockets close with 4409, the loaded doc is
-   * dropped without a final save, and the next join loads the empty doc. Returns the new epoch.
+   * Empties the room's doc and bumps its epoch: sockets close with 4409 and the next join loads
+   * the empty doc. Returns the new epoch.
+   *
+   * The room is closed to joins before anything is awaited, and its doc is saved before the
+   * clear is written, so no save can land after it. If either write fails the room reopens with
+   * its doc: clients already reset on 4409 get it back on their next sync, and nothing is lost.
    */
   async clear(roomId: RoomId): Promise<number> {
     while (this.#pending.has(roomId)) await this.#pending.get(roomId)?.catch(() => {});
     const run = (async () => {
       const room = this.#rooms.get(roomId);
       if (room) {
-        this.#rooms.delete(roomId);
+        room.close();
         room.disconnectAll(CloseCode.EpochChanged, 'epoch_changed');
-        // A save already running finishes before the clear overwrites it, never after.
-        await room.saver.stop();
+        // Closed and empty, so no update can arrive: once this flush is done, nothing is dirty.
+        if (!(await room.saver.flush())) {
+          room.reopen();
+          throw new Error(`room ${roomId} could not be saved before clearing`);
+        }
+      }
+      let epoch: number;
+      try {
+        epoch = await this.#store.clear(roomId);
+      } catch (err) {
+        room?.reopen();
+        throw err;
+      }
+      if (room && this.#rooms.get(roomId) === room) {
+        this.#rooms.delete(roomId);
         room.destroy();
       }
-      const epoch = await this.#store.clear(roomId);
       this.log.info({ roomId, epoch }, 'room.cleared');
       return epoch;
     })();

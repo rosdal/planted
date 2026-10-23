@@ -35,7 +35,7 @@ declare module 'fastify' {
 
 export type BuildAppOptions = AppDeps & {
   env: Pick<Env, 'NODE_ENV' | 'WEB_ORIGIN' | 'LOG_LEVEL' | 'ROOM_TOKEN_SECRET'> &
-    Partial<Pick<Env, 'ROOM_TOKEN_SECRET_PREVIOUS'>>;
+    Partial<Pick<Env, 'ROOM_TOKEN_SECRET_PREVIOUS' | 'TRUST_PROXY'>>;
   /** Where docs persist; tests pass a stub that fails on demand. */
   store?: RoomStore;
   /** Tests pass one with a fake clock to mint expired tokens. */
@@ -62,6 +62,7 @@ export async function buildApp({ db, env, store, tokens: tokensOverride }: Build
   const app = Fastify({
     logger: loggerOptions(env),
     genReqId: () => randomUUID(),
+    trustProxy: env.TRUST_PROXY ?? false,
   }).withTypeProvider<ZodTypeProvider>();
 
   app.setValidatorCompiler(validatorCompiler);

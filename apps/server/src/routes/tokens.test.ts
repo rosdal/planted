@@ -1,5 +1,6 @@
 import { ApiError, RoomTokenResponse } from '@planted/schema';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { buildApp } from '../app';
 import { newLinkKey } from '../auth/links';
 import { ROOM_TOKEN_TTL_S, RoomTokens } from '../auth/room-token';
 import { newRoomId } from '../ids';
@@ -72,6 +73,25 @@ describe('POST /rooms/:roomId/token', () => {
     }
     const res = await requestToken(room.roomId, room.viewKey);
     expect(res.statusCode).toBe(429);
+  });
+
+  it('behind a trusted proxy, limits each client address separately', async () => {
+    const app = await buildApp({ db: t.db, env: { ...testEnv, TRUST_PROXY: true } });
+    try {
+      const room = await createRoom(app);
+      const from = (ip: string) =>
+        app.inject({
+          method: 'POST',
+          url: `/rooms/${room.roomId}/token`,
+          payload: { key: room.viewKey },
+          headers: { 'x-forwarded-for': ip },
+        });
+      for (let i = 0; i < 30; i++) expect((await from('203.0.113.1')).statusCode).toBe(200);
+      expect((await from('203.0.113.1')).statusCode).toBe(429);
+      expect((await from('203.0.113.2')).statusCode).toBe(200);
+    } finally {
+      await app.close();
+    }
   });
 
   it('rejects a body without a key with 400', async () => {

@@ -53,8 +53,9 @@ export type Verdict = 'ok' | 'drop' | 'close';
 /**
  * Per-socket inbound limits: 200 frames/s (burst 400) and 512 KB/s. Over the limit, awareness
  * frames are dropped first; Yjs frames are still applied (dropping one would lose an edit) until
- * they have been over for 2 s, and then the socket is closed. sync-2 counts as a frame but not
- * against the byte budget: it carries a whole doc of up to 5 MB once per connection.
+ * they have been over for 2 s, and then the socket is closed. The first sync-2 counts as a frame
+ * but not against the byte budget: it carries a whole doc of up to 5 MB once per connection.
+ * Every later one counts in full, so a client can't send its updates as sync-2 to dodge it.
  */
 export class SocketLimiter {
   readonly #frames: TokenBucket;
@@ -62,6 +63,7 @@ export class SocketLimiter {
   readonly #now: () => number;
   #yjsOverSince: number | null = null;
   #yjsOverAt = Number.NEGATIVE_INFINITY;
+  #sawSync2 = false;
 
   constructor(now: () => number = performance.now.bind(performance)) {
     this.#now = now;
@@ -71,7 +73,9 @@ export class SocketLimiter {
 
   check(kind: FrameKind, bytes: number): Verdict {
     const frameOk = this.#frames.take(1);
-    const bytesOk = kind === 'sync2' || this.#bytes.take(bytes);
+    const exempt = kind === 'sync2' && !this.#sawSync2;
+    if (kind === 'sync2') this.#sawSync2 = true;
+    const bytesOk = exempt || this.#bytes.take(bytes);
     const within = frameOk && bytesOk;
     if (kind === 'yjs' || kind === 'sync2') {
       const now = this.#now();

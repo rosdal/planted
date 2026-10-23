@@ -97,11 +97,57 @@ describe('validation after apply', () => {
     expect(objectsOf(honest.doc).has('evil00000001')).toBe(false);
   });
 
+  it('still removes an invalid object from an update whose delete set fails to decode', async () => {
+    const room = await createRoom(t.app);
+    const honest = client(room);
+    await waitForStatus(honest, 'synced');
+    const evil = await evilEditor(room);
+    // Yjs integrates the structs before it reads the delete set, so a truncated delete set
+    // throws after the bad object is already in the doc.
+    const local = new Y.Doc();
+    Y.applyUpdate(local, Y.encodeStateAsUpdate(evil.doc));
+    let update: Uint8Array | null = null;
+    local.on('update', (u: Uint8Array) => {
+      update = u;
+    });
+    putObject(local, 'trunc0000001', strokeFields({ colour: 'red' }));
+    if (!update) throw new Error('no update');
+    const truncated = (update as Uint8Array).slice(0, -1);
+    evil.send(updateFrame(truncated));
+    expect((await evil.closed).code).toBe(CloseCode.BadFrame);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(serverObjects(room)?.has('trunc0000001')).toBe(false);
+    expect(objectsOf(honest.doc).has('trunc0000001')).toBe(false);
+  });
+
   it('closes the sender with 4400 for a new unknown root type', async () => {
     const room = await createRoom(t.app);
     const evil = await evilEditor(room);
     evil.update((doc) => doc.getMap('sneaky').set('x', 1));
     expect((await evil.closed).code).toBe(CloseCode.BadFrame);
+  });
+
+  it('removes what an unknown root holds, so peers end with it empty', async () => {
+    const room = await createRoom(t.app);
+    const honest = client(room);
+    await waitForStatus(honest, 'synced');
+    const evil = await evilEditor(room);
+    evil.update((doc) => doc.getMap('sneaky').set('payload', 'x'.repeat(10_000)));
+    expect((await evil.closed).code).toBe(CloseCode.BadFrame);
+    await until(() => honest.doc.share.has('sneaky'));
+    expect(honest.doc.getMap('sneaky').size).toBe(0);
+    expect(t.app.realtime.get(room.roomId as RoomId)?.doc.getMap('sneaky').size).toBe(0);
+  });
+
+  it('flags writes to an unknown root that already exists, e.g. one saved earlier', async () => {
+    const room = await createRoom(t.app);
+    const server = await t.app.realtime.getOrCreate(room.roomId as RoomId);
+    if (!server) throw new Error('room did not load');
+    server.doc.transact(() => server.doc.getMap('junk').set('old', 1), SERVER_ORIGIN);
+    const evil = await evilEditor(room);
+    evil.update((doc) => doc.getMap('junk').set('new', 'x'));
+    expect((await evil.closed).code).toBe(CloseCode.BadFrame);
+    expect(server.doc.getMap('junk').has('new')).toBe(false);
   });
 
   it('accepts the allowed roots: objects, meta, and the dev-only debug list', async () => {
@@ -155,6 +201,33 @@ describe('limits', () => {
     expect(evil.socket.readyState).toBe(evil.socket.OPEN);
   });
 
+  it('refuses new objects in a full room with a warning, and closes a socket that grows it otherwise with 4413', {
+    timeout: 30_000,
+  }, async () => {
+    const room = await createRoom(t.app);
+    const evil = await evilEditor(room);
+    const server = t.app.realtime.get(room.roomId as RoomId);
+    if (!server) throw new Error('room not loaded');
+    // Past 5 MB in frames under the 256 KB cap, then a save measures it.
+    for (let i = 0; i < 22; i++) {
+      server.doc.transact(
+        () => server.doc.getMap('meta').set(`blob${i}`, 'x'.repeat(250_000)),
+        SERVER_ORIGIN,
+      );
+    }
+    await server.saver.flush();
+    expect(server.full).toBe(true);
+    await evil.waitFor(() => evil.errors().includes('doc_limit'));
+
+    evil.update((doc) => putObject(doc, 'full00000001', strokeFields()));
+    await evil.waitFor(() => !objectsOf(evil.doc).has('full00000001'));
+    expect(server.doc.getMap('objects').has('full00000001')).toBe(false);
+    expect(evil.socket.readyState).toBe(evil.socket.OPEN);
+
+    evil.update((doc) => doc.getMap('meta').set('more', 'y'.repeat(1000)));
+    expect((await evil.closed).code).toBe(CloseCode.DocLimit);
+  });
+
   it('closes socket 51 in a room with 4429', { timeout: 20_000 }, async () => {
     const room = await createRoom(t.app);
     for (let i = 0; i < MAX_SOCKETS_PER_ROOM; i++) await evilEditor(room);
@@ -197,10 +270,23 @@ describe('SocketLimiter', () => {
     expect(now).toBeLessThan(2300);
   });
 
-  it('does not count sync-2 against the byte budget', () => {
+  it('does not count the first sync-2 against the byte budget', () => {
     const limiter = new SocketLimiter(() => 0);
     expect(limiter.check('sync2', 5 * 1024 * 1024)).toBe('ok');
     expect(limiter.check('yjs', 1000)).toBe('ok');
+  });
+
+  it('counts every later sync-2, so sending updates as sync-2 does not dodge the limit', () => {
+    let now = 0;
+    const limiter = new SocketLimiter(() => now);
+    expect(limiter.check('sync2', 5 * 1024 * 1024)).toBe('ok');
+    let verdict = 'ok';
+    while (verdict === 'ok' && now < 5000) {
+      now += 100;
+      verdict = limiter.check('sync2', 1024 * 1024);
+    }
+    expect(verdict).toBe('close');
+    expect(now).toBeLessThan(2500);
   });
 
   it('forgets a burst after a second without going over', () => {

@@ -1,6 +1,8 @@
 import { docHash, objectsOf } from '@planted/client';
+import { rooms } from '@planted/db';
 import { CloseCode } from '@planted/protocol';
 import type { RoomId } from '@planted/schema';
+import { eq } from 'drizzle-orm';
 import type { FastifyBaseLogger } from 'fastify';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as Y from 'yjs';
@@ -205,7 +207,7 @@ describe('persistence through Postgres', () => {
       save: async (roomId, state) => {
         if (down) throw new Error('connection refused');
         saves++;
-        await real.save(roomId, state);
+        return real.save(roomId, state);
       },
     };
     t.app = await buildApp({ db: t.db, env: testEnv, store });
@@ -238,6 +240,55 @@ describe('persistence through Postgres', () => {
     await vi.advanceTimersByTimeAsync(UNLOAD_AFTER_MS);
     await until(() => t.app.realtime.get(roomId) === undefined, { message: 'unloaded' });
     expect((await real.load(roomId))?.ydoc?.byteLength).toBeGreaterThan(100);
+  });
+});
+
+describe('rooms in Postgres', () => {
+  let t: TestApp;
+  let url: string;
+  let tokens: ReturnType<typeof tokenSource>;
+  const clients: TestClient[] = [];
+
+  beforeEach(async () => {
+    t = await makeTestApp();
+    url = await listen(t.app);
+    tokens = tokenSource(() => t.app);
+  });
+  afterEach(async () => {
+    for (const c of clients.splice(0)) c.destroy();
+    await t.close();
+  });
+
+  function client(room: TestRoom): TestClient {
+    const c = connectClient(url, room.roomId, tokens(room.roomId, room.editKey));
+    clients.push(c);
+    return c;
+  }
+
+  it('counts opening a board as activity, so boards that are only viewed do not expire', async () => {
+    const room = await createRoom(t.app);
+    await t.db
+      .update(rooms)
+      .set({ lastActiveAt: new Date(Date.now() - 20 * 86_400_000) })
+      .where(eq(rooms.id, room.roomId));
+    const a = client(room);
+    await waitForStatus(a, 'synced');
+    const [row] = await t.db.select().from(rooms).where(eq(rooms.id, room.roomId));
+    expect(Date.now() - (row?.lastActiveAt.getTime() ?? 0)).toBeLessThan(60_000);
+  });
+
+  it('drops a loaded room whose row was deleted underneath it, instead of retrying forever', async () => {
+    const room = await createRoom(t.app);
+    const a = client(room);
+    await waitForStatus(a, 'synced');
+    const closed = new Promise<number>((resolve) => a.socket().on('close', (c) => resolve(c)));
+    // Another instance's expiry job, say.
+    await t.db.delete(rooms).where(eq(rooms.id, room.roomId));
+    a.doc.getArray<string>('debug-items').push(['into the void']);
+    expect(await closed).toBe(CloseCode.RoomNotFound);
+    await until(() => t.app.realtime.get(room.roomId as RoomId) === undefined, {
+      message: 'room dropped',
+    });
   });
 });
 
@@ -303,6 +354,37 @@ describe('epochs', () => {
     const server = t.app.realtime.get(room.roomId as RoomId);
     expect(server?.doc.getArray('debug-items').length).toBe(0);
     expect(server?.epoch).toBe(2);
+  });
+
+  it('keeps the doc when the clear cannot be written, and clients get it back', async () => {
+    await t.app.close();
+    const real = new PgRoomStore(t.db);
+    const store: RoomStore = {
+      load: (roomId) => real.load(roomId),
+      save: (roomId, state) => real.save(roomId, state),
+      clear: async () => {
+        throw new Error('connection refused');
+      },
+    };
+    t.app = await buildApp({ db: t.db, env: testEnv, store });
+    url = await listen(t.app);
+
+    const room = await createRoom(t.app);
+    const a = client(room);
+    await waitForStatus(a, 'synced');
+    a.doc.getArray<string>('debug-items').push(['keep me']);
+    await until(
+      () => t.app.realtime.get(room.roomId as RoomId)?.doc.getArray('debug-items').length === 1,
+    );
+
+    const res = await clear(room);
+    expect(res.statusCode).toBe(500);
+    // The 4409 already reset A's doc; the room kept its own, so A gets it back.
+    await until(() => a.status === 'synced' && a.doc.getArray('debug-items').length === 1, {
+      timeoutMs: 10_000,
+      message: 'A has the item again',
+    });
+    expect(t.app.realtime.get(room.roomId as RoomId)?.epoch).toBe(1);
   });
 
   it('refuses /clear with a view token', async () => {

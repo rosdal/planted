@@ -23,10 +23,17 @@ export type LoadedRoom = { ydoc: Uint8Array | null; epoch: number };
  * this is the copy. An interface so tests can stub a failing database.
  */
 export interface RoomStore {
-  /** Null when the room doesn't exist (never created, or expired). */
+  /**
+   * Null when the room doesn't exist (never created, or expired). Loading counts as activity
+   * for the 30-day expiry, so a board that is only ever viewed stays.
+   */
   load(roomId: RoomId): Promise<LoadedRoom | null>;
-  /** Full state, not increments: one row per room, upserted. */
-  save(roomId: RoomId, state: Uint8Array): Promise<void>;
+  /**
+   * Full state, not increments: one row per room, upserted. `gone` when the room row was
+   * deleted underneath a loaded room (another instance's expiry job): there is nothing to save
+   * it into, and retrying would never succeed.
+   */
+  save(roomId: RoomId, state: Uint8Array): Promise<'saved' | 'gone'>;
   /** Replaces the doc with an empty one and bumps the epoch; returns the new epoch. */
   clear(roomId: RoomId): Promise<number>;
 }
@@ -37,16 +44,28 @@ export class PgRoomStore implements RoomStore {
   constructor(private readonly db: Db) {}
 
   async load(roomId: RoomId): Promise<LoadedRoom | null> {
-    const [row] = await this.db
-      .select({ epoch: rooms.epoch, ydoc: roomDocs.ydoc })
-      .from(rooms)
-      .leftJoin(roomDocs, eq(roomDocs.roomId, rooms.id))
-      .where(eq(rooms.id, roomId));
-    return row ? { epoch: row.epoch, ydoc: row.ydoc } : null;
+    const [room] = await this.db
+      .update(rooms)
+      .set({ lastActiveAt: sql`now()` })
+      .where(eq(rooms.id, roomId))
+      .returning({ epoch: rooms.epoch });
+    if (!room) return null;
+    const [doc] = await this.db
+      .select({ ydoc: roomDocs.ydoc })
+      .from(roomDocs)
+      .where(eq(roomDocs.roomId, roomId));
+    return { epoch: room.epoch, ydoc: doc?.ydoc ?? null };
   }
 
-  async save(roomId: RoomId, state: Uint8Array): Promise<void> {
-    await this.db.transaction(async (tx) => {
+  async save(roomId: RoomId, state: Uint8Array): Promise<'saved' | 'gone'> {
+    return this.db.transaction(async (tx) => {
+      // Locks the room row, so an expiry can't delete it between this check and the upsert.
+      const [room] = await tx
+        .update(rooms)
+        .set({ lastActiveAt: sql`now()` })
+        .where(eq(rooms.id, roomId))
+        .returning({ id: rooms.id });
+      if (!room) return 'gone' as const;
       await tx
         .insert(roomDocs)
         .values({ roomId, ydoc: state, version: 1 })
@@ -54,7 +73,7 @@ export class PgRoomStore implements RoomStore {
           target: roomDocs.roomId,
           set: { ydoc: state, version: sql`${roomDocs.version} + 1`, updatedAt: sql`now()` },
         });
-      await tx.update(rooms).set({ lastActiveAt: sql`now()` }).where(eq(rooms.id, roomId));
+      return 'saved' as const;
     });
   }
 
