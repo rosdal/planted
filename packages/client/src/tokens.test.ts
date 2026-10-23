@@ -48,4 +48,23 @@ describe('cachedTokens', () => {
     expect(await Promise.all([getToken(), getToken(), getToken()])).toEqual(['t1', 't1', 't1']);
     expect(count()).toBe(1);
   });
+
+  it('forgets a rejected token even when the refresh itself fails', async () => {
+    const clock = { now: 0 };
+    let fail = false;
+    let n = 0;
+    const getToken = cachedTokens(
+      async () => {
+        n++;
+        if (fail) throw new Error('429');
+        return { token: `t${n}`, expiresAt: new Date(5 * 60_000).toISOString() };
+      },
+      { now: () => clock.now },
+    );
+    expect(await getToken()).toBe('t1');
+    fail = true;
+    await expect(getToken('refresh')).rejects.toThrow('429');
+    fail = false;
+    expect(await getToken('connect')).toBe('t3');
+  });
 });

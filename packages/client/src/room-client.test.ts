@@ -1,9 +1,11 @@
 import { CloseCode, controlFrame, decodeControl, decodeFrame } from '@planted/protocol';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  LinkRevokedError,
   PING_INTERVAL_MS,
   RATE_LIMITED_BACKOFF_MS,
   RoomClient,
+  type TokenReason,
   type WebSocketLike,
 } from './room-client';
 
@@ -76,7 +78,9 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-async function connected(options: { dev?: boolean } = {}): Promise<FakeSocket> {
+async function connected(
+  options: { dev?: boolean; getToken?: (reason: TokenReason) => Promise<string> } = {},
+): Promise<FakeSocket> {
   client = new RoomClient({
     url: 'ws://x',
     roomId: 'r',
@@ -168,5 +172,68 @@ describe('RoomClient as a viewer', () => {
     const sentBefore = socket.sent.length;
     expect(() => client?.doc.getArray('debug-items').push(['x'])).toThrow(/viewer/);
     expect(socket.sent.slice(sentBefore).filter((b) => decodeFrame(b).channel === 1)).toEqual([]);
+  });
+});
+
+describe('RoomClient tokens', () => {
+  it('refetches after a 4401, keeps retrying with backoff, and never calls it revoked on its own', async () => {
+    const reasons: TokenReason[] = [];
+    const socket = await connected({
+      getToken: async (reason) => {
+        reasons.push(reason);
+        return 'token';
+      },
+    });
+    socket.serverClose(CloseCode.BadToken);
+    await settle();
+    FakeSocket.all.at(-1)?.open();
+    FakeSocket.all.at(-1)?.serverClose(CloseCode.BadToken);
+    await vi.advanceTimersByTimeAsync(10_000);
+    expect(client?.stopReason).toBeNull();
+    expect(reasons).toEqual(['connect', 'refresh', 'refresh']);
+  });
+
+  it('stops with link_revoked when the key itself is refused', async () => {
+    let revoked = false;
+    const socket = await connected({
+      getToken: async () => {
+        if (revoked) throw new LinkRevokedError();
+        return 'token';
+      },
+    });
+    revoked = true;
+    socket.serverClose(CloseCode.BadToken);
+    await vi.waitFor(() => expect(client?.stopReason).toBe('link_revoked'));
+  });
+});
+
+describe('RoomClient epochs', () => {
+  it('resets once for a clear: on the 4409, not again on the welcome that follows', async () => {
+    const socket = await connected();
+    socket.receive(welcome('edit', 1));
+    let resets = 0;
+    client?.on('reset', () => resets++);
+    socket.serverClose(CloseCode.EpochChanged);
+    await settle();
+    const next = FakeSocket.all.at(-1);
+    next?.open();
+    client?.doc.getArray('debug-items').push(['drawn while reconnecting']);
+    next?.receive(welcome('edit', 2));
+    expect(resets).toBe(1);
+    expect(client?.doc.getArray('debug-items').length).toBe(1);
+    expect(client?.epoch).toBe(2);
+  });
+
+  it('resets on a welcome with a new epoch after an ordinary reconnect', async () => {
+    const socket = await connected();
+    socket.receive(welcome('edit', 1));
+    let resets = 0;
+    client?.on('reset', () => resets++);
+    socket.serverClose(CloseCode.GoingAway);
+    await vi.advanceTimersByTimeAsync(1000);
+    const next = FakeSocket.all.at(-1);
+    next?.open();
+    next?.receive(welcome('edit', 2));
+    expect(resets).toBe(1);
   });
 });

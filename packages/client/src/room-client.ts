@@ -141,7 +141,7 @@ export class RoomClient {
   #sentSync2 = false;
   #pendingProbes: number[] = [];
   #nextSeq = 1;
-  /** The last close was a 4401 and no `welcome` came since: a second one means revoked. */
+  /** The last close was a 4401 and no `welcome` came since. */
   #tokenRejected = false;
   #role: RoomRole | null = null;
   #limits: RoomLimits | null = null;
@@ -371,15 +371,15 @@ export class RoomClient {
         this.#stop('protocol_error');
         return;
       case CloseCode.BadToken:
-        // Once with a fresh token; a second 4401 in a row means the link itself is gone.
-        if (rejectedBefore) {
-          this.#stop('link_revoked');
-          return;
-        }
-        if (this.#wantOnline) void this.#connect('refresh');
+        // Straight back with a fresh token; again in a row, with backoff. Only the token route
+        // refusing the key itself (`LinkRevokedError`) means the link is gone.
+        if (rejectedBefore) this.#scheduleReconnect(0, 'refresh');
+        else if (this.#wantOnline) void this.#connect('refresh');
         return;
       case CloseCode.EpochChanged:
         this.#resetDoc();
+        // The fresh doc belongs to whatever epoch the next welcome brings; don't reset again.
+        this.#epoch = null;
         this.#notice({ code: 'reset', message: 'Board was reset' });
         if (this.#wantOnline) void this.#connect('connect');
         return;
@@ -581,14 +581,14 @@ export class RoomClient {
     awareness.emit('update', [change, this]);
   }
 
-  #scheduleReconnect(minDelayMs = 0): void {
+  #scheduleReconnect(minDelayMs = 0, reason: TokenReason = 'connect'): void {
     if (this.#stopReason || !this.#wantOnline) return;
     this.#clearReconnect();
     const delay = Math.max(minDelayMs, backoffDelay(this.#attempt, this.#random));
     this.#attempt++;
     this.#reconnectTimer = setTimeout(() => {
       this.#reconnectTimer = null;
-      void this.#connect('connect');
+      void this.#connect(reason);
     }, delay);
   }
 

@@ -49,9 +49,10 @@ export function cachedTokens(
     : null;
   let inFlight: Promise<string> | null = null;
   return (reason = 'connect') => {
-    if (reason === 'connect' && current && current.expiresAt - marginMs > now()) {
-      return Promise.resolve(current.token);
-    }
+    // A refresh means the server just rejected `current`: forget it now, so a refresh that
+    // fails (a 429, a network blip) doesn't leave it to be sent again on the next connect.
+    if (reason === 'refresh') current = null;
+    if (current && current.expiresAt - marginMs > now()) return Promise.resolve(current.token);
     inFlight ??= issue()
       .then(({ token, expiresAt }) => {
         current = { token, expiresAt: Date.parse(expiresAt) };
