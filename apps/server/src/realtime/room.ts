@@ -158,6 +158,11 @@ export class Room {
     // A viewer's state is never needed: it can't contribute anything.
     if (role === 'edit') conn.send(sync1Frame(this.doc));
     if (this.#full && role === 'edit') this.#sendDocLimit(conn);
+    // Presence frames skipped while the socket lagged are stale anyway; one snapshot replaces them.
+    conn.onCaughtUp(() => {
+      const others = [...this.awareness.getStates().keys()].filter((id) => !conn.clientIds.has(id));
+      if (others.length > 0) conn.send(awarenessFrame(this.awareness, others), { droppable: true });
+    });
     conn.setHandler((inbound) => this.#onInbound(conn, inbound));
     return true;
   }

@@ -15,6 +15,7 @@ import {
   until,
   waitForStatus,
 } from '../test/realtime';
+import { LAG_LIMIT_MS } from './connection';
 import { MAX_OBJECTS, MAX_SOCKETS_PER_ROOM, SocketLimiter } from './limits';
 import { SERVER_ORIGIN } from './room';
 import { checkObject } from './validation';
@@ -243,6 +244,39 @@ describe('limits', () => {
     const evil = await evilEditor(room);
     evil.send(updateFrame(new Uint8Array(256 * 1024)));
     expect((await evil.closed).code).toBe(CloseCode.BadFrame);
+  });
+});
+
+describe('lagging sockets', () => {
+  it('stops sending awareness to a socket whose pongs fall behind, keeps its doc updates, and catches it up after', {
+    timeout: 15_000,
+  }, async () => {
+    const room = await createRoom(t.app);
+    const honest = client(room);
+    await waitForStatus(honest, 'synced');
+    const evil = await evilEditor(room);
+    evil.answerPings = false;
+    const awarenessSince = (from: number) =>
+      evil.frames.slice(from).filter((f) => f.channel === 2).length;
+    const cursor = setInterval(() => {
+      honest.awareness.setLocalStateField('cursor', { x: Math.random(), y: 0.5 });
+    }, 50);
+    try {
+      // Past the lag limit with pings unanswered: awareness stops, doc updates don't.
+      await new Promise((resolve) => setTimeout(resolve, LAG_LIMIT_MS + 1500));
+      const mark = evil.frames.length;
+      honest.doc.transact(() => putObject(honest.doc, 'lagged000001', strokeFields()));
+      await evil.waitFor(() => objectsOf(evil.doc).has('lagged000001'));
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      expect(awarenessSince(mark)).toBe(0);
+
+      // Answering again: the next pong is on time and awareness resumes.
+      evil.answerPings = true;
+      const resumed = evil.frames.length;
+      await evil.waitFor(() => awarenessSince(resumed) > 0, 5000);
+    } finally {
+      clearInterval(cursor);
+    }
   });
 });
 

@@ -20,6 +20,14 @@ export const LIVENESS_CHECK_MS = 15_000;
 export const SILENCE_TIMEOUT_MS = 45_000;
 /** Above this, awareness frames are dropped for the socket; Yjs frames never are. */
 export const MAX_BUFFERED_BYTES = 1024 * 1024;
+/** The server pings each socket this often to see how far behind its frames are. */
+export const LAG_PING_MS = 1000;
+/**
+ * A socket whose pong is later than this gets no awareness until it catches up. Unlike
+ * `bufferedAmount`, this also sees a backlog queued past the socket: in a proxy, a mobile
+ * network's buffers, anywhere that accepts bytes faster than it delivers them.
+ */
+export const LAG_LIMIT_MS = 1500;
 
 /** A decoded frame; control frames arrive with their payload already parsed. */
 export type Inbound =
@@ -53,6 +61,12 @@ export class Connection {
   #closeListeners = new Set<(code: number) => void>();
   #nextSeq = 1;
   readonly #limiter = new SocketLimiter();
+  /** Our pings awaiting a pong: seq → sent at. */
+  readonly #pings = new Map<number, number>();
+  #lagPing: ReturnType<typeof setInterval>;
+  #lastRttMs = 0;
+  #lagging = false;
+  #onCaughtUp: (() => void) | null = null;
 
   constructor(
     readonly socket: WebSocket,
@@ -63,6 +77,7 @@ export class Connection {
     socket.on('message', this.#onMessage);
     socket.on('close', (code) => {
       clearInterval(this.#liveness);
+      clearInterval(this.#lagPing);
       for (const listener of this.#closeListeners) listener(code);
     });
     socket.on('error', (err) => this.log.warn({ err }, 'socket error'));
@@ -72,6 +87,35 @@ export class Connection {
         socket.terminate();
       }
     }, LIVENESS_CHECK_MS);
+    this.#lagPing = setInterval(() => {
+      this.#updateLag();
+      const seq = this.#nextSeq++;
+      this.#pings.set(seq, Date.now());
+      // A socket that never answers shouldn't grow this without bound.
+      if (this.#pings.size > 30) this.#pings.delete(this.#pings.keys().next().value as number);
+      this.sendControl({ kind: 'ping', seq, body: { t: Date.now() } });
+    }, LAG_PING_MS);
+  }
+
+  /** True while this socket's pongs come back later than `LAG_LIMIT_MS`. */
+  get lagging(): boolean {
+    return this.#lagging;
+  }
+
+  /** Called when a lagging socket catches up, e.g. to resend presence it missed. */
+  onCaughtUp(listener: () => void): void {
+    this.#onCaughtUp = listener;
+  }
+
+  /** Lag is the last round trip, or the age of the oldest unanswered ping if that is worse. */
+  #updateLag(): void {
+    const oldest = this.#pings.values().next().value;
+    const waiting = oldest === undefined ? 0 : Date.now() - oldest;
+    const lagging = Math.max(this.#lastRttMs, waiting) > LAG_LIMIT_MS;
+    if (lagging === this.#lagging) return;
+    this.#lagging = lagging;
+    this.log.info({ rttMs: this.#lastRttMs, waitingMs: waiting, lagging }, 'conn.lag');
+    if (!lagging) this.#onCaughtUp?.();
   }
 
   get bufferedAmount(): number {
@@ -93,7 +137,7 @@ export class Connection {
   /** `droppable` frames (awareness) are skipped when the socket is backed up. */
   send(bytes: Uint8Array, { droppable = false } = {}): void {
     if (!this.isOpen) return;
-    if (droppable && this.socket.bufferedAmount > MAX_BUFFERED_BYTES) return;
+    if (droppable && (this.#lagging || this.socket.bufferedAmount > MAX_BUFFERED_BYTES)) return;
     this.socket.send(bytes);
   }
 
@@ -155,6 +199,19 @@ export class Connection {
 
     if (inbound.channel === 'control' && inbound.message.kind === 'ping') {
       this.sendControl({ kind: 'pong', seq: inbound.message.seq, body: inbound.message.body });
+      return;
+    }
+    if (inbound.channel === 'control' && inbound.message.kind === 'pong') {
+      const sentAt = this.#pings.get(inbound.message.seq);
+      if (sentAt !== undefined) {
+        // Pongs come back in order, so every older ping is answered too, or lost for good.
+        for (const seq of this.#pings.keys()) {
+          this.#pings.delete(seq);
+          if (seq === inbound.message.seq) break;
+        }
+        this.#lastRttMs = Date.now() - sentAt;
+        this.#updateLag();
+      }
       return;
     }
     this.#handler?.(inbound);
