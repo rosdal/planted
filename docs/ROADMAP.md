@@ -9,7 +9,6 @@ If a gate fails, fix it inside that version rather than moving on. 0.5 (drawing 
 ## 0.0 Repo bootstrap
 
 From an empty folder to a monorepo where `pnpm install && pnpm check` passes locally and in CI. No product code yet.
-
 - [ ] `git init -b main`
 - [ ] Pin Node LTS with `.nvmrc`, enable Corepack, `pnpm init`, set `packageManager` in the root package.json
 - [ ] `pnpm-workspace.yaml` with `apps/*` and `packages/*`; create the empty folders
@@ -29,7 +28,6 @@ From an empty folder to a monorepo where `pnpm install && pnpm check` passes loc
 ## 0.1 App skeletons
 
 All four workspaces exist and talk to each other: the web app calls the server, the server reads Postgres, both share types.
-
 - [ ] `packages/schema`: Zod schemas for `BoardObject`, room ids, API DTOs; built with tsup
 - [ ] `packages/db`: Drizzle config, first migration with `users`, `rooms`, `strat_docs`; `db:migrate` and `db:studio` scripts
 - [ ] `docker-compose.dev.yml`: Postgres 17 (+ Adminer optional), named volume
@@ -46,7 +44,6 @@ All four workspaces exist and talk to each other: the web app calls the server, 
 ## 0.2 Relay spike
 
 Prove Yjs sync over your own Fastify WebSocket before any drawing exists. If this is shaky, try Hocuspocus now, not later.
-
 - [ ] Add `@fastify/websocket`, `yjs`, `y-protocols`, `lib0`
 - [ ] Route `GET /rooms/:id/ws`: on connect, get or create an in-memory `Room { doc, awareness, sockets }`
 - [ ] Implement frame header `[channel][type]` from the wire protocol; channels 1 (yjs) and 2 (awareness) only
@@ -63,7 +60,6 @@ Prove Yjs sync over your own Fastify WebSocket before any drawing exists. If thi
 ## 0.3 Canvas spike
 
 A real board on top of the relay: pan, zoom, draw, see each other. This is the first gate from the design doc.
-
 - [ ] PixiJS v8 mounted in a React component; React never re-renders per frame
 - [ ] Camera: wheel zoom to cursor, drag to pan, clamp to map bounds, coordinates normalised 0..1
 - [ ] Placeholder map: one hand-drawn vector floor (a simple test layout is fine)
@@ -80,7 +76,6 @@ A real board on top of the relay: pan, zoom, draw, see each other. This is the f
 ## 0.4 Persistence and rooms
 
 Boards survive restarts, and the full wire protocol is in place, so nothing after this changes the socket contract.
-
 - [ ] Control channel: `hello` / `welcome` / `error` / `ping` with protocol version and close codes 4401, 4403, 4409, 4429
 - [ ] Room tokens: `GET /rooms/:id/token` returns a 5-minute signed JWT with role; sent in `hello`, never in the URL
 - [ ] Load a cold room's Y.Doc from `strat_docs`; debounced save 2 s after the last change and on last disconnect
@@ -96,7 +91,6 @@ Boards survive restarts, and the full wire protocol is in place, so nothing afte
 ## 0.5 Content package
 
 Real maps and an original icon set, delivered as versioned data. This is the slowest version by hours of work, mostly drawing, so start it in parallel with 0.4.
-
 - [ ] `packages/content` with Zod schemas for `map.json` (floors, sites, rooms with callouts, walls with stable `wallId`s, hatches, windows, spawns) and `operators.json`
 - [ ] Vector redraw tooling: an SVG template per floor, a script that extracts rooms and walls from named SVG layers into `map.json`
 - [ ] First 3 maps redrawn by hand from in-game reference (pick the 3 your team plays most)
@@ -112,7 +106,6 @@ Real maps and an original icon set, delivered as versioned data. This is the slo
 ## 0.6 Editor tools
 
 Everything in the MVP feature list and the Editor UX layout, working together.
-
 - [ ] Tools: select/move (with box select), arrow, line, text (`Y.Text`), eraser; all hotkeys from the keyboard map
 - [ ] Drags and multi-moves wrapped in `doc.transact`: one drag = one undo step
 - [ ] Lineup panel: 5 slots per side with operator, player name, role
@@ -130,7 +123,6 @@ Everything in the MVP feature list and the Editor UX layout, working together.
 ## 0.7 MVP public beta
 
 Ship it to real teams. No accounts yet: guest rooms only, which keeps the beta friction-free.
-
 - [ ] All maps in the ranked pool redrawn and in the content package
 - [ ] Production Dockerfiles (multi-stage), `docker-compose.prod.yml` with Caddy, server, Postgres
 - [ ] Deploy to a small VPS, or the homelab behind a Cloudflare Tunnel for a closed beta first
@@ -148,7 +140,6 @@ Ship it to real teams. No accounts yet: guest rooms only, which keeps the beta f
 ## 0.8 Accounts and teams
 
 Guests can still jump in, but teams get a permanent home for their strats.
-
 - [ ] better-auth with Discord OAuth; email magic link fallback; httpOnly SameSite cookies
 - [ ] Migrations: `teams`, `team_members`, `stratbooks`, `strats`; link `strat_docs` to strats
 - [ ] Roles owner / editor / viewer, checked by the API and by the WS server on connect and on every update
@@ -163,7 +154,6 @@ Guests can still jump in, but teams get a permanent home for their strats.
 ## 0.9 Stratbook depth
 
 Planted starts to understand Siege: it checks strats, keeps history and survives patches.
-
 - [ ] `packages/rules` with the 10 rules from the design doc, each with fixture tests
 - [ ] Lint runs in a Web Worker on every change; issues panel + inline markers; mute per strat
 - [ ] Utility sheet per side: gadgets placed / available, reinforcements left, breaches per wall
@@ -178,7 +168,6 @@ Planted starts to understand Siege: it checks strats, keeps history and survives
 ## 1.0 Live sessions and launch
 
 The scrim-day feature, then the public launch.
-
 - [ ] Presenter role: controls map, floor, phase, viewport; followers snap to it, F to break out and re-sync
 - [ ] Phase sync over the app channel; objects fade in and out per phase
 - [ ] Per-player view: own slot highlighted with operator, loadout and one-line job
@@ -194,7 +183,6 @@ The scrim-day feature, then the public launch.
 ## After 1.0
 
 Pick by what teams ask for most; each is its own minor version.
-
 - [ ] 1.1 Breached integration: replay round → board phase, strat overlay in replay review
 - [ ] 1.2 Public strat library: publish, rate, fork
 - [ ] 1.3 Timeline playback: animate operator paths per phase
