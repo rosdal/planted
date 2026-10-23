@@ -11,9 +11,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@planted/schema": "workspace:*",
+    "cbor-x": "^1.6.8",
     "lib0": "catalog:",
     "y-protocols": "catalog:",
-    "yjs": "catalog:"
+    "yjs": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "fast-check": "catalog:",

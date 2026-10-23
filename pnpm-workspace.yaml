@@ -3,6 +3,8 @@ packages:
   - packages/*
   - scripts
 allowBuilds:
+  # Optional native CBOR decoder; cbor-x falls back to plain JS, which is fast enough.
+  cbor-extract: false
   esbuild: true
   lefthook: true
 catalog:
