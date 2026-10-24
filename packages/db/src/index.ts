@@ -1,4 +1,4 @@
-import type { roomDocs, rooms } from './schema';
+import type { roomDocs, roomLinks, rooms } from './schema';
 
 export { createDb, type Db } from './client';
 export * from './schema';
@@ -6,3 +6,4 @@ export * from './schema';
 export type Room = typeof rooms.$inferSelect;
 export type NewRoom = typeof rooms.$inferInsert;
 export type RoomDoc = typeof roomDocs.$inferSelect;
+export type RoomLink = typeof roomLinks.$inferSelect;

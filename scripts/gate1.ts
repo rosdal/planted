@@ -19,7 +19,14 @@
 import { type ChildProcess, spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { commitStroke, newObjectId, RoomClient, type WebSocketCtor } from '@planted/client';
+import {
+  cachedTokens,
+  commitStroke,
+  fetchRoomToken,
+  newObjectId,
+  RoomClient,
+  type WebSocketCtor,
+} from '@planted/client';
 import { TEST_FLOOR, USER_COLOURS } from '@planted/schema';
 import { type Browser, type BrowserContext, chromium, type Page } from '@playwright/test';
 import WebSocket from 'ws';
@@ -57,14 +64,16 @@ type Stats = {
   heapMb: number | null;
 };
 
-async function newRoom(): Promise<string> {
+type Room = { roomId: string; editKey: string };
+
+async function newRoom(): Promise<Room> {
   const res = await fetch(`${args.api}/rooms`, { method: 'POST' });
   if (!res.ok) throw new Error(`POST /rooms answered ${res.status}`);
-  return ((await res.json()) as { roomId: string }).roomId;
+  return (await res.json()) as Room;
 }
 
 function startBots(
-  roomId: string,
+  { roomId, editKey }: Room,
   seconds: number,
 ): { proc: ChildProcess; output: string[]; exited: Promise<void> } {
   const output: string[] = [];
@@ -78,6 +87,8 @@ function startBots(
       args.api,
       '--room',
       roomId,
+      '--key',
+      editKey,
       '--count',
       args.bots,
       '--mode',
@@ -101,7 +112,7 @@ function startBots(
 
 async function openHuman(
   browser: Browser,
-  roomId: string,
+  { roomId, editKey }: Room,
   name: string,
   bounds: { left: number; top: number; width: number; height: number },
 ): Promise<{ context: BrowserContext; page: Page }> {
@@ -137,7 +148,7 @@ async function openHuman(
     windowId,
     bounds,
   });
-  await page.goto(`${args.web}/r/${roomId}?perf=1`);
+  await page.goto(`${args.web}/r/${roomId}?perf=1#k=${editKey}`);
   await page.getByRole('status').filter({ hasText: 'Live' }).waitFor({ timeout: 30_000 });
   await page.waitForFunction(() => window.__board !== undefined);
   return { context, page };
@@ -228,11 +239,12 @@ async function takeLoaf(page: Page): Promise<string> {
   return `loaf ${loaf.length} worst ${worst.ms.toFixed(0)} ms (script ${worst.script.toFixed(0)}) script share ${((script / total) * 100).toFixed(0)}%`;
 }
 
-async function seedStrokes(roomId: string, count: number): Promise<void> {
+async function seedStrokes({ roomId, editKey }: Room, count: number): Promise<void> {
   if (count <= 0) return;
   const client = new RoomClient({
     url: args.api.replace(/^http/, 'ws'),
     roomId,
+    getToken: cachedTokens(() => fetchRoomToken(args.api, roomId, editKey)),
     WebSocketImpl: WebSocket as unknown as WebSocketCtor,
   });
   while (client.status !== 'synced') await sleep(50);
@@ -280,8 +292,8 @@ async function panPhase(page: Page, ms: number): Promise<Stats> {
   return statsOf(page);
 }
 
-const roomId = await newRoom();
-console.log(`room ${roomId}`);
+const room = await newRoom();
+console.log(`room ${room.roomId}`);
 const browser = await chromium.launch({
   channel: 'chrome',
   headless: false,
@@ -295,8 +307,8 @@ const browser = await chromium.launch({
 });
 const version = browser.version();
 // A is the measured reference window; B is a second person in a smaller window.
-const a = await openHuman(browser, roomId, 'Human A', { left: 0, top: 0, width, height });
-const b = await openHuman(browser, roomId, 'Human B', {
+const a = await openHuman(browser, room, 'Human A', { left: 0, top: 0, width, height });
+const b = await openHuman(browser, room, 'Human B', {
   left: 120,
   top: 120,
   width: 1280,
@@ -309,7 +321,7 @@ if (Number(args.throttle) > 1) {
   await cdp.send('Emulation.setCPUThrottlingRate', { rate: Number(args.throttle) });
 }
 
-const bots = startBots(roomId, runMs / 1000);
+const bots = startBots(room, runMs / 1000);
 const startedAt = Date.now();
 const done = () => Date.now() - startedAt > runMs;
 await sleep(1000);
@@ -348,7 +360,7 @@ const botHash = botLine.match(/ ([0-9a-f]{8})×/)?.[1];
 // stalled the whole machine and wrecked the numbers it was meant to explain.
 if (args.trace) {
   const stopTracing = Date.now() + 30_000;
-  const traceBots = startBots(roomId, 32);
+  const traceBots = startBots(room, 32);
   // The default DevTools categories made a 400 MB file; these still load in the Performance panel.
   await browser.startTracing(a.page, {
     path: args.trace,
@@ -371,7 +383,7 @@ if (args.trace) {
 // Gate item 6: 2,000+ strokes on screen, pan at fit and at 8×. One viewer per GPU, as in real
 // use: B's window would otherwise render all the same strokes on the same GPU.
 await b.context.close();
-await seedStrokes(roomId, Number(args.seed));
+await seedStrokes(room, Number(args.seed));
 // Measure panning, not the initial build: wait until the scene holds every object and the
 // stream of incoming updates has stopped.
 await a.page.waitForFunction(

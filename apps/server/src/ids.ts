@@ -6,3 +6,8 @@ const LENGTH = 22; // 62^22 > 2^128, so any 16-byte value fits
 export function newRoomId(): RoomId {
   return RoomId.parse(base62Id(crypto.getRandomValues(new Uint8Array(16)), LENGTH));
 }
+
+/** Share link ids: 8 random bytes, base62, 12 characters (62^12 > 2^64). */
+export function newLinkId(): string {
+  return base62Id(crypto.getRandomValues(new Uint8Array(8)), 12);
+}

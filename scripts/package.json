@@ -3,15 +3,22 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "exports": {
+    "./evil-client": "./evil-client.ts"
+  },
   "scripts": {
     "bots": "tsx bots.ts",
     "gate1": "tsx gate1.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "evil": "tsx evil-client.ts",
+    "chaos": "tsx chaos.ts"
   },
   "dependencies": {
     "@planted/client": "workspace:*",
     "@planted/db": "workspace:*",
+    "@planted/protocol": "workspace:*",
     "@planted/schema": "workspace:*",
+    "drizzle-orm": "^0.45.4",
     "ws": "catalog:",
     "yjs": "catalog:"
   },

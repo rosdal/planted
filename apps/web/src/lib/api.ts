@@ -1,4 +1,12 @@
-import { ApiError, CreateRoomResponse, GetRoomResponse, type RoomId } from '@planted/schema';
+import {
+  ApiError,
+  ClearRoomResponse,
+  CreateRoomResponse,
+  GetRoomResponse,
+  type RoomId,
+  RoomTokenResponse,
+  RotateLinksResponse,
+} from '@planted/schema';
 import type { z } from 'zod';
 
 /**
@@ -17,15 +25,25 @@ export class ApiClientError extends Error {
   }
 }
 
-async function request<T>(schema: z.ZodType<T>, path: string, init?: RequestInit): Promise<T> {
+type RequestOptions = { method?: 'GET' | 'POST'; token?: string; body?: unknown };
+
+async function request<T>(
+  schema: z.ZodType<T>,
+  path: string,
+  { method = 'GET', token, body: payload }: RequestOptions = {},
+): Promise<T> {
   const baseUrl = import.meta.env.VITE_API_URL;
   if (!baseUrl) throw new ApiClientError('network', 0, 'VITE_API_URL is not configured');
 
   let res: Response;
   try {
+    const headers: Record<string, string> = { accept: 'application/json' };
+    if (token) headers.authorization = `Bearer ${token}`;
+    if (payload !== undefined) headers['content-type'] = 'application/json';
     res = await fetch(new URL(path, baseUrl), {
-      ...init,
-      headers: { accept: 'application/json' },
+      method,
+      headers,
+      ...(payload === undefined ? {} : { body: JSON.stringify(payload) }),
     });
   } catch (cause) {
     throw new ApiClientError('network', 0, 'Could not reach the server', { cause });
@@ -57,5 +75,13 @@ async function request<T>(schema: z.ZodType<T>, path: string, init?: RequestInit
 
 export const api = {
   createRoom: () => request(CreateRoomResponse, '/rooms', { method: 'POST' }),
-  getRoom: (roomId: RoomId) => request(GetRoomResponse, `/rooms/${roomId}`),
+  /** 403 `forbidden`: the key is wrong or its link was revoked. */
+  roomToken: (roomId: RoomId, key: string) =>
+    request(RoomTokenResponse, `/rooms/${roomId}/token`, { method: 'POST', body: { key } }),
+  getRoom: (roomId: RoomId, token: string) =>
+    request(GetRoomResponse, `/rooms/${roomId}`, { token }),
+  rotateLinks: (roomId: RoomId, token: string) =>
+    request(RotateLinksResponse, `/rooms/${roomId}/links/rotate`, { method: 'POST', token }),
+  clearRoom: (roomId: RoomId, token: string) =>
+    request(ClearRoomResponse, `/rooms/${roomId}/clear`, { method: 'POST', token }),
 };

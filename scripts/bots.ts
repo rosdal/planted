@@ -1,10 +1,14 @@
 /**
  * Headless load: N bots per room, each a real `RoomClient` over the `ws` package.
  *
- *   pnpm bots --room <id> --count 20 --rate 5
+ *   pnpm bots --count 20 --rate 5                      # a new room; prints both links
+ *   pnpm bots --room <id> --key <edit key> --count 20  # an existing room
  *   pnpm bots --rooms 10 --count 10 --duration 60     # new rooms, stop on its own
- *   pnpm bots --room <id> --chaos                      # sockets drop every 30–90 s
- *   pnpm bots --room <id> --count 8 --mode draw        # draw and undo real strokes
+ *   pnpm bots --room <id> --key <key> --chaos          # sockets drop every 30–90 s
+ *   pnpm bots --count 8 --mode draw                    # draw and undo real strokes
+ *
+ * The key is the part after `#k=` in an edit link. Bots in one room share one room token,
+ * refreshed a minute before it expires, so reconnects stay under the token route's limit.
  *
  * Each bot moves a fake cursor over awareness at 30 Hz and inserts or deletes `debug-items` at
  * `--rate` ops/s. One bot per room writes `{ t, by }` into the `latency` map every second; the
@@ -20,13 +24,14 @@
  * server and Postgres), because a single thread runs out of CPU applying fan-out before the
  * server does. The "bot loop p99" column shows when the bots themselves are the bottleneck.
  */
+import { createHash, randomBytes } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { availableParallelism } from 'node:os';
 import { parseArgs } from 'node:util';
 import { Worker } from 'node:worker_threads';
-import { createDb, rooms } from '@planted/db';
+import { createDb, roomLinks, rooms } from '@planted/db';
 import { CreateRoomResponse, RoomId } from '@planted/schema';
-import type { FromWorker, ToWorker, WorkerConfig, WorkerSample } from './bot-worker';
+import type { BotRoom, FromWorker, ToWorker, WorkerConfig, WorkerSample } from './bot-worker';
 
 const envFile = new URL('../.env', import.meta.url);
 if (existsSync(envFile)) process.loadEnvFile(envFile);
@@ -34,6 +39,7 @@ if (existsSync(envFile)) process.loadEnvFile(envFile);
 const { values: args } = parseArgs({
   options: {
     room: { type: 'string' },
+    key: { type: 'string' },
     rooms: { type: 'string', default: '1' },
     count: { type: 'string', default: '20' },
     rate: { type: 'string', default: '5' },
@@ -57,6 +63,10 @@ if (args.mode !== 'list' && args.mode !== 'draw') {
   process.exit(2);
 }
 const mode = args.mode;
+if (args.room && !args.key) {
+  console.error('--room needs --key: the part after #k= in its edit link');
+  process.exit(2);
+}
 
 function percentile(sorted: number[], p: number): number {
   if (sorted.length === 0) return Number.NaN;
@@ -69,33 +79,50 @@ const median = (xs: number[]) =>
     50,
   );
 
-/** Same shape as the server's `newRoomId`: 16 random bytes, base62, 22 characters. */
-function randomRoomId(): RoomId {
-  const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+const BASE62 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+
+/** Same shape as the server's ids: random bytes, base62, left-padded to `length`. */
+function randomId(bytes: number, length: number): string {
   let n = 0n;
-  for (const byte of crypto.getRandomValues(new Uint8Array(16))) n = (n << 8n) | BigInt(byte);
+  for (const byte of crypto.getRandomValues(new Uint8Array(bytes))) n = (n << 8n) | BigInt(byte);
   let out = '';
-  for (; n > 0n; n /= 62n) out = alphabet.charAt(Number(n % 62n)) + out;
-  return RoomId.parse(out.padStart(22, '0'));
+  for (; n > 0n; n /= 62n) out = BASE62.charAt(Number(n % 62n)) + out;
+  return out.padStart(length, '0');
 }
 
-async function createRooms(count: number): Promise<string[]> {
-  // POST /rooms allows 10 a minute, so several rooms go straight into the dev database.
+type NewRoom = { roomId: string; editKey: string; viewKey: string };
+
+async function createRooms(count: number): Promise<NewRoom[]> {
+  // POST /rooms allows 10 a minute, so several rooms go straight into the dev database, with
+  // links made the way the server makes them (ADR 0005): only the key's SHA-256 is stored.
   const url = process.env.DATABASE_URL;
   if (count === 1 || !url) {
     return Promise.all(
       Array.from({ length: count }, async () => {
         const res = await fetch(`${apiUrl}/rooms`, { method: 'POST' });
         if (!res.ok) throw new Error(`POST /rooms answered ${res.status}: ${await res.text()}`);
-        return CreateRoomResponse.parse(await res.json()).roomId;
+        return CreateRoomResponse.parse(await res.json());
       }),
     );
   }
   const { db, close } = createDb(url);
   try {
-    const ids = Array.from({ length: count }, randomRoomId);
-    await db.insert(rooms).values(ids.map((id) => ({ id })));
-    return ids;
+    const made = Array.from({ length: count }, () => ({
+      roomId: RoomId.parse(randomId(16, 22)),
+      editKey: randomBytes(32).toString('base64url'),
+      viewKey: randomBytes(32).toString('base64url'),
+    }));
+    const hash = (key: string) => createHash('sha256').update(key).digest();
+    await db.transaction(async (tx) => {
+      await tx.insert(rooms).values(made.map(({ roomId }) => ({ id: roomId })));
+      await tx.insert(roomLinks).values(
+        made.flatMap(({ roomId, editKey, viewKey }) => [
+          { id: randomId(8, 12), roomId, role: 'edit' as const, keyHash: hash(editKey) },
+          { id: randomId(8, 12), roomId, role: 'view' as const, keyHash: hash(viewKey) },
+        ]),
+      );
+    });
+    return made;
   } finally {
     await close();
   }
@@ -111,15 +138,20 @@ async function serverStats(): Promise<ServerStats | null> {
   }
 }
 
-const roomIds = args.room ? [args.room] : await createRooms(roomCount);
+const created = args.room ? [] : await createRooms(roomCount);
+const botRooms: BotRoom[] = args.room
+  ? [{ roomId: args.room, key: args.key ?? '' }]
+  : created.map(({ roomId, editKey }) => ({ roomId, key: editKey }));
+const roomIds = botRooms.map((r) => r.roomId);
 const workerCount = Math.max(
   1,
   Math.min(roomIds.length, Number(args.workers ?? Math.max(1, availableParallelism() - 2))),
 );
 const workers = Array.from({ length: workerCount }, (_, w) => {
   const config: WorkerConfig = {
+    apiUrl,
     wsUrl: apiUrl.replace(/^http/, 'ws'),
-    roomIds: roomIds.filter((_, i) => i % workerCount === w),
+    rooms: botRooms.filter((_, i) => i % workerCount === w),
     botsPerRoom,
     opsPerSec,
     chaos: args.chaos ? { minS: chaosMinS, maxS: chaosMaxS } : null,
@@ -162,10 +194,12 @@ for (const worker of workers) {
 console.log(
   `${roomIds.length * botsPerRoom} bots in ${roomIds.length} room(s) on ${workerCount} worker(s), ${mode === 'draw' ? 'drawing' : `${opsPerSec} ops/s each`}${args.chaos ? `, chaos every ${args['chaos-every']} s` : ''}`,
 );
-if (!args.room && roomIds[0]) {
-  console.log(
-    `watch: ${process.env.WEB_ORIGIN ?? 'http://localhost:5173'}/r/${roomIds[0]}${mode === 'draw' ? '' : '/debug'}`,
-  );
+const first = created[0];
+if (first) {
+  const web = process.env.WEB_ORIGIN ?? 'http://localhost:5173';
+  const page = `${web}/r/${first.roomId}${mode === 'draw' ? '' : '/debug'}`;
+  console.log(`edit link: ${page}#k=${first.editKey}`);
+  console.log(`view link: ${page}#k=${first.viewKey}`);
 }
 
 const startedAt = Date.now();

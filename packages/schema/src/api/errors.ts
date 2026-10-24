@@ -1,6 +1,13 @@
 import { z } from 'zod';
 
-export const ERROR_CODES = ['not_found', 'bad_request', 'rate_limited', 'internal'] as const;
+export const ERROR_CODES = [
+  'not_found',
+  'bad_request',
+  'unauthorized',
+  'forbidden',
+  'rate_limited',
+  'internal',
+] as const;
 export const ErrorCode = z.enum(ERROR_CODES);
 export type ErrorCode = z.infer<typeof ErrorCode>;
 

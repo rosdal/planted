@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto';
 import { defineConfig, devices } from '@playwright/test';
 import { API_PORT, API_URL, WEB_PORT, WEB_URL } from './e2e/env';
 
@@ -31,6 +32,8 @@ export default defineConfig({
         SERVER_PORT: String(API_PORT),
         WEB_ORIGIN: WEB_URL,
         LOG_LEVEL: 'warn',
+        // A fresh secret per run unless one is set: tokens only have to verify on this server.
+        ROOM_TOKEN_SECRET: process.env.ROOM_TOKEN_SECRET ?? randomBytes(32).toString('base64url'),
         DATABASE_URL:
           process.env.DATABASE_URL ?? 'postgres://planted:planted@localhost:5433/planted',
       },

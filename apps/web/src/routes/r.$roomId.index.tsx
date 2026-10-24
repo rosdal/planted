@@ -1,17 +1,19 @@
-import type { RoomId } from '@planted/schema';
+import type { RoomId, RoomRole } from '@planted/schema';
 import { createFileRoute, getRouteApi, Link } from '@tanstack/react-router';
 import { useCallback, useMemo, useState } from 'react';
 import { BoardCanvas } from '../board/BoardCanvas';
 import type { Board } from '../board/board';
 import { IdentityDialog } from '../board/identity-dialog';
 import { DevOverlay, perfEnabled } from '../board/overlay';
+import { Banners } from '../components/Banners';
+import { ShareDialog } from '../components/ShareDialog';
 import {
   type GuestIdentity,
   loadGuestIdentity,
   readStoredIdentity,
   saveGuestIdentity,
 } from '../realtime/identity';
-import { RoomProvider, usePeers, useRoomClient, useSyncStatus } from '../realtime/react';
+import { RoomProvider, usePeers, useRole, useRoomClient, useSyncStatus } from '../realtime/react';
 import { Button } from '../ui/button';
 
 const roomRoute = getRouteApi('/r/$roomId');
@@ -21,17 +23,22 @@ export const Route = createFileRoute('/r/$roomId/')({
 });
 
 function RoomPage() {
-  const { roomId } = roomRoute.useLoaderData();
+  const access = roomRoute.useLoaderData();
+  // The layout renders the need-link page itself; this only runs with a working key.
+  if (access.status !== 'ok') return null;
   return (
-    <RoomProvider roomId={roomId}>
-      <BoardRoom roomId={roomId} />
+    <RoomProvider roomId={access.roomId} initialToken={access.token} overlay={<Banners />}>
+      <BoardRoom roomId={access.roomId} initialRole={access.role} />
     </RoomProvider>
   );
 }
 
-function BoardRoom({ roomId }: { roomId: RoomId }) {
+function BoardRoom({ roomId, initialRole }: { roomId: RoomId; initialRole: RoomRole }) {
   const client = useRoomClient();
   const peers = usePeers();
+  const role = useRole(initialRole);
+  const viewer = role === 'view';
+  const [sharing, setSharing] = useState(false);
   const [identity, setIdentity] = useState<GuestIdentity>(loadGuestIdentity);
   const [dialog, setDialog] = useState<'welcome' | 'edit' | null>(() =>
     readStoredIdentity() ? null : 'welcome',
@@ -54,10 +61,15 @@ function BoardRoom({ roomId }: { roomId: RoomId }) {
   return (
     // The board fills everything under the header; the root layout's centred column is for pages.
     <div className="fixed inset-x-0 top-14 bottom-0 bg-bg">
-      <BoardCanvas identity={identityGetter} onBoard={setBoard} />
+      <BoardCanvas identity={identityGetter} readOnly={viewer} onBoard={setBoard} />
       {perfEnabled() && <DevOverlay board={board} />}
       <div className="absolute top-3 right-3 flex flex-wrap items-center justify-end gap-2">
         <StatusPill />
+        {viewer && (
+          <span className="inline-flex h-8 items-center rounded-full border border-border bg-bg px-3 text-sm">
+            View only
+          </span>
+        )}
         <PeerDots peers={peers.length} />
         <Button
           onClick={() => setDialog('edit')}
@@ -71,7 +83,11 @@ function BoardRoom({ roomId }: { roomId: RoomId }) {
           />
           {identity.name}
         </Button>
-        <CopyLinkButton />
+        {!viewer && (
+          <Button variant="primary" onClick={() => setSharing(true)} aria-haspopup="dialog">
+            Share
+          </Button>
+        )}
         {import.meta.env.DEV && (
           <Link
             to="/r/$roomId/debug"
@@ -83,9 +99,19 @@ function BoardRoom({ roomId }: { roomId: RoomId }) {
         )}
       </div>
       <p className="pointer-events-none absolute bottom-3 left-3 hidden text-xs text-muted sm:block">
-        Draw with the mouse · <Kbd>Space</Kbd> drag or middle drag to pan · scroll to zoom ·{' '}
-        <Kbd>0</Kbd> fit · <Kbd>Ctrl</Kbd>+<Kbd>Z</Kbd> undo
+        {viewer ? (
+          <>
+            View only · <Kbd>Space</Kbd> drag or middle drag to pan · scroll to zoom · <Kbd>0</Kbd>{' '}
+            fit
+          </>
+        ) : (
+          <>
+            Draw with the mouse · <Kbd>Space</Kbd> drag or middle drag to pan · scroll to zoom ·{' '}
+            <Kbd>0</Kbd> fit · <Kbd>Ctrl</Kbd>+<Kbd>Z</Kbd> undo
+          </>
+        )}
       </p>
+      {!viewer && <ShareDialog open={sharing} roomId={roomId} onClose={() => setSharing(false)} />}
       <IdentityDialog
         open={dialog !== null}
         mode={dialog ?? 'edit'}
@@ -133,29 +159,5 @@ function PeerDots({ peers }: { peers: number }) {
     <span className="inline-flex h-8 items-center rounded-full border border-border bg-bg px-3 text-sm text-muted tabular-nums">
       {peers === 0 ? 'Just you' : `${peers + 1} here`}
     </span>
-  );
-}
-
-type CopyState = 'idle' | 'copied' | 'failed';
-
-function CopyLinkButton() {
-  const [state, setState] = useState<CopyState>('idle');
-
-  async function copy() {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setState('copied');
-    } catch {
-      setState('failed');
-    }
-    setTimeout(() => setState('idle'), 2000);
-  }
-
-  return (
-    <Button variant="primary" onClick={copy}>
-      <span aria-live="polite">
-        {state === 'copied' ? 'Copied' : state === 'failed' ? 'Copy failed' : 'Copy link'}
-      </span>
-    </Button>
   );
 }

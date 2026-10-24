@@ -82,15 +82,17 @@ Built from [the v0.3 todo](todo/v0.3.md); the gate measurement is in progress, w
 ## 0.4 Persistence and rooms
 
 Boards survive restarts, and the full wire protocol is in place, so nothing after this changes the socket contract.
-- [ ] Control channel: `hello` / `welcome` / `error` / `ping` with protocol version and close codes 4401, 4403, 4409, 4429
-- [ ] Room tokens: `GET /rooms/:id/token` returns a 5-minute signed JWT with role; sent in `hello`, never in the URL
-- [ ] Load a cold room's Y.Doc from `strat_docs`; debounced save 2 s after the last change and on last disconnect
-- [ ] `roomEpoch` stored per room; mismatched clients drop local state and resync
-- [ ] Signed share links: edit vs view; viewer sockets have yjs updates dropped server side
-- [ ] Limits: 256 KB frame cap, per-socket bytes/s, 20k objects and 5 MB per doc, room creation rate limit per IP
-- [ ] Server-side apply in try/catch + Zod check of changed objects; reject and disconnect on failure
-- [ ] Guest rooms expire after 30 days idle (nightly job)
-- [ ] Chaos test: bots through toxiproxy (150 ms, 2% loss, random drops)
+
+Built from [the v0.4 todo](todo/v0.4.md); the access model is [ADR 0005](adr/0005-access-model.md).
+- [x] Control channel: `hello` / `welcome` / `error` / `ping`, protocol v1, and one table of close codes (4400–4429)
+- [x] Room tokens: `POST /rooms/:id/token` trades a link key for a 5-minute signed JWT with role; sent in `hello`, never in the URL
+- [x] Load a cold room's Y.Doc from `room_docs`; save 2 s after the last change, at least every 10 s, retried with backoff, flushed on shutdown
+- [x] `roomEpoch` stored per room; mismatched clients drop local state and resync
+- [x] Signed share links: edit vs view, rotatable; viewers' Yjs writes close their socket with 4403
+- [x] Limits: 256 KB frame cap, per-socket frames and bytes per second, 20k objects and 5 MB per doc, 50 sockets per room, rate limits per IP
+- [x] Server validates every changed object with Zod after applying, corrects it in the same broadcast, and disconnects the sender
+- [x] Guest rooms expire after 30 days idle (daily job)
+- [x] Chaos test: bots through Toxiproxy (150 ms ± 50 ms, 256 KB/s, sliced frames, random resets, two server restarts) for 30 minutes
 
 **Exit check:** draw, restart the server, reload: everything is there. A view link cannot change the board even with a hand-crafted socket client.
 

@@ -5,9 +5,11 @@
 import { monitorEventLoopDelay } from 'node:perf_hooks';
 import { parentPort, workerData } from 'node:worker_threads';
 import {
+  cachedTokens,
   commitStroke,
   createUndoManager,
   docHash,
+  fetchRoomToken,
   newObjectId,
   objectsOf,
   RoomClient,
@@ -17,9 +19,13 @@ import { TEST_FLOOR, USER_COLOURS } from '@planted/schema';
 import WebSocket from 'ws';
 import * as Y from 'yjs';
 
+/** A room and the link key its bots trade for tokens. */
+export type BotRoom = { roomId: string; key: string };
+
 export type WorkerConfig = {
+  apiUrl: string;
   wsUrl: string;
-  roomIds: string[];
+  rooms: BotRoom[];
   botsPerRoom: number;
   opsPerSec: number;
   chaos: { minS: number; maxS: number } | null;
@@ -75,6 +81,13 @@ type Bot = {
 };
 
 const bots: Bot[] = [];
+/** One token cache per room, shared by its bots. */
+const tokens = new Map(
+  config.rooms.map(({ roomId, key }) => [
+    roomId,
+    cachedTokens(() => fetchRoomToken(config.apiUrl, roomId, key)),
+  ]),
+);
 let latencies: number[] = [];
 const loopDelay = monitorEventLoopDelay({ resolution: 10 });
 loopDelay.enable();
@@ -116,6 +129,12 @@ function startBot(roomId: string, isProbe: boolean): Bot {
   const client = new RoomClient({
     url: config.wsUrl,
     roomId,
+    getToken: (reason) => {
+      const getToken = tokens.get(roomId);
+      if (!getToken) throw new Error(`no key for room ${roomId}`);
+      return getToken(reason);
+    },
+    clientName: bot.name,
     WebSocketImpl: TrackedWebSocket as unknown as WebSocketCtor,
   });
   bot.client = client;
@@ -321,7 +340,7 @@ async function finish(): Promise<WorkerDone> {
     bot.client.wake();
   }
   const hashRooms = () =>
-    config.roomIds.map((roomId) => {
+    config.rooms.map(({ roomId }) => {
       const hashes: Record<string, number> = {};
       const roomBots = bots.filter((b) => b.roomId === roomId);
       for (const bot of roomBots) {
@@ -352,7 +371,7 @@ async function finish(): Promise<WorkerDone> {
   return { type: 'done', rooms, settleMs };
 }
 
-for (const roomId of config.roomIds) {
+for (const { roomId } of config.rooms) {
   for (let i = 0; i < config.botsPerRoom; i++) bots.push(startBot(roomId, i === 0));
 }
 

@@ -1,6 +1,16 @@
-import { RoomClient, type StopReason, type SyncStatus } from '@planted/client';
+import {
+  cachedTokens,
+  type IssuedToken,
+  LinkRevokedError,
+  type Notice,
+  RoomClient,
+  type StopReason,
+  type SyncStatus,
+} from '@planted/client';
+import type { RoomId, RoomRole } from '@planted/schema';
 import {
   createContext,
+  Fragment,
   type ReactNode,
   useContext,
   useEffect,
@@ -9,7 +19,9 @@ import {
   useSyncExternalStore,
 } from 'react';
 import type * as Y from 'yjs';
+import { ApiClientError, api } from '../lib/api';
 import { type GuestIdentity, loadGuestIdentity } from './identity';
+import { readKey, rotationSettled } from './keys';
 
 const RoomContext = createContext<RoomClient | null>(null);
 
@@ -19,16 +31,58 @@ function socketUrl(): string {
 }
 
 /**
+ * A room token from the key stored for this room. A 403 means the link is gone; the client then
+ * stops with `link_revoked`.
+ */
+async function fetchToken(roomId: RoomId): Promise<IssuedToken> {
+  await rotationSettled();
+  const key = readKey(roomId);
+  if (!key) throw new LinkRevokedError();
+  try {
+    return await api.roomToken(roomId, key);
+  } catch (error) {
+    if (error instanceof ApiClientError && error.code === 'forbidden') throw new LinkRevokedError();
+    throw error;
+  }
+}
+
+/**
  * Owns one `RoomClient` for `roomId`. The client is made in an effect, not during render, so
  * StrictMode's mount → unmount → mount makes two clients and destroys the first, instead of
  * leaking one.
+ *
+ * `children` remount when the board is reset (an epoch change replaces the doc), so nothing
+ * keeps the old doc or its undo stack. `overlay` doesn't, so a "Board was reset" toast survives.
  */
-export function RoomProvider({ roomId, children }: { roomId: string; children: ReactNode }) {
+export function RoomProvider({
+  roomId,
+  initialToken,
+  children,
+  overlay,
+}: {
+  roomId: RoomId;
+  /** The loader's token: still fresh, so the first `hello` doesn't need another request. */
+  initialToken?: IssuedToken;
+  children: ReactNode;
+  overlay?: ReactNode;
+}) {
   const [client, setClient] = useState<RoomClient | null>(null);
+  const [generation, setGeneration] = useState(0);
 
+  // The initial token only matters for the first connect; a new one must not remake the client.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: see above
   useEffect(() => {
-    const next = new RoomClient({ url: socketUrl(), roomId });
+    const next = new RoomClient({
+      url: socketUrl(),
+      roomId,
+      // Reused until a minute before it expires; a 4401 always fetches a new one. The token
+      // route allows 30 a minute per IP, which a household behind one address shares.
+      getToken: cachedTokens(() => fetchToken(roomId), { initial: initialToken }),
+      clientName: loadGuestIdentity().name,
+      dev: import.meta.env.DEV,
+    });
     next.awareness.setLocalStateField('user', loadGuestIdentity());
+    const offReset = next.on('reset', () => setGeneration(next.generation));
     const wake = () => next.wake();
     const onVisibility = () => {
       if (document.visibilityState === 'visible') next.wake();
@@ -49,7 +103,9 @@ export function RoomProvider({ roomId, children }: { roomId: string; children: R
     window.addEventListener('pagehide', onPageHide);
     window.addEventListener('pageshow', onPageShow);
     setClient(next);
+    setGeneration(next.generation);
     return () => {
+      offReset();
       window.removeEventListener('online', wake);
       document.removeEventListener('visibilitychange', onVisibility);
       window.removeEventListener('pagehide', onPageHide);
@@ -60,7 +116,12 @@ export function RoomProvider({ roomId, children }: { roomId: string; children: R
   }, [roomId]);
 
   if (!client) return null;
-  return <RoomContext value={client}>{children}</RoomContext>;
+  return (
+    <RoomContext value={client}>
+      {overlay}
+      <Fragment key={generation}>{children}</Fragment>
+    </RoomContext>
+  );
 }
 
 export function useRoomClient(): RoomClient {
@@ -73,7 +134,13 @@ export function useRoomDoc(): Y.Doc {
   return useRoomClient().doc;
 }
 
-export type SyncState = { status: SyncStatus; attempt: number; stopReason: StopReason | null };
+export type SyncState = {
+  status: SyncStatus;
+  attempt: number;
+  stopReason: StopReason | null;
+  /** The server's last error frame, e.g. why a socket was closed. */
+  lastError: Notice | null;
+};
 
 type Store<T> = { subscribe: (onStoreChange: () => void) => () => void; getSnapshot: () => T };
 
@@ -110,7 +177,12 @@ export function useSyncStatus(): SyncState {
             offStop();
           };
         },
-        () => ({ status: client.status, attempt: client.attempt, stopReason: client.stopReason }),
+        () => ({
+          status: client.status,
+          attempt: client.attempt,
+          stopReason: client.stopReason,
+          lastError: client.lastError,
+        }),
       ),
     [client],
   );
@@ -166,4 +238,27 @@ export function useYArray<T>(name: string): T[] {
     );
   }, [doc, name]);
   return useStore(store);
+}
+
+/** The role from the last `welcome`, or `initial` (from the loader's token) before the first. */
+export function useRole(initial: RoomRole): RoomRole {
+  const client = useRoomClient();
+  const store = useMemo(
+    () =>
+      derivedStore(
+        (onChange) => client.on('role', onChange),
+        () => client.role,
+      ),
+    [client],
+  );
+  return useStore(store) ?? initial;
+}
+
+/** Calls `listener` for every notice: a board reset, `object_limit`, `doc_limit`, a 4429. */
+export function useNotices(listener: (notice: Notice) => void): void {
+  const client = useRoomClient();
+  // The latest listener without resubscribing on every render.
+  const [box] = useState(() => ({ listener }));
+  box.listener = listener;
+  useEffect(() => client.on('notice', (notice) => box.listener(notice)), [client, box]);
 }

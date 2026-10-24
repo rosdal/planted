@@ -7,7 +7,8 @@ const env = loadEnv();
 const { db, close: closeDb } = createDb(env.DATABASE_URL);
 const app = await buildApp({ db, env });
 
-closeWithGrace({ delay: 10_000 }, async ({ signal, err }) => {
+// Room saves get 10 s of this (SHUTDOWN_FLUSH_MS); the rest is for sockets and the pool.
+closeWithGrace({ delay: 15_000 }, async ({ signal, err }) => {
   if (err) app.log.error({ err }, 'shutting down after an error');
   else app.log.info({ signal }, 'shutting down');
   await app.close();

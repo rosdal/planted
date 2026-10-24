@@ -28,9 +28,5 @@ export const StrokeObject = z.object({
 });
 export type StrokeObject = z.infer<typeof StrokeObject>;
 
-/** Every kind of board object; more join the union in 0.6. */
-export const BoardObject = z.discriminatedUnion('kind', [StrokeObject]);
-export type BoardObject = z.infer<typeof BoardObject>;
-
 /** The only floor until 0.5. */
 export const TEST_FLOOR = 'test-1';

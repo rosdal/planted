@@ -14,3 +14,6 @@ playwright-report/
 # scripts/gate1.ts output
 gate1-*.png
 trace-*.json
+
+# chaos run server logs
+scripts/chaos-server.log

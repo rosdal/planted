@@ -11,14 +11,21 @@ import {
   validatorCompiler,
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod';
+import { RoomTokens } from './auth/room-token';
 import type { Env } from './env';
 import { AppError, errorHandler, notFoundHandler } from './errors';
+import { expireRooms } from './jobs/expire-rooms';
+import { scheduleDaily } from './jobs/scheduler';
+import { PgRoomStore, type RoomStore } from './realtime/persistence';
 import { RoomManager } from './realtime/room-manager';
 import { realtimeDebugRoutes, realtimeRoutes } from './realtime/routes';
 import { healthRoutes } from './routes/health';
+import { linkRoutes } from './routes/links';
 import { roomRoutes } from './routes/rooms';
+import { tokenRoutes } from './routes/tokens';
 
 export type AppDeps = { db: Db };
+export type AuthDeps = AppDeps & { tokens: RoomTokens };
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -27,7 +34,12 @@ declare module 'fastify' {
 }
 
 export type BuildAppOptions = AppDeps & {
-  env: Pick<Env, 'NODE_ENV' | 'WEB_ORIGIN' | 'LOG_LEVEL'>;
+  env: Pick<Env, 'NODE_ENV' | 'WEB_ORIGIN' | 'LOG_LEVEL' | 'ROOM_TOKEN_SECRET'> &
+    Partial<Pick<Env, 'ROOM_TOKEN_SECRET_PREVIOUS' | 'TRUST_PROXY'>>;
+  /** Where docs persist; tests pass a stub that fails on demand. */
+  store?: RoomStore;
+  /** Tests pass one with a fake clock to mint expired tokens. */
+  tokens?: RoomTokens;
 };
 
 // Fastify's default serializers log method, url and status code, never bodies; keep it that way.
@@ -46,10 +58,11 @@ function loggerOptions(env: BuildAppOptions['env']): NonNullable<FastifyServerOp
 }
 
 /** Pure app factory: no env reads, no listening. Tests drive it with `app.inject`. */
-export async function buildApp({ db, env }: BuildAppOptions) {
+export async function buildApp({ db, env, store, tokens: tokensOverride }: BuildAppOptions) {
   const app = Fastify({
     logger: loggerOptions(env),
     genReqId: () => randomUUID(),
+    trustProxy: env.TRUST_PROXY ?? false,
   }).withTypeProvider<ZodTypeProvider>();
 
   app.setValidatorCompiler(validatorCompiler);
@@ -69,17 +82,33 @@ export async function buildApp({ db, env }: BuildAppOptions) {
       new AppError('rate_limited', 429, `Too many requests, retry in ${context.after}`),
   });
 
-  await app.register(healthRoutes, { db });
-  await app.register(roomRoutes, { db });
-
-  const manager = new RoomManager(app.log);
+  const tokens =
+    tokensOverride ??
+    new RoomTokens({ secret: env.ROOM_TOKEN_SECRET, previous: env.ROOM_TOKEN_SECRET_PREVIOUS });
+  const dev = env.NODE_ENV !== 'production';
+  const manager = new RoomManager({ store: store ?? new PgRoomStore(db), log: app.log, dev });
   app.decorate('realtime', manager);
+
+  await app.register(healthRoutes, { db });
+  await app.register(roomRoutes, { db, tokens });
+  await app.register(tokenRoutes, { db, tokens });
+  await app.register(linkRoutes, { db, tokens, manager });
+
   // Added before the websocket plugin's own preClose, so clients get 1001 going_away (and
-  // reconnect) rather than a bare close.
+  // reconnect) rather than a bare close, and dirty rooms are saved before the pool closes.
   app.addHook('preClose', async () => manager.closeAll());
   await app.register(websocket, { options: { maxPayload: MAX_SYNC_FRAME_BYTES } });
-  await app.register(realtimeRoutes, { db, manager });
-  if (env.NODE_ENV !== 'production') await app.register(realtimeDebugRoutes, { manager });
+  await app.register(realtimeRoutes, { db, tokens, manager });
+
+  const runExpiry = () => expireRooms(db, () => manager.loadedIds(), app.log);
+  if (env.NODE_ENV !== 'test') {
+    const stop = scheduleDaily('expire_rooms', 4, runExpiry, app.log);
+    app.addHook('onClose', async () => stop());
+  }
+  if (dev) {
+    await app.register(realtimeDebugRoutes, { manager });
+    app.post('/debug/jobs/expire-rooms', async () => runExpiry());
+  }
 
   return app;
 }
