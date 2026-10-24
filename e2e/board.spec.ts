@@ -49,11 +49,14 @@ async function openBoard(
   return page;
 }
 
-/** Pointer down, 20 moves, up: one stroke. */
+/**
+ * Pointer down, 8 moves, up: one stroke. Each move waits for a renderer that is busy drawing
+ * two WebGL boards, which on a 2-core CI runner costs ~0.4 s, so the stroke is kept short.
+ */
 async function drawStroke(page: Page, x: number, y: number): Promise<void> {
   await page.mouse.move(x, y);
   await page.mouse.down();
-  for (let i = 1; i <= 20; i++) await page.mouse.move(x + i * 10, y + Math.sin(i / 3) * 30);
+  for (let i = 1; i <= 8; i++) await page.mouse.move(x + i * 25, y + Math.sin(i / 1.2) * 30);
   await page.mouse.up();
 }
 
