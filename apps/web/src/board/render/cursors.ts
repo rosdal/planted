@@ -50,6 +50,8 @@ type Cursor = {
   target: Point | null;
   pos: Point | null;
   lastMoveAt: number;
+  /** The floor the peer is looking at; null for clients that don't say. */
+  floor: string | null;
 };
 
 function parsePoint(value: unknown): Point | null {
@@ -81,10 +83,17 @@ export class CursorLayer {
   readonly #cursors = new Map<number, Cursor>();
   readonly #dirty = new Set<number>();
   readonly #awareness: Awareness;
+  #floor: string | null = null;
+
   constructor(awareness: Awareness) {
     this.#awareness = awareness;
     awareness.on('change', this.#onChange);
     for (const clientId of awareness.getStates().keys()) this.#dirty.add(clientId);
+  }
+
+  /** Shows only cursors of peers looking at `floor`. */
+  setFloor(floor: string): void {
+    this.#floor = floor;
   }
 
   /** Cursors currently on screen. */
@@ -103,7 +112,7 @@ export class CursorLayer {
     const pxPerMap = WORLD_SIZE * camera.scale;
     for (const cursor of this.#cursors.values()) {
       const { target } = cursor;
-      if (!target) {
+      if (!target || (cursor.floor !== null && cursor.floor !== this.#floor)) {
         cursor.container.visible = false;
         continue;
       }
@@ -144,6 +153,7 @@ export class CursorLayer {
     const user = parseUser(state.user);
     const cursor = existing ?? this.#create(clientId, user);
     if (cursor.name !== user.name || cursor.colour !== user.colour) this.#style(cursor, user);
+    cursor.floor = typeof state.floor === 'string' ? state.floor : null;
     const target = parsePoint(state.cursor);
     if (!target) {
       cursor.target = null;
@@ -176,6 +186,7 @@ export class CursorLayer {
       target: null,
       pos: null,
       lastMoveAt: 0,
+      floor: null,
     };
     this.#cursors.set(clientId, cursor);
     this.#style(cursor, user);

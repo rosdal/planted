@@ -3,6 +3,8 @@ import { createFileRoute, notFound, Outlet } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { NeedLink } from '../components/NeedLink';
 import { NotFoundPage } from '../components/not-found-page';
+import { LEGACY_MAP } from '../content/legacy';
+import { type LoadedMap, loadMap } from '../content/loader';
 import { ApiClientError, api } from '../lib/api';
 import { readKey, stripKeyFromUrl, takeKeyFromHash } from '../realtime/keys';
 
@@ -14,6 +16,8 @@ export type RoomAccess =
       role: RoomRole;
       /** Reused for the first `hello`, so opening a board costs one token request, not two. */
       token: { token: string; expiresAt: string };
+      /** The room's map in the content version it pinned at creation. */
+      content: LoadedMap;
     }
   /** No key in the URL or in this browser: nothing to ask the server. */
   | { status: 'need_link'; roomId: RoomId }
@@ -40,7 +44,13 @@ export const Route = createFileRoute('/r/$roomId')({
     try {
       const { token, role, expiresAt } = await api.roomToken(roomId, key);
       const room = await api.getRoom(roomId, token);
-      return { status: 'ok', roomId, room, role, token: { token, expiresAt } };
+      // The server wrote the same mapId and version into the doc's meta; reading them here
+      // lets the floor art start loading before the socket has synced.
+      const content =
+        room.mapId && room.contentVersion
+          ? await loadMap(room.contentVersion, room.mapId)
+          : LEGACY_MAP;
+      return { status: 'ok', roomId, room, role, token: { token, expiresAt }, content };
     } catch (error) {
       if (error instanceof ApiClientError && error.code === 'forbidden') {
         return { status: 'revoked', roomId };

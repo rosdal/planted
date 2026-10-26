@@ -2,15 +2,25 @@
   "$schema": "https://turbo.build/schema.json",
   "ui": "stream",
   "globalDependencies": [".env.example"],
-  "globalPassThroughEnv": ["E2E_API_PORT", "E2E_WEB_PORT", "ROOM_TOKEN_SECRET"],
+  "globalPassThroughEnv": [
+    "E2E_API_PORT",
+    "E2E_WEB_PORT",
+    "E2E_CONTENT_PORT",
+    "PLANTED_BASELINES",
+    "ROOM_TOKEN_SECRET"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/.env"],
       "outputs": ["dist/**"],
-      "env": ["VITE_API_URL"]
+      "env": ["VITE_API_URL", "VITE_CONTENT_URL"]
     },
     "typecheck": { "dependsOn": ["^typecheck"] },
-    "dev": { "cache": false, "persistent": true, "env": ["DATABASE_URL", "VITE_API_URL"] }
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "env": ["DATABASE_URL", "VITE_API_URL", "VITE_CONTENT_URL"]
+    }
   }
 }

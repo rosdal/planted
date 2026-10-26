@@ -8,6 +8,7 @@
   },
   "scripts": {
     "build": "tsc --noEmit",
+    "dev": "tsx scripts/build.ts && tsx scripts/serve.ts",
     "typecheck": "tsc --noEmit",
     "content:extract": "tsx scripts/extract.ts",
     "content:check": "tsx scripts/check.ts",

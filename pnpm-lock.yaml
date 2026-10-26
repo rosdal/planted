@@ -363,6 +363,9 @@ importers:
       '@planted/client':
         specifier: workspace:*
         version: link:../../packages/client
+      '@planted/content':
+        specifier: workspace:*
+        version: link:../../packages/content
       '@planted/schema':
         specifier: workspace:*
         version: link:../../packages/schema

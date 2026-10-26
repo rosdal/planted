@@ -1,12 +1,13 @@
 import type { RoomId, RoomRole } from '@planted/schema';
 import { createFileRoute, getRouteApi, Link } from '@tanstack/react-router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BoardCanvas } from '../board/BoardCanvas';
-import type { Board } from '../board/board';
+import type { Board, BoardView } from '../board/board';
 import { IdentityDialog } from '../board/identity-dialog';
 import { DevOverlay, perfEnabled } from '../board/overlay';
 import { Banners } from '../components/Banners';
 import { ShareDialog } from '../components/ShareDialog';
+import type { LoadedMap } from '../content/loader';
 import {
   type GuestIdentity,
   loadGuestIdentity,
@@ -28,12 +29,20 @@ function RoomPage() {
   if (access.status !== 'ok') return null;
   return (
     <RoomProvider roomId={access.roomId} initialToken={access.token} overlay={<Banners />}>
-      <BoardRoom roomId={access.roomId} initialRole={access.role} />
+      <BoardRoom roomId={access.roomId} initialRole={access.role} content={access.content} />
     </RoomProvider>
   );
 }
 
-function BoardRoom({ roomId, initialRole }: { roomId: RoomId; initialRole: RoomRole }) {
+function BoardRoom({
+  roomId,
+  initialRole,
+  content,
+}: {
+  roomId: RoomId;
+  initialRole: RoomRole;
+  content: LoadedMap;
+}) {
   const client = useRoomClient();
   const peers = usePeers();
   const role = useRole(initialRole);
@@ -44,6 +53,9 @@ function BoardRoom({ roomId, initialRole }: { roomId: RoomId; initialRole: RoomR
     readStoredIdentity() ? null : 'welcome',
   );
   const [board, setBoard] = useState<Board | null>(null);
+  const [view, setView] = useState<BoardView | null>(null);
+  // The board owns floor and overlay state (keys 1 to 5 and L change it too); this mirrors it.
+  useEffect(() => (board ? board.onView(setView) : setView(null)), [board]);
   const taken = useMemo(
     () => new Set(peers.flatMap((p) => (p.user ? [p.user.colour] : []))),
     [peers],
@@ -61,7 +73,13 @@ function BoardRoom({ roomId, initialRole }: { roomId: RoomId; initialRole: RoomR
   return (
     // The board fills everything under the header; the root layout's centred column is for pages.
     <div className="fixed inset-x-0 top-14 bottom-0 bg-bg">
-      <BoardCanvas identity={identityGetter} readOnly={viewer} onBoard={setBoard} />
+      <BoardCanvas
+        identity={identityGetter}
+        readOnly={viewer}
+        content={content}
+        onBoard={setBoard}
+      />
+      {board && view && <FloorBar board={board} view={view} content={content} />}
       {perfEnabled() && <DevOverlay board={board} />}
       <div className="absolute top-3 right-3 flex flex-wrap items-center justify-end gap-2">
         <StatusPill />
@@ -102,14 +120,18 @@ function BoardRoom({ roomId, initialRole }: { roomId: RoomId; initialRole: RoomR
         {viewer ? (
           <>
             View only · <Kbd>Space</Kbd> drag or middle drag to pan · scroll to zoom · <Kbd>0</Kbd>{' '}
-            fit
+            fit · <Kbd>1</Kbd>–<Kbd>5</Kbd> floor · <Kbd>L</Kbd> overlay
           </>
         ) : (
           <>
             Draw with the mouse · <Kbd>Space</Kbd> drag or middle drag to pan · scroll to zoom ·{' '}
-            <Kbd>0</Kbd> fit · <Kbd>Ctrl</Kbd>+<Kbd>Z</Kbd> undo
+            <Kbd>0</Kbd> fit · <Kbd>1</Kbd>–<Kbd>5</Kbd> floor · <Kbd>L</Kbd> overlay ·{' '}
+            <Kbd>Ctrl</Kbd>+<Kbd>Z</Kbd> undo
           </>
         )}
+      </p>
+      <p className="pointer-events-none absolute right-3 bottom-3 text-xs text-muted">
+        {content.map.name} · content {content.version} · Not affiliated with Ubisoft
       </p>
       {!viewer && <ShareDialog open={sharing} roomId={roomId} onClose={() => setSharing(false)} />}
       <IdentityDialog
@@ -120,6 +142,47 @@ function BoardRoom({ roomId, initialRole }: { roomId: RoomId; initialRole: RoomR
         onSave={save}
         onClose={() => setDialog(null)}
       />
+    </div>
+  );
+}
+
+/**
+ * Floor buttons (bottom floor last, as the floors stack) and the overlay toggle. Proper tabs
+ * and the stack view arrive in 0.6.
+ */
+function FloorBar({ board, view, content }: { board: Board; view: BoardView; content: LoadedMap }) {
+  const labels = new Map(content.map.floors.map((f) => [f.id, f.label]));
+  const floors = [...board.floorIds].reverse();
+  return (
+    <div className="absolute top-3 left-3 flex flex-col items-start gap-2">
+      <fieldset className="flex flex-col gap-1">
+        <legend className="sr-only">Floor</legend>
+        {floors.map((id) => {
+          const key = board.floorIds.indexOf(id) + 1;
+          return (
+            <Button
+              key={id}
+              variant={view.floor === id ? 'primary' : 'secondary'}
+              aria-pressed={view.floor === id}
+              onClick={() => board.setFloor(id)}
+              title={key <= 5 ? `Floor ${labels.get(id) ?? id} (${key})` : undefined}
+              className={`min-w-11 ${view.floor === id ? '' : 'bg-bg'}`}
+            >
+              {labels.get(id) ?? id}
+            </Button>
+          );
+        })}
+      </fieldset>
+      {content.map.rooms.length > 0 && (
+        <Button
+          aria-pressed={view.overlay}
+          onClick={() => board.setOverlay(!view.overlay)}
+          title="Map overlay (L)"
+          className={view.overlay ? 'bg-surface-2' : 'bg-bg'}
+        >
+          Overlay
+        </Button>
+      )}
     </div>
   );
 }

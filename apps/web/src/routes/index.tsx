@@ -10,8 +10,8 @@ function Landing() {
     <section className="flex max-w-xl flex-col gap-4">
       <h1 className="text-2xl font-semibold">Plan the round together.</h1>
       <p className="text-md text-muted">
-        A free, real-time multiplayer strat board for Rainbow Six Siege. Pre-alpha: rooms exist, the
-        board doesn't yet.
+        A free, real-time multiplayer strat board for Rainbow Six Siege. Pre-alpha: pick a map,
+        share the link, draw together.
       </p>
       <div className="mt-4">
         <NewRoomButton size="lg" />

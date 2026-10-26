@@ -1,8 +1,9 @@
 import { useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ApiClientError, api } from '../lib/api';
 import { saveKeys } from '../realtime/keys';
 import { Button, type ButtonProps } from '../ui/button';
+import { loadPickerContent, MapPicker, type PickerContent } from './MapPicker';
 
 function errorMessage(error: unknown): string {
   if (error instanceof ApiClientError && error.code === 'rate_limited') {
@@ -14,43 +15,55 @@ function errorMessage(error: unknown): string {
   return 'Could not create a room, try again';
 }
 
+/** "New room": opens the map picker; picking a map creates the room and opens it. */
 export function NewRoomButton({
   variant = 'primary',
   size,
 }: Pick<ButtonProps, 'variant' | 'size'>) {
   const navigate = useNavigate();
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+  // Fetched on the first open, then kept so the picker reopens instantly; refetched after a
+  // failed load.
+  const [content, setContent] = useState<Promise<PickerContent> | null>(null);
+  const failed = useRef(false);
 
-  async function createRoom() {
-    setPending(true);
-    setError(null);
+  function openPicker() {
+    if (!content || failed.current) {
+      failed.current = false;
+      const next = loadPickerContent();
+      void next.then((c) => {
+        failed.current = !c.ok;
+      });
+      setContent(next);
+    }
+    setOpen(true);
+  }
+
+  async function createRoom(mapId: string) {
     try {
-      const { roomId, editKey, viewKey } = await api.createRoom();
+      const { roomId, editKey, viewKey } = await api.createRoom(mapId);
       // The keys come back only now; without them nobody, the creator included, gets back in.
       saveKeys(roomId, { editKey, viewKey });
+      setOpen(false);
       await navigate({ to: '/r/$roomId', params: { roomId } });
     } catch (e) {
-      setError(errorMessage(e));
-    } finally {
-      setPending(false);
+      throw new Error(errorMessage(e));
     }
   }
 
   return (
-    <div className="flex flex-col items-start gap-2">
-      <Button
-        variant={variant}
-        {...(size && { size })}
-        disabled={pending}
-        aria-busy={pending}
-        onClick={createRoom}
-      >
-        {pending ? 'Creating…' : 'New room'}
+    <>
+      <Button variant={variant} {...(size && { size })} onClick={openPicker} aria-haspopup="dialog">
+        New room
       </Button>
-      <p role="status" className="min-h-4 text-xs text-muted">
-        {error}
-      </p>
-    </div>
+      {content && (
+        <MapPicker
+          open={open}
+          content={content}
+          onPick={createRoom}
+          onClose={() => setOpen(false)}
+        />
+      )}
+    </>
   );
 }
