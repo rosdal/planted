@@ -200,7 +200,13 @@ export async function extractMap(metaInput: unknown, sources: FloorSource[]): Pr
         return out.map((v) => Math.min(1, Math.max(0, v))) as Pt;
       };
       const segment = (): [Pt, Pt] | null => {
-        const ends = lineEnds(node);
+        let ends: [Pt, Pt] | null;
+        try {
+          ends = lineEnds(node);
+        } catch (err) {
+          say(`has a path that doesn't parse (${(err as Error).message})`);
+          return null;
+        }
         if (!ends) {
           say(`must be a <line> or a two-point path, got <${node.name}>`);
           return null;
@@ -224,10 +230,8 @@ export async function extractMap(metaInput: unknown, sources: FloorSource[]): Pr
           if (!callout) say('has no data-callout');
           const outline = roomOutline(node, say);
           if (!outline || !callout) break;
-          const polygon = simplify(
-            outline.map((p) => apply(matrix, p)),
-            SIMPLIFY_EPSILON,
-          ).map(point);
+          // `point` applies the element's transform, so simplify in its own drawing units.
+          const polygon = simplify(outline, SIMPLIFY_EPSILON).map(point);
           map.rooms.push({ id: `room:${floorId}:${match[1]}`, floorId, callout, polygon });
           break;
         }

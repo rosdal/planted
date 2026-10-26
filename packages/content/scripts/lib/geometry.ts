@@ -319,14 +319,3 @@ export function selfIntersection(polygon: Pt[]): [number, number] | null {
   }
   return null;
 }
-
-/** Point in polygon by ray casting. */
-export function pointInPolygon([x, y]: Pt, polygon: readonly Pt[]): boolean {
-  let inside = false;
-  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const [xi, yi] = polygon[i] as Pt;
-    const [xj, yj] = polygon[j] as Pt;
-    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
-  }
-  return inside;
-}

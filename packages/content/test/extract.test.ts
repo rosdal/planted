@@ -65,6 +65,46 @@ describe('extractMap', () => {
     expect(svg).not.toMatch(/<circle|data-|inkscape/);
   });
 
+  it('applies a transform on the rooms layer once', async () => {
+    // The lab, drawn half size inside a group that moves it back to where it was.
+    const input = await tinyWith((svg) =>
+      svg
+        .replace(
+          '<g id="rooms" inkscape:groupmode="layer">',
+          '<g id="rooms" transform="translate(512 512) scale(0.5)">',
+        )
+        .replace('d="M1024 1024H2048V2048H1024Z"', 'd="M1024 1024H3072V3072H1024Z"')
+        .replace(
+          'points="2048,1024 3072,1024 3072,2048 2048,2048"',
+          'points="3072,1024 5120,1024 5120,3072 3072,3072"',
+        ),
+    );
+    const { map } = await extractMap(input.meta, input.sources);
+    expect(map.rooms.map((r) => r.polygon)).toEqual([
+      [
+        [0.25, 0.25],
+        [0.5, 0.25],
+        [0.5, 0.5],
+        [0.25, 0.5],
+      ],
+      [
+        [0.5, 0.25],
+        [0.75, 0.25],
+        [0.75, 0.5],
+        [0.5, 0.5],
+      ],
+    ]);
+  });
+
+  it('names a wall whose path does not parse instead of crashing', async () => {
+    const input = await tinyWith((svg) => svg.replace('d="M512 512L1024 512"', 'd="M512 512L"'));
+    const problems = await problemsOf(input);
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toMatch(
+      /^test\/fixtures\/tiny\/src\/1f\.svg: wall:1f:office-south has a path that doesn't parse/,
+    );
+  });
+
   it('names the wall when data-kind is missing', async () => {
     const input = await tinyWith((svg) => svg.replace(' data-kind="soft"', ''));
     expect(await problemsOf(input)).toEqual([
