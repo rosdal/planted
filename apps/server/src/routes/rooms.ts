@@ -15,13 +15,16 @@ import { createLinks } from '../auth/links';
 import { AppError } from '../errors';
 import { newRoomId } from '../ids';
 
-export const roomRoutes: FastifyPluginAsyncZod<AuthDeps> = async (app, deps) => {
+export const roomRoutes: FastifyPluginAsyncZod<AuthDeps & { roomsPerMinute: number }> = async (
+  app,
+  deps,
+) => {
   const { db } = deps;
 
   app.post(
     '/rooms',
     {
-      config: { rateLimit: { max: 10, timeWindow: '1 minute' } },
+      config: { rateLimit: { max: deps.roomsPerMinute, timeWindow: '1 minute' } },
       schema: { body: CreateRoomRequest, response: { 201: CreateRoomResponse } },
     },
     async (request, reply) => {

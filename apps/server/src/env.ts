@@ -20,6 +20,8 @@ const Env = z.object({
    * `X-Forwarded-For`; otherwise every user shares the proxy's rate-limit bucket.
    */
   TRUST_PROXY: z.stringbool().default(false),
+  /** `POST /rooms` per client address per minute. Raised only for the e2e suite. */
+  ROOMS_PER_MINUTE: z.coerce.number().int().positive().default(10),
   /** Signs room tokens (ADR 0005). */
   ROOM_TOKEN_SECRET: TokenSecret,
   /** The secret before the last rotation; tokens it signed stay valid until they expire. */
