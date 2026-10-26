@@ -6,6 +6,11 @@ const bytea = customType<{ data: Uint8Array }>({ dataType: () => 'bytea' });
 export const rooms = pgTable('rooms', {
   id: text('id').primaryKey(), // 22-char base62 RoomId
   mapId: text('map_id'),
+  /**
+   * Content version the room was created with (`y11s3.1`). The room keeps loading this version
+   * after newer ones ship. Null for rooms created before 0.5.
+   */
+  contentVersion: text('content_version'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   lastActiveAt: timestamp('last_active_at', { withTimezone: true }).notNull().defaultNow(),
   /** Bumps when the doc is replaced (clear, and snapshot restore in 0.9); see `welcome.roomEpoch`. */
