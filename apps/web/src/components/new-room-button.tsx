@@ -12,6 +12,10 @@ function errorMessage(error: unknown): string {
   if (error instanceof ApiClientError && error.code === 'network') {
     return 'Could not reach the server, try again';
   }
+  if (error instanceof ApiClientError && error.code === 'bad_request') {
+    // The CDN lists a map the server doesn't have yet: content was released before the server.
+    return "That map isn't available yet. Pick another, or try again later.";
+  }
   return 'Could not create a room, try again';
 }
 

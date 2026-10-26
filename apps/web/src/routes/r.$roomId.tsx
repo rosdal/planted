@@ -48,7 +48,13 @@ export const Route = createFileRoute('/r/$roomId')({
       // lets the floor art start loading before the socket has synced.
       const content =
         room.mapId && room.contentVersion
-          ? await loadMap(room.contentVersion, room.mapId)
+          ? await loadMap(room.contentVersion, room.mapId).catch((cause: unknown) => {
+              console.error('room: map content failed to load', cause);
+              throw new Error(
+                `Couldn't load this board's map (content ${room.contentVersion}). Try again in a moment.`,
+                { cause },
+              );
+            })
           : LEGACY_MAP;
       return { status: 'ok', roomId, room, role, token: { token, expiresAt }, content };
     } catch (error) {

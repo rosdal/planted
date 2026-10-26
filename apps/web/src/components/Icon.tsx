@@ -2,23 +2,14 @@ import { use, useEffect, useMemo } from 'react';
 import { loadSprite } from '../content/loader';
 import { spriteElement } from '../content/sprite';
 
-const promises = new Map<string, Promise<string>>();
-function spritePromise(version: string): Promise<string> {
-  // `use()` needs the same promise across renders.
-  let p = promises.get(version);
-  if (!p) {
-    p = loadSprite(version);
-    promises.set(version, p);
-  }
-  return p;
-}
-
 /**
  * Puts a content version's icon sprite into the document for every `<Icon>` on the page, and
  * returns the icon ids it holds. Suspends until the sprite has loaded. Mount it once per page.
  */
 export function useIconSprite(version: string): string[] {
-  const text = use(spritePromise(version));
+  // loadSprite hands back the same promise for a version while it is pending or loaded (which
+  // `use()` needs) and forgets a failed one, so a remount retries.
+  const text = use(loadSprite(version));
   const sprite = useMemo(() => spriteElement(text), [text]);
   useEffect(() => {
     document.body.appendChild(sprite.element);

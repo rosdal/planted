@@ -77,6 +77,7 @@ export function calloutAt(map: MapData, floorId: string, p: Point): string | nul
 }
 
 type Label = { container: Container; pill: Graphics; text: BitmapText };
+type Callout = { label: Label; at: Point; roomWidth: number };
 
 function makeLabel(text: string): Label {
   const container = new Container();
@@ -109,7 +110,9 @@ export class MapOverlay {
   readonly screen = new Container({ label: 'overlayScreen' });
   readonly #map: MapData;
   readonly #floors = new Map<string, Graphics>();
-  #callouts: { label: Label; at: Point; roomWidth: number }[] = [];
+  /** Callout labels per floor, built the first time the floor is shown. */
+  readonly #calloutsByFloor = new Map<string, Callout[]>();
+  #callouts: Callout[] = [];
   #visible = true;
 
   constructor(map: MapData) {
@@ -134,15 +137,26 @@ export class MapOverlay {
       this.world.addChild(g);
     }
     for (const [id, graphics] of this.#floors) graphics.visible = id === floorId;
-    for (const { label } of this.#callouts) label.container.destroy({ children: true });
-    this.#callouts = this.#map.rooms
-      .filter((r) => r.floorId === floorId)
-      .map((room) => {
-        const label = makeLabel(room.callout);
-        this.screen.addChild(label.container);
-        const xs = room.polygon.map((p) => p[0]);
-        return { label, at: centroid(room.polygon), roomWidth: Math.max(...xs) - Math.min(...xs) };
-      });
+    for (const { label } of this.#callouts) label.container.visible = false;
+    let callouts = this.#calloutsByFloor.get(floorId);
+    if (!callouts) {
+      callouts = this.#map.rooms
+        .filter((r) => r.floorId === floorId)
+        .map((room) => {
+          const label = makeLabel(room.callout);
+          label.container.visible = false;
+          this.screen.addChild(label.container);
+          const xs = room.polygon.map((p) => p[0]);
+          return {
+            label,
+            at: centroid(room.polygon),
+            roomWidth: Math.max(...xs) - Math.min(...xs),
+          };
+        });
+      this.#calloutsByFloor.set(floorId, callouts);
+    }
+    // `render` decides which of this floor's labels fit on screen.
+    this.#callouts = callouts;
   }
 
   /** Once a frame while visible: place callouts for this camera. */

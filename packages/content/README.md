@@ -83,6 +83,8 @@ To release, bump `build` (or `season`) in `content.json`, merge, then:
 git tag content-vy11s3.2 && git push --tags
 ```
 
+**Release content before deploying a server that bundles it.** The server pins new rooms to the version in its own `content.json` and only accepts the maps listed there. If the server ships first, new rooms pin a version the CDN doesn't have yet and won't open. If the CDN ships first, the picker can offer a map the server refuses until it is deployed. So: merge, tag and wait for `content-release` to finish, then deploy the server.
+
 The `content-release` workflow checks, builds, and uploads to the `planted-content` R2 bucket: hashed files and the manifest with `Cache-Control: public, max-age=31536000, immutable`, then `latest.json` with `max-age=60`, last. Old versions are never deleted.
 
 **One-time bucket setup:** create the `planted-content` bucket, attach the custom domain `content.<your domain>`, create an R2 API token with Object Read & Write on the bucket, and add `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY` as repository secrets. Set CORS once with an admin token: `pnpm content:release --cors https://<web origin>` (it also needs a built `dist/`), or in the dashboard. Set the repository variable `CONTENT_URL` to the public domain so CI checks wall ids against the live release.
