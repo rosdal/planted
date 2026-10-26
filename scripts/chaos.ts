@@ -21,6 +21,7 @@ import { createDb, roomDocs } from '@planted/db';
 import { CreateRoomResponse } from '@planted/schema';
 import { eq } from 'drizzle-orm';
 import * as Y from 'yjs';
+import { createRoomInit } from './rooms';
 
 const envFile = new URL('../.env', import.meta.url);
 if (existsSync(envFile)) process.loadEnvFile(envFile);
@@ -174,7 +175,7 @@ execSync('pnpm --filter @planted/server build', { stdio: 'inherit' });
 await setUpProxy();
 await startServer();
 
-const created = await fetch(`${serverUrl}/rooms`, { method: 'POST' });
+const created = await fetch(`${serverUrl}/rooms`, createRoomInit());
 if (!created.ok) throw new Error(`POST /rooms answered ${created.status}`);
 const room = CreateRoomResponse.parse(await created.json());
 log(`room ${room.roomId}, ${args.bots} bots for ${args.minutes} min through ${proxyUrl}`);

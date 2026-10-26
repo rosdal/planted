@@ -29,9 +29,12 @@ import { existsSync } from 'node:fs';
 import { availableParallelism } from 'node:os';
 import { parseArgs } from 'node:util';
 import { Worker } from 'node:worker_threads';
-import { createDb, roomLinks, rooms } from '@planted/db';
+import { initialDocState } from '@planted/client';
+import { CONTENT_VERSION } from '@planted/content';
+import { createDb, roomDocs, roomLinks, rooms } from '@planted/db';
 import { CreateRoomResponse, RoomId } from '@planted/schema';
 import type { BotRoom, FromWorker, ToWorker, WorkerConfig, WorkerSample } from './bot-worker';
+import { createRoomInit, DEFAULT_MAP_ID } from './rooms';
 
 const envFile = new URL('../.env', import.meta.url);
 if (existsSync(envFile)) process.loadEnvFile(envFile);
@@ -99,7 +102,7 @@ async function createRooms(count: number): Promise<NewRoom[]> {
   if (count === 1 || !url) {
     return Promise.all(
       Array.from({ length: count }, async () => {
-        const res = await fetch(`${apiUrl}/rooms`, { method: 'POST' });
+        const res = await fetch(`${apiUrl}/rooms`, createRoomInit());
         if (!res.ok) throw new Error(`POST /rooms answered ${res.status}: ${await res.text()}`);
         return CreateRoomResponse.parse(await res.json());
       }),
@@ -114,7 +117,21 @@ async function createRooms(count: number): Promise<NewRoom[]> {
     }));
     const hash = (key: string) => createHash('sha256').update(key).digest();
     await db.transaction(async (tx) => {
-      await tx.insert(rooms).values(made.map(({ roomId }) => ({ id: roomId })));
+      const createdAt = new Date();
+      await tx.insert(rooms).values(
+        made.map(({ roomId }) => ({
+          id: roomId,
+          mapId: DEFAULT_MAP_ID,
+          contentVersion: CONTENT_VERSION,
+          createdAt,
+        })),
+      );
+      const ydoc = initialDocState({
+        mapId: DEFAULT_MAP_ID,
+        contentVersion: CONTENT_VERSION,
+        createdAt: createdAt.toISOString(),
+      });
+      await tx.insert(roomDocs).values(made.map(({ roomId }) => ({ roomId, ydoc, version: 1 })));
       await tx.insert(roomLinks).values(
         made.flatMap(({ roomId, editKey, viewKey }) => [
           { id: randomId(8, 12), roomId, role: 'edit' as const, keyHash: hash(editKey) },

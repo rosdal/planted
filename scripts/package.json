@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@planted/client": "workspace:*",
+    "@planted/content": "workspace:*",
     "@planted/db": "workspace:*",
     "@planted/protocol": "workspace:*",
     "@planted/schema": "workspace:*",

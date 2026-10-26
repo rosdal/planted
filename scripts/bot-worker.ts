@@ -15,9 +15,10 @@ import {
   RoomClient,
   type WebSocketCtor,
 } from '@planted/client';
-import { TEST_FLOOR, USER_COLOURS } from '@planted/schema';
+import { USER_COLOURS } from '@planted/schema';
 import WebSocket from 'ws';
 import * as Y from 'yjs';
+import { floorFor } from './rooms';
 
 /** A room and the link key its bots trade for tokens. */
 export type BotRoom = { roomId: string; key: string };
@@ -286,7 +287,7 @@ function startDrawing(bot: Bot, colour: string): void {
       }
       commitStroke(doc, {
         id: stroke.id,
-        floor: TEST_FLOOR,
+        floor: floorFor(doc),
         colour,
         width: STROKE_WIDTH,
         points: stroke.points,
