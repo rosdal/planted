@@ -5,5 +5,13 @@ interface Window {
     docHash: () => string;
     authors: () => string[];
     fps: () => number;
+    floor: () => string;
+    floors: () => readonly string[];
+    setFloor: (floorId: string) => void;
+    overlay: () => boolean;
+    visibleStrokes: () => number;
+    visibleCallouts: () => string[];
+    hoverCallout: () => string | null;
+    iconCount: () => number;
   };
 }

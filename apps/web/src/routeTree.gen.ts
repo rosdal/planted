@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DevIconsRouteImport } from './routes/dev.icons'
 import { Route as RRoomIdRouteImport } from './routes/r.$roomId'
 import { Route as RRoomIdIndexRouteImport } from './routes/r.$roomId.index'
 import { Route as RRoomIdDebugRouteImport } from './routes/r.$roomId.debug'
@@ -17,6 +18,11 @@ import { Route as RRoomIdDebugRouteImport } from './routes/r.$roomId.debug'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevIconsRoute = DevIconsRouteImport.update({
+  id: '/dev/icons',
+  path: '/dev/icons',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RRoomIdRoute = RRoomIdRouteImport.update({
@@ -37,32 +43,43 @@ const RRoomIdDebugRoute = RRoomIdDebugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dev/icons': typeof DevIconsRoute
   '/r/$roomId': typeof RRoomIdRouteWithChildren
   '/r/$roomId/debug': typeof RRoomIdDebugRoute
   '/r/$roomId/': typeof RRoomIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dev/icons': typeof DevIconsRoute
   '/r/$roomId/debug': typeof RRoomIdDebugRoute
   '/r/$roomId': typeof RRoomIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dev/icons': typeof DevIconsRoute
   '/r/$roomId': typeof RRoomIdRouteWithChildren
   '/r/$roomId/debug': typeof RRoomIdDebugRoute
   '/r/$roomId/': typeof RRoomIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/r/$roomId' | '/r/$roomId/debug' | '/r/$roomId/'
+  fullPaths:
+    '/' | '/dev/icons' | '/r/$roomId' | '/r/$roomId/debug' | '/r/$roomId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/r/$roomId/debug' | '/r/$roomId'
-  id: '__root__' | '/' | '/r/$roomId' | '/r/$roomId/debug' | '/r/$roomId/'
+  to: '/' | '/dev/icons' | '/r/$roomId/debug' | '/r/$roomId'
+  id:
+    | '__root__'
+    | '/'
+    | '/dev/icons'
+    | '/r/$roomId'
+    | '/r/$roomId/debug'
+    | '/r/$roomId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DevIconsRoute: typeof DevIconsRoute
   RRoomIdRoute: typeof RRoomIdRouteWithChildren
 }
 
@@ -73,6 +90,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/icons': {
+      id: '/dev/icons'
+      path: '/dev/icons'
+      fullPath: '/dev/icons'
+      preLoaderRoute: typeof DevIconsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/r/$roomId': {
@@ -114,6 +138,7 @@ const RRoomIdRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DevIconsRoute: DevIconsRoute,
   RRoomIdRoute: RRoomIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport

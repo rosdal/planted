@@ -26,6 +26,7 @@ import {
 import { PROTOCOL_VERSION, type WelcomeMessage } from '@planted/schema';
 import WebSocket from 'ws';
 import * as Y from 'yjs';
+import { DEFAULT_FLOOR } from './rooms';
 
 export type Closed = { code: number; reason: string };
 
@@ -162,7 +163,7 @@ export class EvilClient {
 export function strokeFields(overrides: Record<string, unknown> = {}): Record<string, unknown> {
   return {
     kind: 'stroke',
-    floor: 'test-1',
+    floor: DEFAULT_FLOOR,
     phase: null,
     colour: '#57ab5a',
     width: 0.002,
@@ -239,7 +240,8 @@ async function main(): Promise<void> {
     case 'flood': {
       await evil.join(await token());
       const timer = setInterval(() => {
-        for (let i = 0; i < 50; i++) evil.update((doc) => doc.getMap('meta').set('n', i));
+        // A dev server's debug list: `meta` is server-owned and would close on the first frame.
+        for (let i = 0; i < 50; i++) evil.update((doc) => doc.getArray('debug-items').push([i]));
       }, 50);
       void evil.closed.then(() => clearInterval(timer));
       break;

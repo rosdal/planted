@@ -36,6 +36,10 @@ function RootLayout() {
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-16 sm:py-24">
         <Outlet />
       </main>
+      <footer className="mx-auto w-full max-w-3xl px-4 pb-6 text-xs text-muted">
+        Planted is a fan project and is not affiliated with or endorsed by Ubisoft. Map, operator
+        and gadget names are used only as labels.
+      </footer>
     </div>
   );
 }

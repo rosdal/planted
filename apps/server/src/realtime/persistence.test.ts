@@ -1,4 +1,4 @@
-import { docHash, objectsOf } from '@planted/client';
+import { docHash, objectsOf, readMeta } from '@planted/client';
 import { rooms } from '@planted/db';
 import { CloseCode } from '@planted/protocol';
 import type { RoomId } from '@planted/schema';
@@ -13,6 +13,8 @@ import {
   createRoom,
   issueToken,
   listen,
+  TEST_MAP_FLOOR,
+  TEST_MAP_ID,
   type TestClient,
   type TestRoom,
   tokenSource,
@@ -150,7 +152,7 @@ describe('persistence through Postgres', () => {
         const map = new Y.Map<unknown>();
         const fields = {
           kind: 'stroke',
-          floor: 'test-1',
+          floor: TEST_MAP_FLOOR,
           phase: null,
           colour: '#57ab5a',
           width: 0.002,
@@ -354,6 +356,17 @@ describe('epochs', () => {
     const server = t.app.realtime.get(room.roomId as RoomId);
     expect(server?.doc.getArray('debug-items').length).toBe(0);
     expect(server?.epoch).toBe(2);
+  });
+
+  it('/clear keeps the room meta, so the cleared board is still on its map', async () => {
+    const room = await createRoom(t.app);
+    const a = client(room);
+    await waitForStatus(a, 'synced');
+    const before = readMeta(a.doc);
+    expect(before?.mapId).toBe(TEST_MAP_ID);
+    expect((await clear(room)).statusCode).toBe(200);
+    await until(() => a.epoch === 2 && a.status === 'synced', { message: 'A on epoch 2' });
+    expect(readMeta(a.doc)).toEqual(before);
   });
 
   it('keeps the doc when the clear cannot be written, and clients get it back', async () => {

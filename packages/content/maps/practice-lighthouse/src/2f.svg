@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Lighthouse (practice), floor 2F. A fictional practice layout for testing the Planted content pipeline; not based on any real map. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4096 4096" width="4096" height="4096">
+  <g id="art">
+    <rect x="1024" y="1024" width="2048" height="2048" fill="#ffffff" fill-opacity="0.05"/>
+    <rect x="1024" y="1024" width="1024" height="1024" fill="#ffffff" fill-opacity="0.03"/>
+    <rect x="2048" y="1024" width="1024" height="1024" fill="#ffffff" fill-opacity="0.03"/>
+    <path d="M1024 1024L1408 1024M1664 1024L2048 1024M2048 1024L2432 1024M2688 1024L3072 1024M1024 3072L1920 3072M2176 3072L3072 3072M1024 1024L1024 1408M1024 1664L1024 2048M1024 2048L1024 3072M3072 1024L3072 1408M3072 1664L3072 2048M3072 2048L3072 3072" fill="none" stroke="#ffffff" stroke-width="40" stroke-linecap="square"/>
+    <path d="M1024 2048L1440 2048M1632 2048L2048 2048M2048 2048L2464 2048M2656 2048L3072 2048M2048 1024L2048 1440M2048 1632L2048 2048" fill="none" stroke="#ffffff" stroke-width="16" stroke-linecap="square"/>
+    <path d="M1408 1014L1664 1014M1408 1034L1664 1034M2432 1014L2688 1014M2432 1034L2688 1034M1920 3062L2176 3062M1920 3082L2176 3082M1014 1408L1014 1664M1034 1408L1034 1664M3062 1408L3062 1664M3082 1408L3082 1664" fill="none" stroke="#ffffff" stroke-width="6"/>
+    <rect x="1152" y="2560" width="384" height="384" fill="none" stroke="#ffffff" stroke-width="8"/>
+    <path d="M1152 2608L1536 2608M1152 2656L1536 2656M1152 2704L1536 2704M1152 2752L1536 2752M1152 2800L1536 2800M1152 2848L1536 2848M1152 2896L1536 2896" fill="none" stroke="#ffffff" stroke-width="4" stroke-opacity="0.6"/>
+    <rect x="1280" y="1280" width="384" height="256" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-width="6" stroke-opacity="0.5"/>
+    <rect x="2304" y="1280" width="512" height="128" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-width="6" stroke-opacity="0.5"/>
+  </g>
+  <g id="rooms" fill="#4c9aff" fill-opacity="0.15" stroke="#4c9aff" stroke-width="4">
+    <path id="room:keeper" data-callout="Keeper&apos;s Room" d="M1024 1024H2048V2048H1024Z"/>
+    <path id="room:radio" data-callout="Radio" d="M2048 1024H3072V2048H2048Z"/>
+    <path id="room:landing" data-callout="Landing" d="M1024 2048H3072V3072H1024Z"/>
+  </g>
+  <g id="walls" stroke-width="12">
+    <line id="wall:2f:keeper-north-1" data-kind="outer" x1="1024" y1="1024" x2="1408" y2="1024" stroke="#d7dae0"/>
+    <line id="wall:2f:keeper-north-2" data-kind="outer" x1="1664" y1="1024" x2="2048" y2="1024" stroke="#d7dae0"/>
+    <line id="wall:2f:radio-north-1" data-kind="outer" x1="2048" y1="1024" x2="2432" y2="1024" stroke="#d7dae0"/>
+    <line id="wall:2f:radio-north-2" data-kind="outer" x1="2688" y1="1024" x2="3072" y2="1024" stroke="#d7dae0"/>
+    <line id="wall:2f:keeper-landing-1" data-kind="reinforceable" x1="1024" y1="2048" x2="1440" y2="2048" stroke="#e06c75"/>
+    <line id="wall:2f:keeper-landing-2" data-kind="reinforceable" x1="1632" y1="2048" x2="2048" y2="2048" stroke="#e06c75"/>
+    <line id="wall:2f:landing-radio-1" data-kind="reinforceable" x1="2048" y1="2048" x2="2464" y2="2048" stroke="#e06c75"/>
+    <line id="wall:2f:landing-radio-2" data-kind="reinforceable" x1="2656" y1="2048" x2="3072" y2="2048" stroke="#e06c75"/>
+    <line id="wall:2f:landing-south-1" data-kind="outer" x1="1024" y1="3072" x2="1920" y2="3072" stroke="#d7dae0"/>
+    <line id="wall:2f:landing-south-2" data-kind="outer" x1="2176" y1="3072" x2="3072" y2="3072" stroke="#d7dae0"/>
+    <line id="wall:2f:keeper-west-1" data-kind="outer" x1="1024" y1="1024" x2="1024" y2="1408" stroke="#d7dae0"/>
+    <line id="wall:2f:keeper-west-2" data-kind="outer" x1="1024" y1="1664" x2="1024" y2="2048" stroke="#d7dae0"/>
+    <line id="wall:2f:landing-west" data-kind="outer" x1="1024" y1="2048" x2="1024" y2="3072" stroke="#d7dae0"/>
+    <line id="wall:2f:keeper-radio-1" data-kind="reinforceable" x1="2048" y1="1024" x2="2048" y2="1440" stroke="#e06c75"/>
+    <line id="wall:2f:keeper-radio-2" data-kind="reinforceable" x1="2048" y1="1632" x2="2048" y2="2048" stroke="#e06c75"/>
+    <line id="wall:2f:radio-east-1" data-kind="outer" x1="3072" y1="1024" x2="3072" y2="1408" stroke="#d7dae0"/>
+    <line id="wall:2f:radio-east-2" data-kind="outer" x1="3072" y1="1664" x2="3072" y2="2048" stroke="#d7dae0"/>
+    <line id="wall:2f:landing-east" data-kind="outer" x1="3072" y1="2048" x2="3072" y2="3072" stroke="#d7dae0"/>
+  </g>
+  <g id="hatches" fill="#d19a66">
+  </g>
+  <g id="openings" stroke-width="16">
+    <line id="window:2f:keeper-north" x1="1408" y1="1024" x2="1664" y2="1024" stroke="#61afef"/>
+    <line id="window:2f:radio-north" x1="2432" y1="1024" x2="2688" y2="1024" stroke="#61afef"/>
+    <line id="door:2f:keeper-landing" x1="1440" y1="2048" x2="1632" y2="2048" stroke="#98c379"/>
+    <line id="door:2f:landing-radio" x1="2464" y1="2048" x2="2656" y2="2048" stroke="#98c379"/>
+    <line id="window:2f:landing-south" x1="1920" y1="3072" x2="2176" y2="3072" stroke="#61afef"/>
+    <line id="window:2f:keeper-west" x1="1024" y1="1408" x2="1024" y2="1664" stroke="#61afef"/>
+    <line id="door:2f:keeper-radio" x1="2048" y1="1440" x2="2048" y2="1632" stroke="#98c379"/>
+    <line id="window:2f:radio-east" x1="3072" y1="1408" x2="3072" y2="1664" stroke="#61afef"/>
+  </g>
+  <g id="sites" fill="#ff5c8a">
+    <circle id="obj:keeper-radio:A" data-room="keeper" cx="1536" cy="1536" r="56"/>
+    <circle id="obj:keeper-radio:B" data-room="radio" cx="2560" cy="1536" r="56"/>
+  </g>
+  <g id="spawns">
+  </g>
+</svg>

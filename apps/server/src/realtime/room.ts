@@ -1,3 +1,4 @@
+import { readMeta } from '@planted/client';
 import {
   AwarenessType,
   awarenessFrame,
@@ -9,12 +10,13 @@ import {
   updateFrame,
   YjsType,
 } from '@planted/protocol';
-import type { RoomId, RoomRole } from '@planted/schema';
+import { META, type RoomId, type RoomMeta, type RoomRole } from '@planted/schema';
 import type { FastifyBaseLogger } from 'fastify';
 import { Awareness, applyAwarenessUpdate, removeAwarenessStates } from 'y-protocols/awareness';
 import * as Y from 'yjs';
 import type { Connection, Inbound } from './connection';
 import { MAX_DOC_BYTES, MAX_OBJECTS, MAX_SOCKETS_PER_ROOM, ROOM_LIMITS } from './limits';
+import { allowedFloors } from './meta';
 import { DocSaver, type RoomStore } from './persistence';
 import { allowedRoots, checkObject, ObjectTracker } from './validation';
 
@@ -89,6 +91,9 @@ export class Room {
   /** One socket's update while it is applied and checked. */
   #held: Held | null = null;
   readonly #objects: Y.Map<unknown>;
+  /** As loaded; the server owns it, so any client change is put back to this. */
+  readonly #meta: RoomMeta | null;
+  readonly #floors: ReadonlySet<string>;
   readonly #tracker: ObjectTracker;
   readonly #roots: ReadonlySet<string>;
   readonly #onIdle: (room: Room) => void;
@@ -113,6 +118,11 @@ export class Room {
     this.awareness.setLocalState(null);
     this.#objects = this.doc.getMap('objects');
     if (state) Y.applyUpdate(this.doc, state, SERVER_ORIGIN);
+    this.#meta = readMeta(this.doc);
+    this.#floors = allowedFloors(this.#meta);
+    if (this.#meta && this.#floors.size === 0) {
+      this.log.warn({ mapId: this.#meta.mapId }, 'room.unknown_map: drawing is refused');
+    }
     this.#approxBytes = state?.byteLength ?? 0;
     this.#full = this.#approxBytes > MAX_DOC_BYTES;
     this.#tracker = new ObjectTracker(this.#objects, (origin) => origin === this.#held?.origin);
@@ -304,11 +314,14 @@ export class Room {
     this.#approxBytes += update.byteLength;
 
     const unknownRoots = [...held.roots].filter((name) => !this.#roots.has(name));
+    // Re-sent meta items that leave it as loaded (a peer resyncing after the server lost an
+    // edit and its revert) change nothing; only an actual change is reverted and closed.
+    const touchedMeta = held.roots.has(META) && !this.#metaAsLoaded();
     const invalid = [...touched].flatMap((id) => {
       const value = this.#objects.get(id);
       // Gone again by the end of the transaction (or a delete): nothing to check.
       if (value === undefined) return [];
-      return checkObject(id, value) ?? [];
+      return checkObject(id, value, this.#floors) ?? [];
     });
     const remove = new Set(invalid.map((i) => i.id));
     let warning: 'object_limit' | 'doc_limit' | null = null;
@@ -320,13 +333,14 @@ export class Room {
     // cleanly, so the sender is closed: at most one frame per connection gets through.
     const growsFullDoc = this.#full && held.inserted && fresh.length === 0;
 
-    if (remove.size > 0 || unknownRoots.length > 0) {
+    if (remove.size > 0 || unknownRoots.length > 0 || touchedMeta) {
       this.doc.transact((transaction) => {
         for (const id of remove) this.#objects.delete(id);
         for (const name of unknownRoots) {
           const root = this.doc.share.get(name);
           if (root) clearRoot(root, transaction);
         }
+        if (touchedMeta) this.#restoreMeta();
       }, SERVER_ORIGIN);
     }
     this.#held = null;
@@ -342,6 +356,11 @@ export class Room {
     if (decodeError) {
       conn.log.warn({ roomId: this.id, err: decodeError, ids: [...remove] }, 'bad update');
       conn.fail(CloseCode.BadFrame, 'bad_update', 'Update does not decode');
+      return;
+    }
+    if (touchedMeta) {
+      conn.log.warn({ roomId: this.id }, 'client edited meta');
+      conn.fail(CloseCode.BadFrame, 'meta_readonly', 'Room meta is set by the server');
       return;
     }
     if (invalid.length > 0 || unknownRoots.length > 0) {
@@ -373,6 +392,28 @@ export class Room {
       });
     }
     if (this.#approxBytes > MAX_DOC_BYTES) this.#setFull(true);
+  }
+
+  /** True when `meta` holds exactly the keys and values it was loaded with. */
+  #metaAsLoaded(): boolean {
+    const now = this.doc.getMap(META).toJSON();
+    const want: Record<string, unknown> = { ...this.#meta };
+    const keys = Object.keys(now);
+    return keys.length === Object.keys(want).length && keys.every((k) => now[k] === want[k]);
+  }
+
+  /**
+   * Puts `meta` back the way it was loaded. These sets come causally after the client's change,
+   * so they win on every replica.
+   */
+  #restoreMeta(): void {
+    const map = this.doc.getMap(META);
+    const want: Record<string, unknown> = { ...this.#meta };
+    for (const key of [...map.keys()]) if (!(key in want)) map.delete(key);
+    for (const [key, value] of Object.entries(want)) {
+      // Anything but the loaded primitive (a nested type, another value) is replaced.
+      if (map.get(key) !== value) map.set(key, value);
+    }
   }
 
   #applyAwareness(conn: Connection, payload: Uint8Array): void {

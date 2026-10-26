@@ -5,14 +5,24 @@ import {
   objectsOf,
   type RoomClient,
 } from '@planted/client';
-import { Application, Container, CullerPlugin, extensions, type Ticker } from 'pixi.js';
+import {
+  Application,
+  Assets,
+  Container,
+  CullerPlugin,
+  extensions,
+  type Spritesheet,
+  type Ticker,
+} from 'pixi.js';
 import * as Y from 'yjs';
+import type { LoadedMap } from '../content/loader';
 import { CameraController } from './camera';
 import { type Point, screenToMap } from './coords';
 import { CursorLayer, installTagFont } from './render/cursors';
+import { FloorLayer } from './render/floor';
+import { FloorStrokes } from './render/floor-strokes';
 import { LocalLiveStroke, RemoteLiveStrokes } from './render/live';
-import { MapLayer } from './render/map';
-import { StrokeLayer } from './render/stroke';
+import { calloutAt, HoverCallout, MapOverlay } from './render/overlay';
 import { SceneStore } from './scene-store';
 import { PenTool } from './tools/pen';
 import { bindUndoKeys } from './undo';
@@ -28,6 +38,10 @@ const FRAME_WINDOW_MS = 5000;
 const WARMUP_MS = 1000;
 
 export type BoardIdentity = () => { name: string; colour: string };
+/** What the floor buttons and overlay toggle show; sent to `onView` listeners on every change. */
+export type BoardView = { floor: string; overlay: boolean };
+/** Keys 1 to 5 switch floor, bottom to top. */
+const FLOOR_KEYS = ['1', '2', '3', '4', '5'];
 /** True for viewers: no pen, no undo. Read on every input, so a role change applies at once. */
 export type BoardReadOnly = () => boolean;
 
@@ -54,6 +68,7 @@ let fontReady: Promise<void> | null = null;
 class Presence {
   #cursor: Point | null = null;
   #live: LiveStroke | null = null;
+  #floor: string | null = null;
   #dirty = false;
   #lastSentAt = Number.NEGATIVE_INFINITY;
   readonly #client: RoomClient;
@@ -76,6 +91,13 @@ class Presence {
     if (live === null) this.send(performance.now());
   }
 
+  /** Peers show this user's cursor and live stroke only while they look at the same floor. */
+  setFloor(floor: string): void {
+    if (floor === this.#floor) return;
+    this.#floor = floor;
+    this.#dirty = true;
+  }
+
   tick(now: number): void {
     if (this.#dirty && now - this.#lastSentAt >= PRESENCE_MS) this.send(now);
   }
@@ -89,6 +111,7 @@ class Presence {
       ...awareness.getLocalState(),
       cursor: this.#cursor,
       live: this.#live,
+      floor: this.#floor,
     });
   }
 }
@@ -148,6 +171,18 @@ export class Board {
   readonly #host: HTMLElement;
   readonly #identity: BoardIdentity;
   readonly #readOnly: BoardReadOnly;
+  readonly #content: LoadedMap;
+  /** Floor ids bottom to top. */
+  readonly floorIds: readonly string[];
+  readonly #viewListeners = new Set<(view: BoardView) => void>();
+  #view: BoardView;
+  #floors: FloorLayer | null = null;
+  #strokes: FloorStrokes | null = null;
+  #overlay: MapOverlay | null = null;
+  #hover: HoverCallout | null = null;
+  #pen: PenTool | null = null;
+  /** The content version's icons as Pixi textures; stamps (0.6) draw from it. */
+  #icons: Spritesheet | null = null;
   readonly #app = new Application();
   readonly #frames = new FrameStats();
   readonly #presence: Presence;
@@ -167,7 +202,15 @@ export class Board {
     client: RoomClient,
     identity: BoardIdentity,
     readOnly: BoardReadOnly,
+    content: LoadedMap,
   ) {
+    this.#content = content;
+    const floors = [...content.map.floors].sort((a, b) => a.order - b.order);
+    this.floorIds = floors.map((f) => f.id);
+    // Start on the ground floor (order 1) when there is one, so a basement isn't the default.
+    const start = floors.find((f) => f.order >= 1) ?? floors[0];
+    if (!start) throw new Error(`map ${content.map.id} has no floors`);
+    this.#view = { floor: start.id, overlay: true };
     this.#host = host;
     this.#client = client;
     this.#identity = identity;
@@ -210,10 +253,13 @@ export class Board {
     this.#scene?.destroy();
     this.#remoteLive?.destroy();
     this.#cursors?.destroy();
+    this.#overlay?.destroy();
+    this.#hover?.destroy();
     this.#camera?.destroy();
+    this.#viewListeners.clear();
     const { awareness } = this.#client;
     const local = awareness.getLocalState();
-    if (local) awareness.setLocalState({ ...local, cursor: null, live: null });
+    if (local) awareness.setLocalState({ ...local, cursor: null, live: null, floor: null });
     // Map art is cached by Assets and shared with the next mount; don't destroy textures.
     if (this.#initialised)
       this.#app.destroy({ removeView: true }, { children: true, texture: false });
@@ -249,6 +295,82 @@ export class Board {
       framesOutPerSec: rate.outPerSec,
       heapMb: memory ? memory.usedJSHeapSize / 1024 / 1024 : null,
     };
+  }
+
+  get view(): BoardView {
+    return this.#view;
+  }
+
+  /** Called with the current view now and after every change; returns an unsubscribe. */
+  onView(listener: (view: BoardView) => void): () => void {
+    this.#viewListeners.add(listener);
+    listener(this.#view);
+    return () => this.#viewListeners.delete(listener);
+  }
+
+  /** Shows another floor: its art (loaded if needed), strokes, overlay and peers on it. */
+  setFloor(floorId: string): void {
+    if (!this.floorIds.includes(floorId) || floorId === this.#view.floor) return;
+    // A stroke in progress belongs to the floor it started on.
+    this.#pen?.commit();
+    this.#applyFloor(floorId);
+    this.#setView({ ...this.#view, floor: floorId });
+  }
+
+  setOverlay(on: boolean): void {
+    if (on === this.#view.overlay) return;
+    this.#overlay?.setVisible(on);
+    this.#setView({ ...this.#view, overlay: on });
+  }
+
+  /** Strokes actually drawn: those in a visible floor layer. */
+  get visibleStrokeCount(): number {
+    return this.#strokes?.visibleCount ?? 0;
+  }
+
+  /** Room callouts the overlay is drawing right now. */
+  get visibleCallouts(): string[] {
+    return this.#overlay?.visibleCallouts ?? [];
+  }
+
+  /** Icon textures loaded from the content atlas; 0 until it has loaded. */
+  get iconCount(): number {
+    return this.#icons ? Object.keys(this.#icons.textures).length : 0;
+  }
+
+  /** The hover callout's text, or null when it is hidden. */
+  get hoverCallout(): string | null {
+    return this.#hover?.text ?? null;
+  }
+
+  async #loadIcons(): Promise<void> {
+    const atlas = this.#content.iconAtlas;
+    if (!atlas) return;
+    // High-density screens get the 128 px sheet; its frames are in 64 px units (meta.scale 2).
+    const url = (window.devicePixelRatio || 1) > 1 ? atlas.x2 : atlas.x1;
+    try {
+      const sheet = await Assets.load<Spritesheet>(url);
+      if (!this.#destroyed) this.#icons = sheet;
+    } catch (err) {
+      console.error('board: icon atlas failed to load', err);
+    }
+  }
+
+  #setView(view: BoardView): void {
+    this.#view = view;
+    for (const listener of this.#viewListeners) listener(view);
+  }
+
+  #applyFloor(floorId: string): void {
+    void this.#floors
+      ?.show(floorId)
+      .catch((err: unknown) => console.error(`board: floor ${floorId} failed to load`, err));
+    this.#strokes?.show(floorId);
+    this.#overlay?.setFloor(floorId);
+    this.#remoteLive?.setFloor(floorId);
+    this.#cursors?.setFloor(floorId);
+    this.#hover?.set(null, null);
+    this.#presence.setFloor(floorId);
   }
 
   /** For measurement runs: forget the longest frame so far. */
@@ -289,23 +411,41 @@ export class Board {
     // every vertex under it, and live strokes changing every frame don't make Pixi re-upload
     // the committed strokes' buffers. See StrokeLayer for the per-tile groups.
     const world = new Container({ label: 'world', isRenderGroup: true });
-    const map = new MapLayer();
-    const strokes = new StrokeLayer();
+    const { map: mapData, floorArt } = this.#content;
+    const floors = new FloorLayer(floorArt);
+    const overlay = new MapOverlay(mapData);
+    const strokes = new FloorStrokes(this.#view.floor);
     const liveLayer = new Container({ label: 'liveLayer', isRenderGroup: true });
     const remoteLive = new RemoteLiveStrokes(this.#client.awareness, objects);
     const localLive = new LocalLiveStroke();
     const cursors = new CursorLayer(this.#client.awareness);
+    const hover = new HoverCallout();
     liveLayer.addChild(remoteLive.container, localLive.container);
-    world.addChild(map.container, strokes.container, liveLayer);
-    app.stage.addChild(world, cursors.container);
+    // Walls and hatches under the strokes; callouts and cursors above everything, unscaled.
+    world.addChild(floors.container, overlay.world, strokes.container, liveLayer);
+    app.stage.addChild(world, overlay.screen, hover.container, cursors.container);
     this.#camera = camera;
     this.#remoteLive = remoteLive;
     this.#cursors = cursors;
     this.#localLive = localLive;
+    this.#floors = floors;
+    this.#strokes = strokes;
+    this.#overlay = overlay;
+    this.#hover = hover;
     this.#scene = new SceneStore(objects, strokes);
 
-    void map.loadFloor().catch((err: unknown) => console.error('board: floor failed to load', err));
-    this.#watchTheme(map);
+    const first = this.#view.floor;
+    this.#applyFloor(first);
+    // The other floors load once the first has painted, so they never compete with it.
+    void floors.show(first).then(
+      () =>
+        requestAnimationFrame(() => {
+          for (const id of this.floorIds) if (id !== first) void floors.load(id).catch(() => {});
+          void this.#loadIcons();
+        }),
+      () => {},
+    );
+    this.#watchTheme(floors);
     this.#watchResolution();
 
     const rect = { left: 0, top: 0 };
@@ -325,9 +465,11 @@ export class Board {
       camera,
       live: localLive,
       identity: this.#identity,
+      floor: () => this.#view.floor,
       toScreen,
       setLive: (live) => this.#presence.setLive(live),
     });
+    this.#pen = pen;
     this.#bindInput(canvas, camera, pen, toScreen, measure);
     this.#cleanups.push(bindUndoKeys(this.undo, () => pen.drawing || this.#readOnly()));
 
@@ -344,6 +486,7 @@ export class Board {
       const cam = camera.camera;
       world.position.set(cam.x, cam.y);
       world.scale.set(cam.scale);
+      overlay.render(cam);
       localLive.render();
       remoteLive.render(now);
       cursors.render(now, ticker.deltaMS, cam, viewport);
@@ -370,16 +513,32 @@ export class Board {
     const onMove = (e: PointerEvent) => {
       const screen = toScreen(e.clientX, e.clientY);
       if (!camera.pointerMove(e, screen)) pen.pointerMove(e);
-      presence.setCursor(screenToMap(camera.camera, screen));
+      const point = screenToMap(camera.camera, screen);
+      presence.setCursor(point);
+      const callout = camera.panning ? null : calloutAt(this.#content.map, this.#view.floor, point);
+      this.#hover?.set(callout, screen);
     };
     const onUp = (e: PointerEvent) => {
       if (!camera.pointerUp(e)) pen.pointerUp(e);
     };
     const onLeave = () => {
       if (!pen.drawing && !camera.panning) presence.setCursor(null);
+      this.#hover?.set(null, null);
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && pen.cancel()) e.preventDefault();
+      // Typing in a field (name dialog, search) must not switch floors.
+      const target = e.target instanceof Element ? e.target : null;
+      const editing = target?.closest('input, textarea, select, [contenteditable="true"]');
+      if (editing || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey || e.repeat) return;
+      const floorId = this.floorIds[FLOOR_KEYS.indexOf(e.key)];
+      if (FLOOR_KEYS.includes(e.key) && floorId) {
+        e.preventDefault();
+        this.setFloor(floorId);
+      } else if (e.key === 'l' || e.key === 'L') {
+        e.preventDefault();
+        this.setOverlay(!this.#view.overlay);
+      }
     };
     const onVisibility = () => {
       if (document.visibilityState !== 'hidden') return;
@@ -413,7 +572,7 @@ export class Board {
   }
 
   /** Map ink follows the theme's text colour, live when the OS switches dark ↔ light. */
-  #watchTheme(map: MapLayer): void {
+  #watchTheme(map: FloorLayer): void {
     const apply = () => {
       const ink = getComputedStyle(document.documentElement).getPropertyValue('--fg').trim();
       map.setInk(ink || '#ededed');

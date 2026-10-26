@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Extractor golden fixture: 2 rooms, 3 walls, 1 hatch, and the editor attributes Inkscape adds. -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" viewBox="0 0 4096 4096" width="4096" height="4096">
+  <g id="art" inkscape:groupmode="layer" inkscape:label="art">
+    <rect x="1024" y="1024" width="2048" height="1024" fill="#ffffff" fill-opacity="0.05"/>
+    <path d="M1024 1024H3072V2048H1024Z" fill="none" stroke="#ffffff" stroke-width="40"/>
+  </g>
+  <g id="rooms" inkscape:groupmode="layer">
+    <path id="room:lab" data-callout="Lab" d="M1024 1024H2048V2048H1024Z"/>
+    <polygon id="room:office" data-callout="Office" points="2048,1024 3072,1024 3072,2048 2048,2048"/>
+  </g>
+  <g id="walls" transform="translate(1024 1024)">
+    <line id="wall:1f:lab-office" data-kind="reinforceable" x1="1024" y1="0" x2="1024" y2="1024"/>
+    <line id="wall:1f:lab-north" data-kind="outer" x1="0" y1="0" x2="1024" y2="0"/>
+    <g transform="scale(2)">
+      <path id="wall:1f:office-south" data-kind="soft" d="M512 512L1024 512"/>
+    </g>
+  </g>
+  <g id="hatches"><circle id="hatch:1f:lab" cx="1536" cy="1536" r="48"/></g>
+  <g id="openings"/>
+  <g id="sites"><circle id="obj:lab:A" data-room="lab" cx="1280" cy="1280" r="56"/></g>
+  <g id="spawns"><circle id="spawn:attack:yard" cx="512" cy="512" r="64"/></g>
+</svg>

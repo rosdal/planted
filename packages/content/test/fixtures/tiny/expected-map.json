@@ -1,0 +1,91 @@
+{
+  "contentRev": "y11s3",
+  "floors": [
+    {
+      "art": "art/1f.svg",
+      "id": "1f",
+      "label": "1F",
+      "order": 1
+    }
+  ],
+  "hatches": [
+    {
+      "at": [0.375, 0.375],
+      "floorId": "1f",
+      "id": "hatch:1f:lab"
+    }
+  ],
+  "id": "tiny",
+  "name": "Tiny",
+  "openings": [],
+  "rooms": [
+    {
+      "callout": "Lab",
+      "floorId": "1f",
+      "id": "room:1f:lab",
+      "polygon": [
+        [0.25, 0.25],
+        [0.5, 0.25],
+        [0.5, 0.5],
+        [0.25, 0.5]
+      ]
+    },
+    {
+      "callout": "Office",
+      "floorId": "1f",
+      "id": "room:1f:office",
+      "polygon": [
+        [0.5, 0.25],
+        [0.75, 0.25],
+        [0.75, 0.5],
+        [0.5, 0.5]
+      ]
+    }
+  ],
+  "sites": [
+    {
+      "floorId": "1f",
+      "id": "site:lab",
+      "name": "Lab",
+      "objectives": [
+        {
+          "at": [0.3125, 0.3125],
+          "label": "A",
+          "roomId": "room:1f:lab"
+        }
+      ]
+    }
+  ],
+  "spawns": [
+    {
+      "at": [0.125, 0.125],
+      "floorId": "1f",
+      "id": "spawn:attack:yard",
+      "name": "Yard",
+      "side": "attack"
+    }
+  ],
+  "walls": [
+    {
+      "floorId": "1f",
+      "from": [0.25, 0.25],
+      "id": "wall:1f:lab-north",
+      "kind": "outer",
+      "to": [0.5, 0.25]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5, 0.25],
+      "id": "wall:1f:lab-office",
+      "kind": "reinforceable",
+      "to": [0.5, 0.5]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5, 0.5],
+      "id": "wall:1f:office-south",
+      "kind": "soft",
+      "to": [0.75, 0.5]
+    }
+  ]
+}

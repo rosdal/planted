@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Planted floor template. Copy to maps/{mapId}/src/{floorId}.svg and replace the examples.
+  Layer group ids must stay exactly as they are; see packages/content/README.md.
+  The legend group is not a layer, so the extractor ignores it; delete it or hide it as you like.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" viewBox="0 0 4096 4096" width="4096" height="4096">
+  <rect id="canvas-background" x="0" y="0" width="4096" height="4096" fill="#16181d"/>
+
+  <!-- Display art: white only, opacity for hierarchy. Outer walls 40, inner walls 16, details 4–8. -->
+  <g id="art" inkscape:groupmode="layer" inkscape:label="art">
+    <rect x="1024" y="1024" width="2048" height="1536" fill="#ffffff" fill-opacity="0.05"/>
+    <path d="M1024 1024H3072V2560H1024Z" fill="none" stroke="#ffffff" stroke-width="40" stroke-linecap="square"/>
+    <path d="M2048 1024V1700M2048 1900V2560" fill="none" stroke="#ffffff" stroke-width="16" stroke-linecap="square"/>
+    <rect x="1152" y="2112" width="384" height="320" fill="none" stroke="#ffffff" stroke-width="8"/>
+  </g>
+
+  <!-- One closed shape per room. id room:{slug}, data-callout = the name players use. -->
+  <g id="rooms" inkscape:groupmode="layer" inkscape:label="rooms" fill="#4c9aff" fill-opacity="0.15" stroke="#4c9aff" stroke-width="4">
+    <path id="room:example-west" data-callout="West Room" d="M1024 1024H2048V2560H1024Z"/>
+    <path id="room:example-east" data-callout="East Room" d="M2048 1024H3072V2560H2048Z"/>
+  </g>
+
+  <!-- One line per wall segment that can change state. id wall:{floor}:{slug}, data-kind soft|reinforceable|hard|outer. -->
+  <g id="walls" inkscape:groupmode="layer" inkscape:label="walls" stroke-width="12">
+    <line id="wall:1f:example-west-east-1" data-kind="reinforceable" x1="2048" y1="1024" x2="2048" y2="1700" stroke="#e06c75"/>
+    <line id="wall:1f:example-west-east-2" data-kind="soft" x1="2048" y1="1900" x2="2048" y2="2560" stroke="#e5c07b"/>
+    <line id="wall:1f:example-west-north" data-kind="outer" x1="1024" y1="1024" x2="2048" y2="1024" stroke="#d7dae0"/>
+    <line id="wall:1f:example-east-south" data-kind="hard" x1="2048" y1="2560" x2="3072" y2="2560" stroke="#8a8f98"/>
+  </g>
+
+  <!-- One circle per hatch, centred on it. id hatch:{floor}:{slug}. -->
+  <g id="hatches" inkscape:groupmode="layer" inkscape:label="hatches" fill="#d19a66">
+    <circle id="hatch:1f:example-east" cx="2560" cy="1536" r="48"/>
+  </g>
+
+  <!-- One line per door, window or vault, across the gap. id door|window|vault:{floor}:{slug}. -->
+  <g id="openings" inkscape:groupmode="layer" inkscape:label="openings" stroke-width="16">
+    <line id="door:1f:example-west-east" x1="2048" y1="1700" x2="2048" y2="1900" stroke="#98c379"/>
+  </g>
+
+  <!-- One circle per objective. id obj:{site}:A or B, data-room = the room's slug on this floor. -->
+  <g id="sites" inkscape:groupmode="layer" inkscape:label="sites" fill="#ff5c8a">
+    <circle id="obj:example:A" data-room="example-west" cx="1536" cy="1536" r="56"/>
+    <circle id="obj:example:B" data-room="example-east" cx="2560" cy="2048" r="56"/>
+  </g>
+
+  <!-- One circle per spawn. id spawn:attack|defence:{slug}, optional data-name. -->
+  <g id="spawns" inkscape:groupmode="layer" inkscape:label="spawns">
+    <circle id="spawn:attack:example-yard" data-name="Yard" cx="2048" cy="512" r="64" fill="#f0883e"/>
+  </g>
+
+  <!-- Legend: not a layer, ignored by the extractor. -->
+  <g id="legend" font-family="sans-serif" font-size="56" fill="#d7dae0">
+    <text x="128" y="3200">Planted floor template · 4096 × 4096 · map space = canvas / 4096</text>
+    <rect x="128" y="3280" width="64" height="64" fill="#4c9aff" fill-opacity="0.6"/><text x="224" y="3332">room</text>
+    <rect x="512" y="3280" width="64" height="64" fill="#e5c07b"/><text x="608" y="3332">soft wall</text>
+    <rect x="992" y="3280" width="64" height="64" fill="#e06c75"/><text x="1088" y="3332">reinforceable</text>
+    <rect x="1552" y="3280" width="64" height="64" fill="#8a8f98"/><text x="1648" y="3332">hard</text>
+    <rect x="1904" y="3280" width="64" height="64" fill="#d7dae0"/><text x="2000" y="3332">outer</text>
+    <rect x="128" y="3408" width="64" height="64" fill="#98c379"/><text x="224" y="3460">door</text>
+    <rect x="512" y="3408" width="64" height="64" fill="#61afef"/><text x="608" y="3460">window</text>
+    <rect x="992" y="3408" width="64" height="64" fill="#c678dd"/><text x="1088" y="3460">vault</text>
+    <rect x="1552" y="3408" width="64" height="64" fill="#d19a66"/><text x="1648" y="3460">hatch</text>
+    <rect x="1904" y="3408" width="64" height="64" fill="#ff5c8a"/><text x="2000" y="3460">objective</text>
+    <rect x="2384" y="3408" width="64" height="64" fill="#f0883e"/><text x="2480" y="3460">attack spawn</text>
+    <rect x="2928" y="3408" width="64" height="64" fill="#58a6ff"/><text x="3024" y="3460">defence spawn</text>
+  </g>
+</svg>

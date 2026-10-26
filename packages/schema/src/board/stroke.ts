@@ -9,8 +9,8 @@ export const MAX_STROKE_POINTS = 4096;
  */
 export const StrokeObject = z.object({
   kind: z.literal('stroke'),
-  /** 'test-1' until real maps arrive in 0.5. */
-  floor: z.string(),
+  /** A floor id of the room's map; the server rejects any other. */
+  floor: z.string().min(1).max(64),
   /** null until phases arrive in 0.6. */
   phase: z.string().nullable(),
   colour: z.string().regex(/^#[0-9a-f]{6}$/i),
@@ -28,5 +28,5 @@ export const StrokeObject = z.object({
 });
 export type StrokeObject = z.infer<typeof StrokeObject>;
 
-/** The only floor until 0.5. */
+/** The one floor of rooms created before 0.5, which have no map. */
 export const TEST_FLOOR = 'test-1';

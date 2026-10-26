@@ -4,6 +4,7 @@ export const PROTOCOL_VERSION = 1 as const;
 export * from './api/errors';
 export * from './api/rooms';
 export * from './board/colours';
+export * from './board/meta';
 export * from './board/object';
 export * from './board/stroke';
 export * from './ids';

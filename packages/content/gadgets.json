@@ -1,0 +1,821 @@
+[
+  {
+    "id": "breach-charge",
+    "name": "Breach Charge",
+    "side": "attack",
+    "placement": "wall",
+    "defaultCount": 3,
+    "iconId": "breach-charge",
+    "unique": false
+  },
+  {
+    "id": "claymore",
+    "name": "Claymore",
+    "side": "attack",
+    "placement": "floor",
+    "defaultCount": 1,
+    "iconId": "claymore",
+    "unique": false
+  },
+  {
+    "id": "frag-grenade",
+    "name": "Frag Grenade",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 2,
+    "iconId": "frag",
+    "unique": false
+  },
+  {
+    "id": "smoke-grenade",
+    "name": "Smoke Grenade",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 2,
+    "iconId": "smoke",
+    "unique": false
+  },
+  {
+    "id": "stun-grenade",
+    "name": "Stun Grenade",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 3,
+    "iconId": "stun",
+    "unique": false
+  },
+  {
+    "id": "impact-emp",
+    "name": "Impact EMP Grenade",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "impact-emp",
+    "unique": false
+  },
+  {
+    "id": "hard-breach-charge",
+    "name": "Hard Breach Charge",
+    "side": "attack",
+    "placement": "wall",
+    "defaultCount": 1,
+    "iconId": "hard-breach",
+    "unique": false
+  },
+  {
+    "id": "barbed-wire",
+    "name": "Barbed Wire",
+    "side": "defence",
+    "placement": "floor",
+    "defaultCount": 2,
+    "iconId": "barbed-wire",
+    "unique": false
+  },
+  {
+    "id": "deployable-shield",
+    "name": "Deployable Shield",
+    "side": "defence",
+    "placement": "floor",
+    "defaultCount": 1,
+    "iconId": "deployable-shield",
+    "unique": false
+  },
+  {
+    "id": "nitro-cell",
+    "name": "Nitro Cell",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "nitro-cell",
+    "unique": false
+  },
+  {
+    "id": "impact-grenade",
+    "name": "Impact Grenade",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 2,
+    "iconId": "impact-grenade",
+    "unique": false
+  },
+  {
+    "id": "bulletproof-camera",
+    "name": "Bulletproof Camera",
+    "side": "defence",
+    "placement": "wall",
+    "defaultCount": 1,
+    "iconId": "bulletproof-camera",
+    "unique": false
+  },
+  {
+    "id": "proximity-alarm",
+    "name": "Proximity Alarm",
+    "side": "defence",
+    "placement": "floor",
+    "defaultCount": 2,
+    "iconId": "proximity-alarm",
+    "unique": false
+  },
+  {
+    "id": "observation-blocker",
+    "name": "Observation Blocker",
+    "side": "defence",
+    "placement": "floor",
+    "defaultCount": 3,
+    "iconId": "observation-blocker",
+    "unique": false
+  },
+  {
+    "id": "reinforcement",
+    "name": "Reinforcement",
+    "side": "defence",
+    "placement": "wall",
+    "defaultCount": 2,
+    "iconId": "reinforcement",
+    "unique": false
+  },
+  {
+    "id": "drone",
+    "name": "Drone",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 2,
+    "iconId": "drone",
+    "unique": false
+  },
+  {
+    "id": "barricade",
+    "name": "Barricade",
+    "side": "defence",
+    "placement": "opening",
+    "defaultCount": 1,
+    "iconId": "barricade",
+    "unique": false
+  },
+  {
+    "id": "tactical-breaching-hammer",
+    "name": "Tactical Breaching Hammer",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 25,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "emp-grenade",
+    "name": "EG MKO-EMP Grenade",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "breaching-rounds",
+    "name": "M120 CREM Breaching Rounds",
+    "side": "attack",
+    "placement": "wall",
+    "defaultCount": 2,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "exothermic-charge",
+    "name": "Exothermic Charge",
+    "side": "attack",
+    "placement": "wall",
+    "defaultCount": 2,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "shock-drones",
+    "name": "RSD Model 1 Shock Drones",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 2,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "extendable-shield",
+    "name": "Le Roc Extendable Shield",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "flip-sight",
+    "name": "Flip Sight",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "cluster-charge",
+    "name": "APM-6 Cluster Charge",
+    "side": "attack",
+    "placement": "wall",
+    "defaultCount": 4,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "flash-shield",
+    "name": "G52-Tactical Flash Shield",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "electronics-detector",
+    "name": "RED Mk III Spectre",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "skeleton-key",
+    "name": "Skeleton Key",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "rifle-shield",
+    "name": "TARS Mk 0",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "tactical-crossbow",
+    "name": "TAC Mk0 Tactical Crossbow",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 2,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "x-kairos",
+    "name": "X-KAIROS Launcher",
+    "side": "attack",
+    "placement": "wall",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "eyenox",
+    "name": "Eyenox Model III",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "candela",
+    "name": "Candela",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 4,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "ks79-lifeline",
+    "name": "KS79 Lifeline",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 4,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "logic-bomb",
+    "name": "Logic Bomb",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "ee-one-d",
+    "name": "EE-ONE-D",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "adrenal-surge",
+    "name": "Adrenal Surge",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "breaching-torch",
+    "name": "Suri Breaching Torch",
+    "side": "attack",
+    "placement": "wall",
+    "defaultCount": 5,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "airjab",
+    "name": "Airjab Launcher",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "trax-stingers",
+    "name": "Trax Stingers",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "hel-presence",
+    "name": "HEL Presence Reduction",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "garra-hook",
+    "name": "Garra Hook",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 4,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "lv-explosive-lance",
+    "name": "LV Explosive Lance",
+    "side": "attack",
+    "placement": "wall",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "gemini-replicator",
+    "name": "Gemini Replicator",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "selma",
+    "name": "S.E.L.M.A. Aqua Breacher",
+    "side": "attack",
+    "placement": "wall",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "argus",
+    "name": "Argus Launcher",
+    "side": "attack",
+    "placement": "wall",
+    "defaultCount": 4,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "rce-ratero",
+    "name": "RCE-Ratero Charge",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 4,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "talon-shield",
+    "name": "Talon-8 Clear Shield",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 2,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "rou-projector",
+    "name": "R.O.U. Projector System",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "kawan-hive",
+    "name": "Kawan Hive Launcher",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 5,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "kludge-drone",
+    "name": "Kludge Drone",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 2,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "bu-gi-auto-breacher",
+    "name": "BU-GI Auto Breacher",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 4,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "deathmark-tracker",
+    "name": "DeathMARK Tracker",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "striker-extra-gadget",
+    "name": "Extra Secondary",
+    "side": "attack",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "compound-z8",
+    "name": "Remote Gas Grenade",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "signal-disruptor",
+    "name": "GC90 Signal Disruptor",
+    "side": "defence",
+    "placement": "floor",
+    "defaultCount": 4,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "armor-panel",
+    "name": "UTP1-Universal Tactical Panel",
+    "side": "defence",
+    "placement": "opening",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "cardiac-sensor",
+    "name": "HB-5 Cardiac Sensor",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "stim-pistol",
+    "name": "MPD-0 Stim Pistol",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "armor-pack",
+    "name": "R1N Rhino Armor",
+    "side": "defence",
+    "placement": "floor",
+    "defaultCount": 5,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "entry-denial-device",
+    "name": "Entry Denial Device",
+    "side": "defence",
+    "placement": "opening",
+    "defaultCount": 5,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "shumikha-launcher",
+    "name": "Shumikha Launcher",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "active-defense-system",
+    "name": "Active Defense System",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "shock-wire",
+    "name": "CED-1 Crude Electrical Device",
+    "side": "defence",
+    "placement": "wall",
+    "defaultCount": 4,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "welcome-mat",
+    "name": "Welcome Mat",
+    "side": "defence",
+    "placement": "floor",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "black-eye",
+    "name": "Black Eye",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "silent-step",
+    "name": "Silent Step",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "yokai",
+    "name": "Yokai",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 2,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "black-mirror",
+    "name": "Black Mirror",
+    "side": "defence",
+    "placement": "wall",
+    "defaultCount": 2,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "gu-mines",
+    "name": "Gu Mines",
+    "side": "defence",
+    "placement": "floor",
+    "defaultCount": 8,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "grzmot-mine",
+    "name": "Grzmot Mine",
+    "side": "defence",
+    "placement": "floor",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "eree",
+    "name": "ERC-7",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "evil-eye",
+    "name": "Evil Eye",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 2,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "prisma",
+    "name": "Prisma",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "cce-shield",
+    "name": "CCE Shield",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "rtila-electroclaw",
+    "name": "Rtila Electroclaw",
+    "side": "defence",
+    "placement": "wall",
+    "defaultCount": 2,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "pest",
+    "name": "Pest Launcher",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 4,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "glance-smart-glasses",
+    "name": "Glance Smart Glasses",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "volcan-shield",
+    "name": "Volcán Shield",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 2,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "mag-net",
+    "name": "Mag-NET System",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 6,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "remah-dash",
+    "name": "Remah Dash",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "banshee",
+    "name": "Banshee Sonic Defense",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "surya-gate",
+    "name": "Surya Laser Gate",
+    "side": "defence",
+    "placement": "opening",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "kona-station",
+    "name": "Kóna Healing Station",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "razorbloom-shell",
+    "name": "Razorbloom Shell",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 3,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "kiba-barrier",
+    "name": "Kiba Barrier",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 5,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "spec-io",
+    "name": "SPEC-IO Electro-Sensor",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "f-natt-dread-mine",
+    "name": "F-NATT Dread Mine",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 4,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "zoto-canister",
+    "name": "Zoto Canister",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 4,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "sentry-extra-gadget",
+    "name": "Extra Secondary",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 1,
+    "iconId": "unique",
+    "unique": true
+  },
+  {
+    "id": "v10-pantheon-shells",
+    "name": "V10 Pantheon Shells",
+    "side": "defence",
+    "placement": "free",
+    "defaultCount": 2,
+    "iconId": "unique",
+    "unique": true
+  }
+]

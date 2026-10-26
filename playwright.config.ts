@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { defineConfig, devices } from '@playwright/test';
-import { API_PORT, API_URL, WEB_PORT, WEB_URL } from './e2e/env';
+import { API_PORT, API_URL, CONTENT_PORT, CONTENT_URL, WEB_PORT, WEB_URL } from './e2e/env';
 
 /**
  * Browser tests against the dev server and the real relay. Ports are off the usual 3000/5173
@@ -25,6 +25,13 @@ export default defineConfig({
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: [
     {
+      // Builds the current content, then serves dist/ the way the CDN does.
+      command: `pnpm --filter @planted/content content:build && pnpm --filter @planted/content content:serve --port ${CONTENT_PORT}`,
+      url: `${CONTENT_URL}/latest.json`,
+      reuseExistingServer: !ci,
+      timeout: 120_000,
+    },
+    {
       command: 'pnpm --filter @planted/server exec tsx src/main.ts',
       url: `${API_URL}/health`,
       reuseExistingServer: !ci,
@@ -32,6 +39,8 @@ export default defineConfig({
         SERVER_PORT: String(API_PORT),
         WEB_ORIGIN: WEB_URL,
         LOG_LEVEL: 'warn',
+        // The suite creates more rooms a minute than the production limit allows.
+        ROOMS_PER_MINUTE: '1000',
         // A fresh secret per run unless one is set: tokens only have to verify on this server.
         ROOM_TOKEN_SECRET: process.env.ROOM_TOKEN_SECRET ?? randomBytes(32).toString('base64url'),
         DATABASE_URL:
@@ -42,7 +51,7 @@ export default defineConfig({
       command: `pnpm --filter @planted/web exec vite --port ${WEB_PORT} --strictPort`,
       url: WEB_URL,
       reuseExistingServer: !ci,
-      env: { VITE_API_URL: API_URL },
+      env: { VITE_API_URL: API_URL, VITE_CONTENT_URL: CONTENT_URL },
     },
   ],
 });

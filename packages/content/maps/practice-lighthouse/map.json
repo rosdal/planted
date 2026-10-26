@@ -1,0 +1,739 @@
+{
+  "contentRev": "y11s3",
+  "floors": [
+    {
+      "art": "art/b.svg",
+      "id": "b",
+      "label": "B",
+      "order": 0
+    },
+    {
+      "art": "art/1f.svg",
+      "id": "1f",
+      "label": "1F",
+      "order": 1
+    },
+    {
+      "art": "art/2f.svg",
+      "id": "2f",
+      "label": "2F",
+      "order": 2
+    },
+    {
+      "art": "art/roof.svg",
+      "id": "roof",
+      "label": "Roof",
+      "order": 3
+    }
+  ],
+  "hatches": [
+    {
+      "at": [0.625, 0.625],
+      "floorId": "1f",
+      "id": "hatch:1f:shop"
+    },
+    {
+      "at": [0.625, 0.375],
+      "floorId": "roof",
+      "id": "hatch:roof:roof"
+    }
+  ],
+  "id": "practice-lighthouse",
+  "name": "Lighthouse (practice)",
+  "openings": [
+    {
+      "floorId": "1f",
+      "from": [0.35156, 0.4375],
+      "id": "door:1f:entrance-gallery",
+      "kind": "door",
+      "to": [0.39844, 0.4375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.47266, 0.25],
+      "id": "door:1f:entrance-north",
+      "kind": "door",
+      "to": [0.52734, 0.25]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.60156, 0.4375],
+      "id": "door:1f:entrance-shop",
+      "kind": "door",
+      "to": [0.64844, 0.4375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5, 0.57031],
+      "id": "door:1f:gallery-shop",
+      "kind": "door",
+      "to": [0.5, 0.61719]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.35156, 0.5],
+      "id": "door:2f:keeper-landing",
+      "kind": "door",
+      "to": [0.39844, 0.5]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5, 0.35156],
+      "id": "door:2f:keeper-radio",
+      "kind": "door",
+      "to": [0.5, 0.39844]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.60156, 0.5],
+      "id": "door:2f:landing-radio",
+      "kind": "door",
+      "to": [0.64844, 0.5]
+    },
+    {
+      "floorId": "b",
+      "from": [0.5, 0.35156],
+      "id": "door:b:cellar-pump",
+      "kind": "door",
+      "to": [0.5, 0.39844]
+    },
+    {
+      "floorId": "b",
+      "from": [0.5, 0.60156],
+      "id": "door:b:cellar-vault",
+      "kind": "door",
+      "to": [0.5, 0.64844]
+    },
+    {
+      "floorId": "b",
+      "from": [0.60156, 0.5],
+      "id": "door:b:pump-vault",
+      "kind": "door",
+      "to": [0.64844, 0.5]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.75, 0.3125],
+      "id": "window:1f:entrance-east",
+      "kind": "window",
+      "to": [0.75, 0.375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.25, 0.5625],
+      "id": "window:1f:gallery-west",
+      "kind": "window",
+      "to": [0.25, 0.625]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.75, 0.5625],
+      "id": "window:1f:shop-east",
+      "kind": "window",
+      "to": [0.75, 0.625]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.59375, 0.75],
+      "id": "window:1f:shop-south",
+      "kind": "window",
+      "to": [0.65625, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.34375, 0.25],
+      "id": "window:2f:keeper-north",
+      "kind": "window",
+      "to": [0.40625, 0.25]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.25, 0.34375],
+      "id": "window:2f:keeper-west",
+      "kind": "window",
+      "to": [0.25, 0.40625]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.46875, 0.75],
+      "id": "window:2f:landing-south",
+      "kind": "window",
+      "to": [0.53125, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.75, 0.34375],
+      "id": "window:2f:radio-east",
+      "kind": "window",
+      "to": [0.75, 0.40625]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.59375, 0.25],
+      "id": "window:2f:radio-north",
+      "kind": "window",
+      "to": [0.65625, 0.25]
+    }
+  ],
+  "rooms": [
+    {
+      "callout": "Entrance",
+      "floorId": "1f",
+      "id": "room:1f:entrance",
+      "polygon": [
+        [0.25, 0.25],
+        [0.75, 0.25],
+        [0.75, 0.4375],
+        [0.25, 0.4375]
+      ]
+    },
+    {
+      "callout": "Gallery",
+      "floorId": "1f",
+      "id": "room:1f:gallery",
+      "polygon": [
+        [0.25, 0.4375],
+        [0.5, 0.4375],
+        [0.5, 0.75],
+        [0.25, 0.75]
+      ]
+    },
+    {
+      "callout": "Gift Shop",
+      "floorId": "1f",
+      "id": "room:1f:shop",
+      "polygon": [
+        [0.5, 0.4375],
+        [0.75, 0.4375],
+        [0.75, 0.75],
+        [0.5, 0.75]
+      ]
+    },
+    {
+      "callout": "Keeper&apos;s Room",
+      "floorId": "2f",
+      "id": "room:2f:keeper",
+      "polygon": [
+        [0.25, 0.25],
+        [0.5, 0.25],
+        [0.5, 0.5],
+        [0.25, 0.5]
+      ]
+    },
+    {
+      "callout": "Landing",
+      "floorId": "2f",
+      "id": "room:2f:landing",
+      "polygon": [
+        [0.25, 0.5],
+        [0.75, 0.5],
+        [0.75, 0.75],
+        [0.25, 0.75]
+      ]
+    },
+    {
+      "callout": "Radio",
+      "floorId": "2f",
+      "id": "room:2f:radio",
+      "polygon": [
+        [0.5, 0.25],
+        [0.75, 0.25],
+        [0.75, 0.5],
+        [0.5, 0.5]
+      ]
+    },
+    {
+      "callout": "Cellar",
+      "floorId": "b",
+      "id": "room:b:cellar",
+      "polygon": [
+        [0.25, 0.25],
+        [0.5, 0.25],
+        [0.5, 0.75],
+        [0.25, 0.75]
+      ]
+    },
+    {
+      "callout": "Pump Room",
+      "floorId": "b",
+      "id": "room:b:pump",
+      "polygon": [
+        [0.5, 0.25],
+        [0.75, 0.25],
+        [0.75, 0.5],
+        [0.5, 0.5]
+      ]
+    },
+    {
+      "callout": "Vault",
+      "floorId": "b",
+      "id": "room:b:vault",
+      "polygon": [
+        [0.5, 0.5],
+        [0.75, 0.5],
+        [0.75, 0.75],
+        [0.5, 0.75]
+      ]
+    },
+    {
+      "callout": "Roof",
+      "floorId": "roof",
+      "id": "room:roof:roof",
+      "polygon": [
+        [0.25, 0.25],
+        [0.75, 0.25],
+        [0.75, 0.75],
+        [0.25, 0.75]
+      ]
+    }
+  ],
+  "sites": [
+    {
+      "floorId": "1f",
+      "id": "site:gallery-shop",
+      "name": "Gallery / Gift Shop",
+      "objectives": [
+        {
+          "at": [0.375, 0.59375],
+          "label": "A",
+          "roomId": "room:1f:gallery"
+        },
+        {
+          "at": [0.625, 0.59375],
+          "label": "B",
+          "roomId": "room:1f:shop"
+        }
+      ]
+    },
+    {
+      "floorId": "2f",
+      "id": "site:keeper-radio",
+      "name": "Keeper's Room / Radio",
+      "objectives": [
+        {
+          "at": [0.375, 0.375],
+          "label": "A",
+          "roomId": "room:2f:keeper"
+        },
+        {
+          "at": [0.625, 0.375],
+          "label": "B",
+          "roomId": "room:2f:radio"
+        }
+      ]
+    },
+    {
+      "floorId": "b",
+      "id": "site:pump-vault",
+      "name": "Pump Room / Vault",
+      "objectives": [
+        {
+          "at": [0.625, 0.375],
+          "label": "A",
+          "roomId": "room:b:pump"
+        },
+        {
+          "at": [0.625, 0.625],
+          "label": "B",
+          "roomId": "room:b:vault"
+        }
+      ]
+    }
+  ],
+  "spawns": [
+    {
+      "at": [0.125, 0.875],
+      "floorId": "1f",
+      "id": "spawn:attack:boathouse",
+      "name": "Boathouse",
+      "side": "attack"
+    },
+    {
+      "at": [0.875, 0.5],
+      "floorId": "1f",
+      "id": "spawn:attack:cliffs",
+      "name": "Cliffs",
+      "side": "attack"
+    },
+    {
+      "at": [0.5, 0.125],
+      "floorId": "1f",
+      "id": "spawn:attack:pier",
+      "name": "Pier",
+      "side": "attack"
+    }
+  ],
+  "walls": [
+    {
+      "floorId": "1f",
+      "from": [0.75, 0.25],
+      "id": "wall:1f:entrance-east-1",
+      "kind": "outer",
+      "to": [0.75, 0.3125]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.75, 0.375],
+      "id": "wall:1f:entrance-east-2",
+      "kind": "outer",
+      "to": [0.75, 0.4375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.25, 0.4375],
+      "id": "wall:1f:entrance-gallery-1",
+      "kind": "reinforceable",
+      "to": [0.35156, 0.4375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.39844, 0.4375],
+      "id": "wall:1f:entrance-gallery-2",
+      "kind": "reinforceable",
+      "to": [0.5, 0.4375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.25, 0.25],
+      "id": "wall:1f:entrance-north-1",
+      "kind": "outer",
+      "to": [0.47266, 0.25]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.52734, 0.25],
+      "id": "wall:1f:entrance-north-2",
+      "kind": "outer",
+      "to": [0.75, 0.25]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5, 0.4375],
+      "id": "wall:1f:entrance-shop-1",
+      "kind": "reinforceable",
+      "to": [0.60156, 0.4375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.64844, 0.4375],
+      "id": "wall:1f:entrance-shop-2",
+      "kind": "reinforceable",
+      "to": [0.75, 0.4375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.25, 0.25],
+      "id": "wall:1f:entrance-west",
+      "kind": "outer",
+      "to": [0.25, 0.4375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5, 0.4375],
+      "id": "wall:1f:gallery-shop-1",
+      "kind": "reinforceable",
+      "to": [0.5, 0.57031]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5, 0.61719],
+      "id": "wall:1f:gallery-shop-2",
+      "kind": "reinforceable",
+      "to": [0.5, 0.75]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.25, 0.75],
+      "id": "wall:1f:gallery-south",
+      "kind": "outer",
+      "to": [0.5, 0.75]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.25, 0.4375],
+      "id": "wall:1f:gallery-west-1",
+      "kind": "outer",
+      "to": [0.25, 0.5625]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.25, 0.625],
+      "id": "wall:1f:gallery-west-2",
+      "kind": "outer",
+      "to": [0.25, 0.75]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.75, 0.4375],
+      "id": "wall:1f:shop-east-1",
+      "kind": "outer",
+      "to": [0.75, 0.5625]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.75, 0.625],
+      "id": "wall:1f:shop-east-2",
+      "kind": "outer",
+      "to": [0.75, 0.75]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5, 0.75],
+      "id": "wall:1f:shop-south-1",
+      "kind": "outer",
+      "to": [0.59375, 0.75]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.65625, 0.75],
+      "id": "wall:1f:shop-south-2",
+      "kind": "outer",
+      "to": [0.75, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.25, 0.5],
+      "id": "wall:2f:keeper-landing-1",
+      "kind": "reinforceable",
+      "to": [0.35156, 0.5]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.39844, 0.5],
+      "id": "wall:2f:keeper-landing-2",
+      "kind": "reinforceable",
+      "to": [0.5, 0.5]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.25, 0.25],
+      "id": "wall:2f:keeper-north-1",
+      "kind": "outer",
+      "to": [0.34375, 0.25]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.40625, 0.25],
+      "id": "wall:2f:keeper-north-2",
+      "kind": "outer",
+      "to": [0.5, 0.25]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5, 0.25],
+      "id": "wall:2f:keeper-radio-1",
+      "kind": "reinforceable",
+      "to": [0.5, 0.35156]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5, 0.39844],
+      "id": "wall:2f:keeper-radio-2",
+      "kind": "reinforceable",
+      "to": [0.5, 0.5]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.25, 0.25],
+      "id": "wall:2f:keeper-west-1",
+      "kind": "outer",
+      "to": [0.25, 0.34375]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.25, 0.40625],
+      "id": "wall:2f:keeper-west-2",
+      "kind": "outer",
+      "to": [0.25, 0.5]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.75, 0.5],
+      "id": "wall:2f:landing-east",
+      "kind": "outer",
+      "to": [0.75, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5, 0.5],
+      "id": "wall:2f:landing-radio-1",
+      "kind": "reinforceable",
+      "to": [0.60156, 0.5]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.64844, 0.5],
+      "id": "wall:2f:landing-radio-2",
+      "kind": "reinforceable",
+      "to": [0.75, 0.5]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.25, 0.75],
+      "id": "wall:2f:landing-south-1",
+      "kind": "outer",
+      "to": [0.46875, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.53125, 0.75],
+      "id": "wall:2f:landing-south-2",
+      "kind": "outer",
+      "to": [0.75, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.25, 0.5],
+      "id": "wall:2f:landing-west",
+      "kind": "outer",
+      "to": [0.25, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.75, 0.25],
+      "id": "wall:2f:radio-east-1",
+      "kind": "outer",
+      "to": [0.75, 0.34375]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.75, 0.40625],
+      "id": "wall:2f:radio-east-2",
+      "kind": "outer",
+      "to": [0.75, 0.5]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5, 0.25],
+      "id": "wall:2f:radio-north-1",
+      "kind": "outer",
+      "to": [0.59375, 0.25]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.65625, 0.25],
+      "id": "wall:2f:radio-north-2",
+      "kind": "outer",
+      "to": [0.75, 0.25]
+    },
+    {
+      "floorId": "b",
+      "from": [0.25, 0.25],
+      "id": "wall:b:cellar-north",
+      "kind": "outer",
+      "to": [0.5, 0.25]
+    },
+    {
+      "floorId": "b",
+      "from": [0.5, 0.25],
+      "id": "wall:b:cellar-pump-1",
+      "kind": "reinforceable",
+      "to": [0.5, 0.35156]
+    },
+    {
+      "floorId": "b",
+      "from": [0.5, 0.39844],
+      "id": "wall:b:cellar-pump-2",
+      "kind": "reinforceable",
+      "to": [0.5, 0.5]
+    },
+    {
+      "floorId": "b",
+      "from": [0.25, 0.75],
+      "id": "wall:b:cellar-south",
+      "kind": "outer",
+      "to": [0.5, 0.75]
+    },
+    {
+      "floorId": "b",
+      "from": [0.5, 0.5],
+      "id": "wall:b:cellar-vault-1",
+      "kind": "reinforceable",
+      "to": [0.5, 0.60156]
+    },
+    {
+      "floorId": "b",
+      "from": [0.5, 0.64844],
+      "id": "wall:b:cellar-vault-2",
+      "kind": "reinforceable",
+      "to": [0.5, 0.75]
+    },
+    {
+      "floorId": "b",
+      "from": [0.25, 0.25],
+      "id": "wall:b:cellar-west",
+      "kind": "outer",
+      "to": [0.25, 0.75]
+    },
+    {
+      "floorId": "b",
+      "from": [0.75, 0.25],
+      "id": "wall:b:pump-east",
+      "kind": "outer",
+      "to": [0.75, 0.5]
+    },
+    {
+      "floorId": "b",
+      "from": [0.5, 0.25],
+      "id": "wall:b:pump-north",
+      "kind": "outer",
+      "to": [0.75, 0.25]
+    },
+    {
+      "floorId": "b",
+      "from": [0.5, 0.5],
+      "id": "wall:b:pump-vault-1",
+      "kind": "reinforceable",
+      "to": [0.60156, 0.5]
+    },
+    {
+      "floorId": "b",
+      "from": [0.64844, 0.5],
+      "id": "wall:b:pump-vault-2",
+      "kind": "reinforceable",
+      "to": [0.75, 0.5]
+    },
+    {
+      "floorId": "b",
+      "from": [0.75, 0.5],
+      "id": "wall:b:vault-east",
+      "kind": "outer",
+      "to": [0.75, 0.75]
+    },
+    {
+      "floorId": "b",
+      "from": [0.5, 0.75],
+      "id": "wall:b:vault-south",
+      "kind": "outer",
+      "to": [0.75, 0.75]
+    },
+    {
+      "floorId": "roof",
+      "from": [0.75, 0.25],
+      "id": "wall:roof:roof-east",
+      "kind": "outer",
+      "to": [0.75, 0.75]
+    },
+    {
+      "floorId": "roof",
+      "from": [0.25, 0.25],
+      "id": "wall:roof:roof-north",
+      "kind": "outer",
+      "to": [0.75, 0.25]
+    },
+    {
+      "floorId": "roof",
+      "from": [0.25, 0.75],
+      "id": "wall:roof:roof-south",
+      "kind": "outer",
+      "to": [0.75, 0.75]
+    },
+    {
+      "floorId": "roof",
+      "from": [0.25, 0.25],
+      "id": "wall:roof:roof-west",
+      "kind": "outer",
+      "to": [0.25, 0.75]
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Depot (practice), floor B. A fictional practice layout for testing the Planted content pipeline; not based on any real map. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4096 4096" width="4096" height="4096">
+  <g id="art">
+    <rect x="512" y="768" width="3072" height="2560" fill="#ffffff" fill-opacity="0.05"/>
+    <rect x="2048" y="768" width="1536" height="1280" fill="#ffffff" fill-opacity="0.03"/>
+    <rect x="2048" y="2048" width="1536" height="1280" fill="#ffffff" fill-opacity="0.03"/>
+    <path d="M512 768L1536 768M1536 768L2048 768M2048 768L3584 768M512 3328L1536 3328M1536 3328L1680 3328M1904 3328L2048 3328M2048 3328L3584 3328M512 768L512 2048M512 2048L512 3328M3584 768L3584 2048M3584 2048L3584 3328" fill="none" stroke="#ffffff" stroke-width="40" stroke-linecap="square"/>
+    <path d="M512 2048L1536 2048M2048 2048L2720 2048M2912 2048L3584 2048M1536 768L1536 1312M1536 1504L1536 2048M1536 2048L1536 2592M1536 2784L1536 3328M2048 768L2048 1312M2048 1504L2048 2048M2048 2048L2048 2592M2048 2784L2048 3328" fill="none" stroke="#ffffff" stroke-width="16" stroke-linecap="square"/>
+    <rect x="1600" y="1856" width="384" height="384" fill="none" stroke="#ffffff" stroke-width="8"/>
+    <path d="M1600 1904L1984 1904M1600 1952L1984 1952M1600 2000L1984 2000M1600 2048L1984 2048M1600 2096L1984 2096M1600 2144L1984 2144M1600 2192L1984 2192" fill="none" stroke="#ffffff" stroke-width="4" stroke-opacity="0.6"/>
+    <rect x="2304" y="1024" width="128" height="768" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-width="6" stroke-opacity="0.5"/>
+    <rect x="2688" y="1024" width="128" height="768" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-width="6" stroke-opacity="0.5"/>
+    <rect x="2560" y="2432" width="640" height="384" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-width="6" stroke-opacity="0.5"/>
+  </g>
+  <g id="rooms" fill="#4c9aff" fill-opacity="0.15" stroke="#4c9aff" stroke-width="4">
+    <path id="room:boiler" data-callout="Boiler" d="M512 768H1536V2048H512Z"/>
+    <path id="room:tunnel" data-callout="Tunnel" d="M1536 768H2048V3328H1536Z"/>
+    <path id="room:server" data-callout="Server Room" d="M2048 768H3584V2048H2048Z"/>
+    <path id="room:archives" data-callout="Archives" d="M512 2048H1536V3328H512Z"/>
+    <path id="room:generator" data-callout="Generator" d="M2048 2048H3584V3328H2048Z"/>
+  </g>
+  <g id="walls" stroke-width="12">
+    <line id="wall:b:boiler-north" data-kind="outer" x1="512" y1="768" x2="1536" y2="768" stroke="#d7dae0"/>
+    <line id="wall:b:tunnel-north" data-kind="outer" x1="1536" y1="768" x2="2048" y2="768" stroke="#d7dae0"/>
+    <line id="wall:b:server-north" data-kind="outer" x1="2048" y1="768" x2="3584" y2="768" stroke="#d7dae0"/>
+    <line id="wall:b:archives-boiler" data-kind="hard" x1="512" y1="2048" x2="1536" y2="2048" stroke="#8a8f98"/>
+    <line id="wall:b:generator-server-1" data-kind="reinforceable" x1="2048" y1="2048" x2="2720" y2="2048" stroke="#e06c75"/>
+    <line id="wall:b:generator-server-2" data-kind="reinforceable" x1="2912" y1="2048" x2="3584" y2="2048" stroke="#e06c75"/>
+    <line id="wall:b:archives-south" data-kind="outer" x1="512" y1="3328" x2="1536" y2="3328" stroke="#d7dae0"/>
+    <line id="wall:b:tunnel-south-1" data-kind="outer" x1="1536" y1="3328" x2="1680" y2="3328" stroke="#d7dae0"/>
+    <line id="wall:b:tunnel-south-2" data-kind="outer" x1="1904" y1="3328" x2="2048" y2="3328" stroke="#d7dae0"/>
+    <line id="wall:b:generator-south" data-kind="outer" x1="2048" y1="3328" x2="3584" y2="3328" stroke="#d7dae0"/>
+    <line id="wall:b:boiler-west" data-kind="outer" x1="512" y1="768" x2="512" y2="2048" stroke="#d7dae0"/>
+    <line id="wall:b:archives-west" data-kind="outer" x1="512" y1="2048" x2="512" y2="3328" stroke="#d7dae0"/>
+    <line id="wall:b:boiler-tunnel-1" data-kind="soft" x1="1536" y1="768" x2="1536" y2="1312" stroke="#e5c07b"/>
+    <line id="wall:b:boiler-tunnel-2" data-kind="soft" x1="1536" y1="1504" x2="1536" y2="2048" stroke="#e5c07b"/>
+    <line id="wall:b:archives-tunnel-1" data-kind="soft" x1="1536" y1="2048" x2="1536" y2="2592" stroke="#e5c07b"/>
+    <line id="wall:b:archives-tunnel-2" data-kind="soft" x1="1536" y1="2784" x2="1536" y2="3328" stroke="#e5c07b"/>
+    <line id="wall:b:server-tunnel-1" data-kind="reinforceable" x1="2048" y1="768" x2="2048" y2="1312" stroke="#e06c75"/>
+    <line id="wall:b:server-tunnel-2" data-kind="reinforceable" x1="2048" y1="1504" x2="2048" y2="2048" stroke="#e06c75"/>
+    <line id="wall:b:generator-tunnel-1" data-kind="reinforceable" x1="2048" y1="2048" x2="2048" y2="2592" stroke="#e06c75"/>
+    <line id="wall:b:generator-tunnel-2" data-kind="reinforceable" x1="2048" y1="2784" x2="2048" y2="3328" stroke="#e06c75"/>
+    <line id="wall:b:server-east" data-kind="outer" x1="3584" y1="768" x2="3584" y2="2048" stroke="#d7dae0"/>
+    <line id="wall:b:generator-east" data-kind="outer" x1="3584" y1="2048" x2="3584" y2="3328" stroke="#d7dae0"/>
+  </g>
+  <g id="hatches" fill="#d19a66">
+  </g>
+  <g id="openings" stroke-width="16">
+    <line id="door:b:generator-server" x1="2720" y1="2048" x2="2912" y2="2048" stroke="#98c379"/>
+    <line id="door:b:tunnel-south" x1="1680" y1="3328" x2="1904" y2="3328" stroke="#98c379"/>
+    <line id="door:b:boiler-tunnel" x1="1536" y1="1312" x2="1536" y2="1504" stroke="#98c379"/>
+    <line id="door:b:archives-tunnel" x1="1536" y1="2592" x2="1536" y2="2784" stroke="#98c379"/>
+    <line id="door:b:server-tunnel" x1="2048" y1="1312" x2="2048" y2="1504" stroke="#98c379"/>
+    <line id="door:b:generator-tunnel" x1="2048" y1="2592" x2="2048" y2="2784" stroke="#98c379"/>
+  </g>
+  <g id="sites" fill="#ff5c8a">
+    <circle id="obj:server-generator:A" data-room="server" cx="2816" cy="1408" r="56"/>
+    <circle id="obj:server-generator:B" data-room="generator" cx="2816" cy="2688" r="56"/>
+  </g>
+  <g id="spawns">
+  </g>
+</svg>

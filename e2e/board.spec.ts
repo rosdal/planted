@@ -1,68 +1,14 @@
-import { type Browser, type BrowserContext, expect, type Page, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { API_URL } from './env';
-
-type Room = { roomId: string; editKey: string; viewKey: string };
-
-/**
- * Every context a test opens. The browser outlives the test, so an unclosed board keeps
- * rendering and holding its socket, and a few of those starve the next test of CPU.
- */
-const contexts: BrowserContext[] = [];
-
-async function newContext(browser: Browser, options?: Parameters<Browser['newContext']>[0]) {
-  const context = await browser.newContext(options);
-  contexts.push(context);
-  return context;
-}
-
-test.afterEach(async () => {
-  await Promise.all(contexts.splice(0).map((context) => context.close()));
-});
-
-async function newRoom(): Promise<Room> {
-  const res = await fetch(`${API_URL}/rooms`, { method: 'POST' });
-  expect(res.ok).toBe(true);
-  return (await res.json()) as Room;
-}
-
-/**
- * A browser context with a saved guest identity, so the name dialog stays closed, opened on the
- * room's edit link unless another key is given.
- */
-async function openBoard(
-  browser: Browser,
-  room: Room,
-  name: string,
-  key = room.editKey,
-): Promise<Page> {
-  const context = await newContext(browser, { viewport: { width: 1280, height: 800 } });
-  await context.addInitScript(
-    (identity) => {
-      localStorage.setItem('planted.guest', JSON.stringify(identity));
-    },
-    { name, colour: name === 'Alice' ? '#57ab5a' : '#b083f0' },
-  );
-  const page = await context.newPage();
-  await page.goto(`/r/${room.roomId}#k=${key}`);
-  await expect(page.getByRole('status').filter({ hasText: 'Live' })).toBeVisible();
-  await page.waitForFunction(() => window.__board !== undefined);
-  return page;
-}
-
-/**
- * Pointer down, 8 moves, up: one stroke. Each move waits for a renderer that is busy drawing
- * two WebGL boards, which on a 2-core CI runner costs ~0.4 s, so the stroke is kept short.
- */
-async function drawStroke(page: Page, x: number, y: number): Promise<void> {
-  await page.mouse.move(x, y);
-  await page.mouse.down();
-  for (let i = 1; i <= 8; i++) await page.mouse.move(x + i * 25, y + Math.sin(i / 1.2) * 30);
-  await page.mouse.up();
-}
-
-const objectCount = (page: Page) => page.evaluate(() => window.__board?.objectCount() ?? -1);
-const authors = (page: Page) => page.evaluate(() => window.__board?.authors() ?? []);
-const docHash = (page: Page) => page.evaluate(() => window.__board?.docHash() ?? '');
+import {
+  authors,
+  docHash,
+  drawStroke,
+  newContext,
+  newRoom,
+  objectCount,
+  openBoard,
+} from './helpers';
 
 test('strokes sync both ways and undo only removes your own', async ({ browser }) => {
   const room = await newRoom();

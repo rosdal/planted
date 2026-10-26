@@ -1,0 +1,10 @@
+[
+  { "id": "ar", "name": "Assault rifle", "iconId": "weapon-ar" },
+  { "id": "smg", "name": "Submachine gun", "iconId": "weapon-smg" },
+  { "id": "shotgun", "name": "Shotgun", "iconId": "weapon-shotgun" },
+  { "id": "dmr", "name": "Marksman rifle", "iconId": "weapon-dmr" },
+  { "id": "lmg", "name": "Light machine gun", "iconId": "weapon-lmg" },
+  { "id": "mp", "name": "Machine pistol", "iconId": "weapon-mp" },
+  { "id": "handgun", "name": "Handgun", "iconId": "weapon-handgun" },
+  { "id": "shield", "name": "Shield", "iconId": "weapon-shield" }
+]

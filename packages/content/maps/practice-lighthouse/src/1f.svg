@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Lighthouse (practice), floor 1F. A fictional practice layout for testing the Planted content pipeline; not based on any real map. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4096 4096" width="4096" height="4096">
+  <g id="art">
+    <rect x="1024" y="1024" width="2048" height="2048" fill="#ffffff" fill-opacity="0.05"/>
+    <rect x="1024" y="1792" width="1024" height="1280" fill="#ffffff" fill-opacity="0.03"/>
+    <rect x="2048" y="1792" width="1024" height="1280" fill="#ffffff" fill-opacity="0.03"/>
+    <path d="M1024 1024L1936 1024M2160 1024L3072 1024M1024 3072L2048 3072M2048 3072L2432 3072M2688 3072L3072 3072M1024 1024L1024 1792M1024 1792L1024 2304M1024 2560L1024 3072M3072 1024L3072 1280M3072 1536L3072 1792M3072 1792L3072 2304M3072 2560L3072 3072" fill="none" stroke="#ffffff" stroke-width="40" stroke-linecap="square"/>
+    <path d="M1024 1792L1440 1792M1632 1792L2048 1792M2048 1792L2464 1792M2656 1792L3072 1792M2048 1792L2048 2336M2048 2528L2048 3072" fill="none" stroke="#ffffff" stroke-width="16" stroke-linecap="square"/>
+    <path d="M2432 3062L2688 3062M2432 3082L2688 3082M1014 2304L1014 2560M1034 2304L1034 2560M3062 1280L3062 1536M3082 1280L3082 1536M3062 2304L3062 2560M3082 2304L3082 2560" fill="none" stroke="#ffffff" stroke-width="6"/>
+    <rect x="1152" y="2560" width="384" height="384" fill="none" stroke="#ffffff" stroke-width="8"/>
+    <path d="M1152 2608L1536 2608M1152 2656L1536 2656M1152 2704L1536 2704M1152 2752L1536 2752M1152 2800L1536 2800M1152 2848L1536 2848M1152 2896L1536 2896" fill="none" stroke="#ffffff" stroke-width="4" stroke-opacity="0.6"/>
+    <rect x="2496" y="2496" width="128" height="128" fill="none" stroke="#ffffff" stroke-width="8"/>
+    <rect x="1280" y="2048" width="512" height="128" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-width="6" stroke-opacity="0.5"/>
+    <rect x="2304" y="2048" width="512" height="128" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-width="6" stroke-opacity="0.5"/>
+    <rect x="2304" y="2816" width="512" height="128" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-width="6" stroke-opacity="0.5"/>
+  </g>
+  <g id="rooms" fill="#4c9aff" fill-opacity="0.15" stroke="#4c9aff" stroke-width="4">
+    <path id="room:entrance" data-callout="Entrance" d="M1024 1024H3072V1792H1024Z"/>
+    <path id="room:gallery" data-callout="Gallery" d="M1024 1792H2048V3072H1024Z"/>
+    <path id="room:shop" data-callout="Gift Shop" d="M2048 1792H3072V3072H2048Z"/>
+  </g>
+  <g id="walls" stroke-width="12">
+    <line id="wall:1f:entrance-north-1" data-kind="outer" x1="1024" y1="1024" x2="1936" y2="1024" stroke="#d7dae0"/>
+    <line id="wall:1f:entrance-north-2" data-kind="outer" x1="2160" y1="1024" x2="3072" y2="1024" stroke="#d7dae0"/>
+    <line id="wall:1f:entrance-gallery-1" data-kind="reinforceable" x1="1024" y1="1792" x2="1440" y2="1792" stroke="#e06c75"/>
+    <line id="wall:1f:entrance-gallery-2" data-kind="reinforceable" x1="1632" y1="1792" x2="2048" y2="1792" stroke="#e06c75"/>
+    <line id="wall:1f:entrance-shop-1" data-kind="reinforceable" x1="2048" y1="1792" x2="2464" y2="1792" stroke="#e06c75"/>
+    <line id="wall:1f:entrance-shop-2" data-kind="reinforceable" x1="2656" y1="1792" x2="3072" y2="1792" stroke="#e06c75"/>
+    <line id="wall:1f:gallery-south" data-kind="outer" x1="1024" y1="3072" x2="2048" y2="3072" stroke="#d7dae0"/>
+    <line id="wall:1f:shop-south-1" data-kind="outer" x1="2048" y1="3072" x2="2432" y2="3072" stroke="#d7dae0"/>
+    <line id="wall:1f:shop-south-2" data-kind="outer" x1="2688" y1="3072" x2="3072" y2="3072" stroke="#d7dae0"/>
+    <line id="wall:1f:entrance-west" data-kind="outer" x1="1024" y1="1024" x2="1024" y2="1792" stroke="#d7dae0"/>
+    <line id="wall:1f:gallery-west-1" data-kind="outer" x1="1024" y1="1792" x2="1024" y2="2304" stroke="#d7dae0"/>
+    <line id="wall:1f:gallery-west-2" data-kind="outer" x1="1024" y1="2560" x2="1024" y2="3072" stroke="#d7dae0"/>
+    <line id="wall:1f:gallery-shop-1" data-kind="reinforceable" x1="2048" y1="1792" x2="2048" y2="2336" stroke="#e06c75"/>
+    <line id="wall:1f:gallery-shop-2" data-kind="reinforceable" x1="2048" y1="2528" x2="2048" y2="3072" stroke="#e06c75"/>
+    <line id="wall:1f:entrance-east-1" data-kind="outer" x1="3072" y1="1024" x2="3072" y2="1280" stroke="#d7dae0"/>
+    <line id="wall:1f:entrance-east-2" data-kind="outer" x1="3072" y1="1536" x2="3072" y2="1792" stroke="#d7dae0"/>
+    <line id="wall:1f:shop-east-1" data-kind="outer" x1="3072" y1="1792" x2="3072" y2="2304" stroke="#d7dae0"/>
+    <line id="wall:1f:shop-east-2" data-kind="outer" x1="3072" y1="2560" x2="3072" y2="3072" stroke="#d7dae0"/>
+  </g>
+  <g id="hatches" fill="#d19a66">
+    <circle id="hatch:1f:shop" cx="2560" cy="2560" r="48"/>
+  </g>
+  <g id="openings" stroke-width="16">
+    <line id="door:1f:entrance-north" x1="1936" y1="1024" x2="2160" y2="1024" stroke="#98c379"/>
+    <line id="door:1f:entrance-gallery" x1="1440" y1="1792" x2="1632" y2="1792" stroke="#98c379"/>
+    <line id="door:1f:entrance-shop" x1="2464" y1="1792" x2="2656" y2="1792" stroke="#98c379"/>
+    <line id="window:1f:shop-south" x1="2432" y1="3072" x2="2688" y2="3072" stroke="#61afef"/>
+    <line id="window:1f:gallery-west" x1="1024" y1="2304" x2="1024" y2="2560" stroke="#61afef"/>
+    <line id="door:1f:gallery-shop" x1="2048" y1="2336" x2="2048" y2="2528" stroke="#98c379"/>
+    <line id="window:1f:entrance-east" x1="3072" y1="1280" x2="3072" y2="1536" stroke="#61afef"/>
+    <line id="window:1f:shop-east" x1="3072" y1="2304" x2="3072" y2="2560" stroke="#61afef"/>
+  </g>
+  <g id="sites" fill="#ff5c8a">
+    <circle id="obj:gallery-shop:A" data-room="gallery" cx="1536" cy="2432" r="56"/>
+    <circle id="obj:gallery-shop:B" data-room="shop" cx="2560" cy="2432" r="56"/>
+  </g>
+  <g id="spawns">
+    <circle id="spawn:attack:pier" data-name="Pier" cx="2048" cy="512" r="64" fill="#f0883e"/>
+    <circle id="spawn:attack:cliffs" data-name="Cliffs" cx="3584" cy="2048" r="64" fill="#f0883e"/>
+    <circle id="spawn:attack:boathouse" data-name="Boathouse" cx="512" cy="3584" r="64" fill="#f0883e"/>
+  </g>
+</svg>

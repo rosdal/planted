@@ -35,7 +35,7 @@ declare module 'fastify' {
 
 export type BuildAppOptions = AppDeps & {
   env: Pick<Env, 'NODE_ENV' | 'WEB_ORIGIN' | 'LOG_LEVEL' | 'ROOM_TOKEN_SECRET'> &
-    Partial<Pick<Env, 'ROOM_TOKEN_SECRET_PREVIOUS' | 'TRUST_PROXY'>>;
+    Partial<Pick<Env, 'ROOM_TOKEN_SECRET_PREVIOUS' | 'TRUST_PROXY' | 'ROOMS_PER_MINUTE'>>;
   /** Where docs persist; tests pass a stub that fails on demand. */
   store?: RoomStore;
   /** Tests pass one with a fake clock to mint expired tokens. */
@@ -90,7 +90,7 @@ export async function buildApp({ db, env, store, tokens: tokensOverride }: Build
   app.decorate('realtime', manager);
 
   await app.register(healthRoutes, { db });
-  await app.register(roomRoutes, { db, tokens });
+  await app.register(roomRoutes, { db, tokens, roomsPerMinute: env.ROOMS_PER_MINUTE ?? 10 });
   await app.register(tokenRoutes, { db, tokens });
   await app.register(linkRoutes, { db, tokens, manager });
 

@@ -15,6 +15,13 @@
       "when": 1792776820070,
       "tag": "0001_links_and_epoch",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793039842989,
+      "tag": "0002_content_version",
+      "breakpoints": true
     }
   ]
 }

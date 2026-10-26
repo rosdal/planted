@@ -1,11 +1,14 @@
 import { createHash } from 'node:crypto';
-import { roomLinks, rooms } from '@planted/db';
+import { readMeta } from '@planted/client';
+import { CONTENT_VERSION } from '@planted/content';
+import { roomDocs, roomLinks, rooms } from '@planted/db';
 import { ApiError, CreateRoomResponse, GetRoomResponse } from '@planted/schema';
 import { eq } from 'drizzle-orm';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import * as Y from 'yjs';
 import { newRoomId } from '../ids';
 import { makeTestApp, type TestApp } from '../test/helpers';
-import { createRoom, issueToken } from '../test/realtime';
+import { createRoom, issueToken, TEST_MAP_ID } from '../test/realtime';
 
 let t: TestApp;
 beforeEach(async () => {
@@ -19,7 +22,11 @@ const bearer = (token: string) => ({ authorization: `Bearer ${token}` });
 
 describe('POST /rooms', () => {
   it('returns 201 with an edit and a view key, and stores only their hashes', async () => {
-    const res = await t.app.inject({ method: 'POST', url: '/rooms' });
+    const res = await t.app.inject({
+      method: 'POST',
+      url: '/rooms',
+      payload: { mapId: TEST_MAP_ID },
+    });
     expect(res.statusCode).toBe(201);
     const body = CreateRoomResponse.parse(res.json());
     const [room] = await t.db.select().from(rooms).where(eq(rooms.id, body.roomId));
@@ -35,12 +42,55 @@ describe('POST /rooms', () => {
     expect(body.editKey).not.toBe(body.viewKey);
   });
 
+  it('refuses an unknown map with 400 and creates nothing', async () => {
+    const res = await t.app.inject({
+      method: 'POST',
+      url: '/rooms',
+      payload: { mapId: 'atlantis' },
+    });
+    expect(res.statusCode).toBe(400);
+    expect(ApiError.parse(res.json()).error.code).toBe('bad_request');
+    expect(await t.db.select().from(rooms)).toEqual([]);
+  });
+
+  it('refuses a request without a mapId with 400', async () => {
+    const res = await t.app.inject({ method: 'POST', url: '/rooms' });
+    expect(res.statusCode).toBe(400);
+  });
+
+  it('saves the initial doc with the room meta before answering', async () => {
+    const res = await t.app.inject({
+      method: 'POST',
+      url: '/rooms',
+      payload: { mapId: TEST_MAP_ID },
+    });
+    const body = CreateRoomResponse.parse(res.json());
+    const [row] = await t.db.select().from(roomDocs).where(eq(roomDocs.roomId, body.roomId));
+    const doc = new Y.Doc();
+    Y.applyUpdate(doc, row?.ydoc ?? new Uint8Array());
+    expect(readMeta(doc)).toEqual({
+      mapId: TEST_MAP_ID,
+      contentVersion: CONTENT_VERSION,
+      createdAt: body.createdAt,
+    });
+    const [room] = await t.db.select().from(rooms).where(eq(rooms.id, body.roomId));
+    expect(room).toMatchObject({ mapId: TEST_MAP_ID, contentVersion: CONTENT_VERSION });
+  });
+
   it('answers the 11th request in a minute with 429 in the ApiError shape', async () => {
     for (let i = 0; i < 10; i++) {
-      const res = await t.app.inject({ method: 'POST', url: '/rooms' });
+      const res = await t.app.inject({
+        method: 'POST',
+        url: '/rooms',
+        payload: { mapId: TEST_MAP_ID },
+      });
       expect(res.statusCode).toBe(201);
     }
-    const res = await t.app.inject({ method: 'POST', url: '/rooms' });
+    const res = await t.app.inject({
+      method: 'POST',
+      url: '/rooms',
+      payload: { mapId: TEST_MAP_ID },
+    });
     expect(res.statusCode).toBe(429);
     expect(ApiError.parse(res.json()).error.code).toBe('rate_limited');
   });
@@ -56,7 +106,11 @@ describe('GET /rooms/:roomId', () => {
       headers: bearer(token),
     });
     expect(res.statusCode).toBe(200);
-    expect(GetRoomResponse.parse(res.json())).toMatchObject({ roomId: room.roomId, mapId: null });
+    expect(GetRoomResponse.parse(res.json())).toMatchObject({
+      roomId: room.roomId,
+      mapId: TEST_MAP_ID,
+      contentVersion: CONTENT_VERSION,
+    });
   });
 
   it('returns 401 without a token, which 0.1 used to allow', async () => {

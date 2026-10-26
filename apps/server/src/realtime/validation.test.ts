@@ -1,6 +1,6 @@
-import { objectsOf } from '@planted/client';
+import { objectsOf, readMeta } from '@planted/client';
 import { CloseCode, updateFrame } from '@planted/protocol';
-import type { RoomId } from '@planted/schema';
+import { META, type RoomId } from '@planted/schema';
 import { EvilClient, putObject, strokeFields } from '@planted/scripts/evil-client';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import * as Y from 'yjs';
@@ -9,6 +9,8 @@ import {
   connectClient,
   createRoom,
   listen,
+  TEST_MAP_FLOOR,
+  TEST_MAP_ID,
   type TestClient,
   type TestRoom,
   tokenSource,
@@ -53,11 +55,13 @@ async function evilEditor(room: TestRoom): Promise<EvilClient> {
 const serverObjects = (room: TestRoom) =>
   t.app.realtime.get(room.roomId as RoomId)?.doc.getMap('objects');
 
+const FLOORS: ReadonlySet<string> = new Set([TEST_MAP_FLOOR]);
+
 describe('checkObject', () => {
   it('accepts a valid stroke', () => {
     const doc = new Y.Doc();
     putObject(doc, 'abcdefABCDEF', strokeFields());
-    expect(checkObject('abcdefABCDEF', objectsOf(doc).get('abcdefABCDEF'))).toBeNull();
+    expect(checkObject('abcdefABCDEF', objectsOf(doc).get('abcdefABCDEF'), FLOORS)).toBeNull();
   });
 
   it.each([
@@ -67,11 +71,11 @@ describe('checkObject', () => {
   ])('rejects %s', (_, id, fields, field) => {
     const doc = new Y.Doc();
     putObject(doc, id, fields);
-    expect(checkObject(id, objectsOf(doc).get(id))?.issues.join(' ')).toContain(field);
+    expect(checkObject(id, objectsOf(doc).get(id), FLOORS)?.issues.join(' ')).toContain(field);
   });
 
   it('rejects a value that is not a nested map', () => {
-    expect(checkObject('abcdefABCDEF', 'a string')?.issues).toEqual(['not a nested Y.Map']);
+    expect(checkObject('abcdefABCDEF', 'a string', FLOORS)?.issues).toEqual(['not a nested Y.Map']);
   });
 });
 
@@ -121,6 +125,59 @@ describe('validation after apply', () => {
     expect(objectsOf(honest.doc).has('trunc0000001')).toBe(false);
   });
 
+  it('removes a stroke on a floor the room map does not have, and closes the sender', async () => {
+    const room = await createRoom(t.app);
+    const honest = client(room);
+    await waitForStatus(honest, 'synced');
+    const evil = await evilEditor(room);
+    evil.update((doc) => putObject(doc, 'floor0000001', strokeFields({ floor: 'roof' })));
+    expect((await evil.closed).code).toBe(CloseCode.BadFrame);
+    expect(evil.errors()).toEqual(['invalid_object']);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(serverObjects(room)?.has('floor0000001')).toBe(false);
+    expect(objectsOf(honest.doc).has('floor0000001')).toBe(false);
+  });
+
+  it('reverts a client edit to meta and closes the sender with 4400', async () => {
+    const room = await createRoom(t.app);
+    const honest = client(room);
+    await waitForStatus(honest, 'synced');
+    const before = readMeta(honest.doc);
+    expect(before?.mapId).toBe(TEST_MAP_ID);
+
+    const evil = await evilEditor(room);
+    evil.update((doc) => {
+      const meta = doc.getMap(META);
+      meta.set('mapId', 'practice-depot');
+      meta.delete('createdAt');
+      meta.set('extra', true);
+    });
+    expect((await evil.closed).code).toBe(CloseCode.BadFrame);
+    expect(evil.errors()).toEqual(['meta_readonly']);
+
+    // Server and peers end with the meta the room was created with.
+    const server = t.app.realtime.get(room.roomId as RoomId)?.doc;
+    await until(() => JSON.stringify(honest.doc.getMap(META).toJSON()) === JSON.stringify(before));
+    expect(server && readMeta(server)).toEqual(before);
+    expect(server?.getMap(META).has('extra')).toBe(false);
+  });
+
+  it('keeps a client whose update touches meta but leaves it as loaded', async () => {
+    // What an honest peer re-sends after a server lost an edit and its revert before saving
+    // them: meta items that end with exactly the loaded values.
+    const room = await createRoom(t.app);
+    const evil = await evilEditor(room);
+    const mapId = readMeta(evil.doc)?.mapId;
+    expect(mapId).toBe(TEST_MAP_ID);
+    evil.update((doc) => doc.getMap(META).set('mapId', mapId));
+    evil.update((doc) => doc.getArray('debug-items').push(['after']));
+    await until(
+      () => t.app.realtime.get(room.roomId as RoomId)?.doc.getArray('debug-items').length === 1,
+    );
+    expect(evil.socket.readyState).toBe(evil.socket.OPEN);
+    expect(evil.errors()).toEqual([]);
+  });
+
   it('closes the sender with 4400 for a new unknown root type', async () => {
     const room = await createRoom(t.app);
     const evil = await evilEditor(room);
@@ -151,10 +208,9 @@ describe('validation after apply', () => {
     expect(server.doc.getMap('junk').has('new')).toBe(false);
   });
 
-  it('accepts the allowed roots: objects, meta, and the dev-only debug list', async () => {
+  it('accepts the dev-only debug list from a client', async () => {
     const room = await createRoom(t.app);
     const evil = await evilEditor(room);
-    evil.update((doc) => doc.getMap('meta').set('mapId', 'clubhouse'));
     evil.update((doc) => doc.getArray('debug-items').push(['x']));
     await until(
       () => t.app.realtime.get(room.roomId as RoomId)?.doc.getArray('debug-items').length === 1,
@@ -170,7 +226,7 @@ describe('limits', () => {
     const room = await createRoom(t.app);
     const evil = await evilEditor(room);
     const flood = setInterval(() => {
-      for (let i = 0; i < 40; i++) evil.update((doc) => doc.getMap('meta').set('n', i));
+      for (let i = 0; i < 40; i++) evil.update((doc) => doc.getArray('debug-items').push([i]));
     }, 20);
     try {
       expect((await evil.closed).code).toBe(CloseCode.RateLimited);
@@ -212,7 +268,7 @@ describe('limits', () => {
     // Past 5 MB in frames under the 256 KB cap, then a save measures it.
     for (let i = 0; i < 22; i++) {
       server.doc.transact(
-        () => server.doc.getMap('meta').set(`blob${i}`, 'x'.repeat(250_000)),
+        () => server.doc.getArray('debug-items').push(['x'.repeat(250_000)]),
         SERVER_ORIGIN,
       );
     }
@@ -225,7 +281,7 @@ describe('limits', () => {
     expect(server.doc.getMap('objects').has('full00000001')).toBe(false);
     expect(evil.socket.readyState).toBe(evil.socket.OPEN);
 
-    evil.update((doc) => doc.getMap('meta').set('more', 'y'.repeat(1000)));
+    evil.update((doc) => doc.getArray('debug-items').push(['y'.repeat(1000)]));
     expect((await evil.closed).code).toBe(CloseCode.DocLimit);
   });
 

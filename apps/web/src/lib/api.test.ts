@@ -23,17 +23,33 @@ afterEach(() => {
 
 describe('api', () => {
   it('parses a valid createRoom response', async () => {
-    const fetchMock = respond(201, JSON.stringify({ roomId, createdAt, editKey, viewKey }));
-    await expect(api.createRoom()).resolves.toEqual({ roomId, createdAt, editKey, viewKey });
+    const created = {
+      roomId,
+      createdAt,
+      mapId: 'bank',
+      contentVersion: 'y11s3.1',
+      editKey,
+      viewKey,
+    };
+    const fetchMock = respond(201, JSON.stringify(created));
+    await expect(api.createRoom('bank')).resolves.toEqual(created);
     expect(fetchMock).toHaveBeenCalledWith(
       new URL('http://api.test/rooms'),
-      expect.objectContaining({ method: 'POST' }),
+      expect.objectContaining({ method: 'POST', body: JSON.stringify({ mapId: 'bank' }) }),
     );
   });
 
   it('parses a valid getRoom response and sends the room token as a bearer header', async () => {
-    const fetchMock = respond(200, JSON.stringify({ roomId, createdAt, mapId: null }));
-    await expect(api.getRoom(roomId, 'tok')).resolves.toEqual({ roomId, createdAt, mapId: null });
+    const fetchMock = respond(
+      200,
+      JSON.stringify({ roomId, createdAt, mapId: null, contentVersion: null }),
+    );
+    await expect(api.getRoom(roomId, 'tok')).resolves.toEqual({
+      roomId,
+      createdAt,
+      mapId: null,
+      contentVersion: null,
+    });
     expect(fetchMock).toHaveBeenCalledWith(
       expect.any(URL),
       expect.objectContaining({
@@ -78,7 +94,7 @@ describe('api', () => {
 
   it('throws when a 2xx body does not match the schema', async () => {
     respond(201, JSON.stringify({ roomId: 'short', createdAt }));
-    await expect(api.createRoom()).rejects.toMatchObject({ code: 'invalid_response' });
+    await expect(api.createRoom('bank')).rejects.toMatchObject({ code: 'invalid_response' });
   });
 
   it('turns a 404 body into an ApiClientError with code not_found', async () => {
@@ -95,6 +111,6 @@ describe('api', () => {
         throw new TypeError('fetch failed');
       }),
     );
-    await expect(api.createRoom()).rejects.toMatchObject({ code: 'network', status: 0 });
+    await expect(api.createRoom('bank')).rejects.toMatchObject({ code: 'network', status: 0 });
   });
 });

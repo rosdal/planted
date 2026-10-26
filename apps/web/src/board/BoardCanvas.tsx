@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import type { LoadedMap } from '../content/loader';
 import { useRoomClient } from '../realtime/react';
 import { Board, type BoardIdentity, type BoardReadOnly } from './board';
 import { perfEnabled } from './overlay';
@@ -13,6 +14,15 @@ declare global {
       fps: () => number;
       stats: () => ReturnType<Board['stats']>;
       resetLongestFrame: () => void;
+      floor: () => string;
+      floors: () => readonly string[];
+      setFloor: (floorId: string) => void;
+      overlay: () => boolean;
+      /** Strokes on the floor in view. */
+      visibleStrokes: () => number;
+      visibleCallouts: () => string[];
+      hoverCallout: () => string | null;
+      iconCount: () => number;
     };
   }
 }
@@ -25,9 +35,12 @@ declare global {
 export function BoardCanvas({
   identity,
   readOnly,
+  content,
   onBoard,
 }: {
   identity: BoardIdentity;
+  /** The room's map; a change of map remounts the board. */
+  content: LoadedMap;
   /** Viewers can pan, zoom and point, but not draw or undo. */
   readOnly: boolean;
   onBoard?: (board: Board | null) => void;
@@ -48,7 +61,7 @@ export function BoardCanvas({
     // when it is destroyed, and then tears itself down as soon as `init` resolves.
     let disposed = false;
     const isReadOnly: BoardReadOnly = () => readOnlyRef.current;
-    const board = new Board(element, client, () => identityRef.current(), isReadOnly);
+    const board = new Board(element, client, () => identityRef.current(), isReadOnly, content);
     void board
       .init()
       .then(() => {
@@ -62,6 +75,14 @@ export function BoardCanvas({
             fps: () => board.fps,
             stats: () => board.stats(),
             resetLongestFrame: () => board.resetLongestFrame(),
+            floor: () => board.view.floor,
+            floors: () => board.floorIds,
+            setFloor: (floorId) => board.setFloor(floorId),
+            overlay: () => board.view.overlay,
+            visibleStrokes: () => board.visibleStrokeCount,
+            visibleCallouts: () => board.visibleCallouts,
+            hoverCallout: () => board.hoverCallout,
+            iconCount: () => board.iconCount,
           };
         }
       })
@@ -72,7 +93,7 @@ export function BoardCanvas({
       onBoardRef.current?.(null);
       if (window.__board) delete window.__board;
     };
-  }, [client]);
+  }, [client, content]);
 
   return <div ref={host} className="absolute inset-0 overflow-hidden" data-testid="board" />;
 }

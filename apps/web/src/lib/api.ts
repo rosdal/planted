@@ -74,7 +74,8 @@ async function request<T>(
 }
 
 export const api = {
-  createRoom: () => request(CreateRoomResponse, '/rooms', { method: 'POST' }),
+  createRoom: (mapId: string) =>
+    request(CreateRoomResponse, '/rooms', { method: 'POST', body: { mapId } }),
   /** 403 `forbidden`: the key is wrong or its link was revoked. */
   roomToken: (roomId: RoomId, key: string) =>
     request(RoomTokenResponse, `/rooms/${roomId}/token`, { method: 'POST', body: { key } }),

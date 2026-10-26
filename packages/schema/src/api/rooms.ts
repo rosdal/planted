@@ -5,10 +5,16 @@ import { RoomRole } from '../protocol';
 /** A share link's key: 32 random bytes, base64url, as it appears after `#k=` (ADR 0005). */
 export const LinkKey = z.string().regex(/^[A-Za-z0-9_-]{43}$/);
 
+/** `mapId` must be a map in the server's current content version. */
+export const CreateRoomRequest = z.strictObject({ mapId: z.string().min(1).max(64) });
+export type CreateRoomRequest = z.infer<typeof CreateRoomRequest>;
+
 /** The only time the raw link keys leave the server; they're stored as hashes. */
 export const CreateRoomResponse = z.object({
   roomId: RoomId,
   createdAt: z.iso.datetime(),
+  mapId: z.string(),
+  contentVersion: z.string(),
   editKey: LinkKey,
   viewKey: LinkKey,
 });
@@ -20,7 +26,9 @@ export type RoomParams = z.infer<typeof RoomParams>;
 export const GetRoomResponse = z.object({
   roomId: RoomId,
   createdAt: z.iso.datetime(),
+  /** Null for rooms created before 0.5, which have no map. */
   mapId: z.string().nullable(),
+  contentVersion: z.string().nullable(),
 });
 export type GetRoomResponse = z.infer<typeof GetRoomResponse>;
 

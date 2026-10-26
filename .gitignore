@@ -17,3 +17,6 @@ trace-*.json
 
 # chaos run server logs
 scripts/chaos-server.log
+
+# TanStack Router plugin scratch files
+.tanstack/

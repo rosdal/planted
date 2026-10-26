@@ -27,9 +27,10 @@ import {
   RoomClient,
   type WebSocketCtor,
 } from '@planted/client';
-import { TEST_FLOOR, USER_COLOURS } from '@planted/schema';
+import { USER_COLOURS } from '@planted/schema';
 import { type Browser, type BrowserContext, chromium, type Page } from '@playwright/test';
 import WebSocket from 'ws';
+import { createRoomInit, floorFor } from './rooms';
 
 const { values: args } = parseArgs({
   options: {
@@ -67,7 +68,7 @@ type Stats = {
 type Room = { roomId: string; editKey: string };
 
 async function newRoom(): Promise<Room> {
-  const res = await fetch(`${args.api}/rooms`, { method: 'POST' });
+  const res = await fetch(`${args.api}/rooms`, createRoomInit());
   if (!res.ok) throw new Error(`POST /rooms answered ${res.status}`);
   return (await res.json()) as Room;
 }
@@ -258,7 +259,7 @@ async function seedStrokes({ roomId, editKey }: Room, count: number): Promise<vo
     ]).flat();
     commitStroke(client.doc, {
       id: newObjectId(),
-      floor: TEST_FLOOR,
+      floor: floorFor(client.doc),
       colour: USER_COLOURS[i % USER_COLOURS.length] ?? '#57ab5a',
       width: 0.002,
       points,

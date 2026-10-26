@@ -97,6 +97,7 @@ export class RemoteLiveStrokes {
   readonly #dirty = new Set<number>();
   readonly #awareness: Awareness;
   readonly #objects: ObjectsMap;
+  #floor: string | null = null;
 
   constructor(awareness: Awareness, objects: ObjectsMap) {
     this.#awareness = awareness;
@@ -107,6 +108,12 @@ export class RemoteLiveStrokes {
 
   get size(): number {
     return this.#byClient.size;
+  }
+
+  /** Shows only live strokes drawn on `floor`; peers without a floor (older clients) show anywhere. */
+  setFloor(floor: string): void {
+    this.#floor = floor;
+    for (const clientId of this.#awareness.getStates().keys()) this.#dirty.add(clientId);
   }
 
   /** Called once a frame, after the scene store flushed this frame's commits. */
@@ -131,8 +138,15 @@ export class RemoteLiveStrokes {
   #apply(clientId: number, now: number): void {
     if (clientId === this.#awareness.clientID) return;
     const state = this.#awareness.getStates().get(clientId);
-    const live = parseLive(state?.live);
+    const elsewhere = typeof state?.floor === 'string' && state.floor !== this.#floor;
+    const live = elsewhere ? null : parseLive(state?.live);
     const existing = this.#byClient.get(clientId);
+    if (elsewhere && existing) {
+      // Switched floors: gone at once, no linger.
+      existing.graphics.destroy();
+      this.#byClient.delete(clientId);
+      return;
+    }
     if (!live || this.#objects.has(live.id)) {
       if (existing && existing.goneAt === null) existing.goneAt = now;
       return;

@@ -1,0 +1,738 @@
+{
+  "contentRev": "y11s3",
+  "floors": [
+    {
+      "art": "art/1f.svg",
+      "id": "1f",
+      "label": "1F",
+      "order": 1
+    },
+    {
+      "art": "art/2f.svg",
+      "id": "2f",
+      "label": "2F",
+      "order": 2
+    }
+  ],
+  "hatches": [
+    {
+      "at": [0.6875, 0.625],
+      "floorId": "2f",
+      "id": "hatch:2f:library"
+    },
+    {
+      "at": [0.3125, 0.375],
+      "floorId": "2f",
+      "id": "hatch:2f:office"
+    }
+  ],
+  "id": "practice-annex",
+  "name": "Annex (practice)",
+  "openings": [
+    {
+      "floorId": "1f",
+      "from": [0.4375, 0.60156],
+      "id": "door:1f:garage-hall",
+      "kind": "door",
+      "to": [0.4375, 0.64844]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.28906, 0.5],
+      "id": "door:1f:garage-lobby",
+      "kind": "door",
+      "to": [0.33594, 0.5]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.28516, 0.75],
+      "id": "door:1f:garage-south",
+      "kind": "door",
+      "to": [0.33984, 0.75]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5625, 0.35156],
+      "id": "door:1f:hall-kitchen",
+      "kind": "door",
+      "to": [0.5625, 0.39844]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.4375, 0.35156],
+      "id": "door:1f:hall-lobby",
+      "kind": "door",
+      "to": [0.4375, 0.39844]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.47266, 0.25],
+      "id": "door:1f:hall-north",
+      "kind": "door",
+      "to": [0.52734, 0.25]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5625, 0.60156],
+      "id": "door:1f:hall-storage",
+      "kind": "door",
+      "to": [0.5625, 0.64844]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.4375, 0.60156],
+      "id": "door:2f:bathroom-landing",
+      "kind": "door",
+      "to": [0.4375, 0.64844]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.28906, 0.5],
+      "id": "door:2f:bathroom-office",
+      "kind": "door",
+      "to": [0.33594, 0.5]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5625, 0.35156],
+      "id": "door:2f:bedroom-landing",
+      "kind": "door",
+      "to": [0.5625, 0.39844]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5625, 0.60156],
+      "id": "door:2f:landing-library",
+      "kind": "door",
+      "to": [0.5625, 0.64844]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.4375, 0.35156],
+      "id": "door:2f:landing-office",
+      "kind": "door",
+      "to": [0.4375, 0.39844]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.1875, 0.59375],
+      "id": "window:1f:garage-west",
+      "kind": "window",
+      "to": [0.1875, 0.65625]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.8125, 0.34375],
+      "id": "window:1f:kitchen-east",
+      "kind": "window",
+      "to": [0.8125, 0.40625]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.65625, 0.25],
+      "id": "window:1f:kitchen-north",
+      "kind": "window",
+      "to": [0.71875, 0.25]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.28125, 0.25],
+      "id": "window:1f:lobby-north",
+      "kind": "window",
+      "to": [0.34375, 0.25]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.65625, 0.75],
+      "id": "window:1f:storage-south",
+      "kind": "window",
+      "to": [0.71875, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.28125, 0.75],
+      "id": "window:2f:bathroom-south",
+      "kind": "window",
+      "to": [0.34375, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.8125, 0.34375],
+      "id": "window:2f:bedroom-east",
+      "kind": "window",
+      "to": [0.8125, 0.40625]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.65625, 0.75],
+      "id": "window:2f:library-south",
+      "kind": "window",
+      "to": [0.71875, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.28125, 0.25],
+      "id": "window:2f:office-north",
+      "kind": "window",
+      "to": [0.34375, 0.25]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.1875, 0.34375],
+      "id": "window:2f:office-west",
+      "kind": "window",
+      "to": [0.1875, 0.40625]
+    }
+  ],
+  "rooms": [
+    {
+      "callout": "Garage",
+      "floorId": "1f",
+      "id": "room:1f:garage",
+      "polygon": [
+        [0.1875, 0.5],
+        [0.4375, 0.5],
+        [0.4375, 0.75],
+        [0.1875, 0.75]
+      ]
+    },
+    {
+      "callout": "Main Hall",
+      "floorId": "1f",
+      "id": "room:1f:hall",
+      "polygon": [
+        [0.4375, 0.25],
+        [0.5625, 0.25],
+        [0.5625, 0.75],
+        [0.4375, 0.75]
+      ]
+    },
+    {
+      "callout": "Kitchen",
+      "floorId": "1f",
+      "id": "room:1f:kitchen",
+      "polygon": [
+        [0.5625, 0.25],
+        [0.8125, 0.25],
+        [0.8125, 0.5],
+        [0.5625, 0.5]
+      ]
+    },
+    {
+      "callout": "Lobby",
+      "floorId": "1f",
+      "id": "room:1f:lobby",
+      "polygon": [
+        [0.1875, 0.25],
+        [0.4375, 0.25],
+        [0.4375, 0.5],
+        [0.1875, 0.5]
+      ]
+    },
+    {
+      "callout": "Storage",
+      "floorId": "1f",
+      "id": "room:1f:storage",
+      "polygon": [
+        [0.5625, 0.5],
+        [0.8125, 0.5],
+        [0.8125, 0.75],
+        [0.5625, 0.75]
+      ]
+    },
+    {
+      "callout": "Bathroom",
+      "floorId": "2f",
+      "id": "room:2f:bathroom",
+      "polygon": [
+        [0.1875, 0.5],
+        [0.4375, 0.5],
+        [0.4375, 0.75],
+        [0.1875, 0.75]
+      ]
+    },
+    {
+      "callout": "Bedroom",
+      "floorId": "2f",
+      "id": "room:2f:bedroom",
+      "polygon": [
+        [0.5625, 0.25],
+        [0.8125, 0.25],
+        [0.8125, 0.5],
+        [0.5625, 0.5]
+      ]
+    },
+    {
+      "callout": "Landing",
+      "floorId": "2f",
+      "id": "room:2f:landing",
+      "polygon": [
+        [0.4375, 0.25],
+        [0.5625, 0.25],
+        [0.5625, 0.75],
+        [0.4375, 0.75]
+      ]
+    },
+    {
+      "callout": "Library",
+      "floorId": "2f",
+      "id": "room:2f:library",
+      "polygon": [
+        [0.5625, 0.5],
+        [0.8125, 0.5],
+        [0.8125, 0.75],
+        [0.5625, 0.75]
+      ]
+    },
+    {
+      "callout": "Office",
+      "floorId": "2f",
+      "id": "room:2f:office",
+      "polygon": [
+        [0.1875, 0.25],
+        [0.4375, 0.25],
+        [0.4375, 0.5],
+        [0.1875, 0.5]
+      ]
+    }
+  ],
+  "sites": [
+    {
+      "floorId": "1f",
+      "id": "site:kitchen-storage",
+      "name": "Kitchen / Storage",
+      "objectives": [
+        {
+          "at": [0.6875, 0.375],
+          "label": "A",
+          "roomId": "room:1f:kitchen"
+        },
+        {
+          "at": [0.6875, 0.625],
+          "label": "B",
+          "roomId": "room:1f:storage"
+        }
+      ]
+    },
+    {
+      "floorId": "2f",
+      "id": "site:office-library",
+      "name": "Office / Library",
+      "objectives": [
+        {
+          "at": [0.3125, 0.375],
+          "label": "A",
+          "roomId": "room:2f:office"
+        },
+        {
+          "at": [0.6875, 0.625],
+          "label": "B",
+          "roomId": "room:2f:library"
+        }
+      ]
+    }
+  ],
+  "spawns": [
+    {
+      "at": [0.5, 0.125],
+      "floorId": "1f",
+      "id": "spawn:attack:front-yard",
+      "name": "Front Yard",
+      "side": "attack"
+    },
+    {
+      "at": [0.90625, 0.5],
+      "floorId": "1f",
+      "id": "spawn:attack:garden",
+      "name": "Garden",
+      "side": "attack"
+    },
+    {
+      "at": [0.09375, 0.625],
+      "floorId": "1f",
+      "id": "spawn:attack:parking",
+      "name": "Parking",
+      "side": "attack"
+    }
+  ],
+  "walls": [
+    {
+      "floorId": "1f",
+      "from": [0.4375, 0.5],
+      "id": "wall:1f:garage-hall-1",
+      "kind": "soft",
+      "to": [0.4375, 0.60156]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.4375, 0.64844],
+      "id": "wall:1f:garage-hall-2",
+      "kind": "soft",
+      "to": [0.4375, 0.75]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.1875, 0.5],
+      "id": "wall:1f:garage-lobby-1",
+      "kind": "hard",
+      "to": [0.28906, 0.5]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.33594, 0.5],
+      "id": "wall:1f:garage-lobby-2",
+      "kind": "hard",
+      "to": [0.4375, 0.5]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.1875, 0.75],
+      "id": "wall:1f:garage-south-1",
+      "kind": "outer",
+      "to": [0.28516, 0.75]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.33984, 0.75],
+      "id": "wall:1f:garage-south-2",
+      "kind": "outer",
+      "to": [0.4375, 0.75]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.1875, 0.5],
+      "id": "wall:1f:garage-west-1",
+      "kind": "outer",
+      "to": [0.1875, 0.59375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.1875, 0.65625],
+      "id": "wall:1f:garage-west-2",
+      "kind": "outer",
+      "to": [0.1875, 0.75]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5625, 0.25],
+      "id": "wall:1f:hall-kitchen-1",
+      "kind": "reinforceable",
+      "to": [0.5625, 0.35156]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5625, 0.39844],
+      "id": "wall:1f:hall-kitchen-2",
+      "kind": "reinforceable",
+      "to": [0.5625, 0.5]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.4375, 0.25],
+      "id": "wall:1f:hall-lobby-1",
+      "kind": "soft",
+      "to": [0.4375, 0.35156]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.4375, 0.39844],
+      "id": "wall:1f:hall-lobby-2",
+      "kind": "soft",
+      "to": [0.4375, 0.5]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.4375, 0.25],
+      "id": "wall:1f:hall-north-1",
+      "kind": "outer",
+      "to": [0.47266, 0.25]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.52734, 0.25],
+      "id": "wall:1f:hall-north-2",
+      "kind": "outer",
+      "to": [0.5625, 0.25]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.4375, 0.75],
+      "id": "wall:1f:hall-south",
+      "kind": "outer",
+      "to": [0.5625, 0.75]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5625, 0.5],
+      "id": "wall:1f:hall-storage-1",
+      "kind": "reinforceable",
+      "to": [0.5625, 0.60156]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5625, 0.64844],
+      "id": "wall:1f:hall-storage-2",
+      "kind": "reinforceable",
+      "to": [0.5625, 0.75]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.8125, 0.25],
+      "id": "wall:1f:kitchen-east-1",
+      "kind": "outer",
+      "to": [0.8125, 0.34375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.8125, 0.40625],
+      "id": "wall:1f:kitchen-east-2",
+      "kind": "outer",
+      "to": [0.8125, 0.5]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5625, 0.25],
+      "id": "wall:1f:kitchen-north-1",
+      "kind": "outer",
+      "to": [0.65625, 0.25]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.71875, 0.25],
+      "id": "wall:1f:kitchen-north-2",
+      "kind": "outer",
+      "to": [0.8125, 0.25]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5625, 0.5],
+      "id": "wall:1f:kitchen-storage",
+      "kind": "reinforceable",
+      "to": [0.8125, 0.5]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.1875, 0.25],
+      "id": "wall:1f:lobby-north-1",
+      "kind": "outer",
+      "to": [0.28125, 0.25]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.34375, 0.25],
+      "id": "wall:1f:lobby-north-2",
+      "kind": "outer",
+      "to": [0.4375, 0.25]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.1875, 0.25],
+      "id": "wall:1f:lobby-west",
+      "kind": "outer",
+      "to": [0.1875, 0.5]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.8125, 0.5],
+      "id": "wall:1f:storage-east",
+      "kind": "outer",
+      "to": [0.8125, 0.75]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5625, 0.75],
+      "id": "wall:1f:storage-south-1",
+      "kind": "outer",
+      "to": [0.65625, 0.75]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.71875, 0.75],
+      "id": "wall:1f:storage-south-2",
+      "kind": "outer",
+      "to": [0.8125, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.4375, 0.5],
+      "id": "wall:2f:bathroom-landing-1",
+      "kind": "soft",
+      "to": [0.4375, 0.60156]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.4375, 0.64844],
+      "id": "wall:2f:bathroom-landing-2",
+      "kind": "soft",
+      "to": [0.4375, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.1875, 0.5],
+      "id": "wall:2f:bathroom-office-1",
+      "kind": "reinforceable",
+      "to": [0.28906, 0.5]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.33594, 0.5],
+      "id": "wall:2f:bathroom-office-2",
+      "kind": "reinforceable",
+      "to": [0.4375, 0.5]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.1875, 0.75],
+      "id": "wall:2f:bathroom-south-1",
+      "kind": "outer",
+      "to": [0.28125, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.34375, 0.75],
+      "id": "wall:2f:bathroom-south-2",
+      "kind": "outer",
+      "to": [0.4375, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.1875, 0.5],
+      "id": "wall:2f:bathroom-west",
+      "kind": "outer",
+      "to": [0.1875, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.8125, 0.25],
+      "id": "wall:2f:bedroom-east-1",
+      "kind": "outer",
+      "to": [0.8125, 0.34375]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.8125, 0.40625],
+      "id": "wall:2f:bedroom-east-2",
+      "kind": "outer",
+      "to": [0.8125, 0.5]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5625, 0.25],
+      "id": "wall:2f:bedroom-landing-1",
+      "kind": "soft",
+      "to": [0.5625, 0.35156]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5625, 0.39844],
+      "id": "wall:2f:bedroom-landing-2",
+      "kind": "soft",
+      "to": [0.5625, 0.5]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5625, 0.5],
+      "id": "wall:2f:bedroom-library",
+      "kind": "hard",
+      "to": [0.8125, 0.5]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5625, 0.25],
+      "id": "wall:2f:bedroom-north",
+      "kind": "outer",
+      "to": [0.8125, 0.25]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5625, 0.5],
+      "id": "wall:2f:landing-library-1",
+      "kind": "reinforceable",
+      "to": [0.5625, 0.60156]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5625, 0.64844],
+      "id": "wall:2f:landing-library-2",
+      "kind": "reinforceable",
+      "to": [0.5625, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.4375, 0.25],
+      "id": "wall:2f:landing-north",
+      "kind": "outer",
+      "to": [0.5625, 0.25]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.4375, 0.25],
+      "id": "wall:2f:landing-office-1",
+      "kind": "reinforceable",
+      "to": [0.4375, 0.35156]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.4375, 0.39844],
+      "id": "wall:2f:landing-office-2",
+      "kind": "reinforceable",
+      "to": [0.4375, 0.5]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.4375, 0.75],
+      "id": "wall:2f:landing-south",
+      "kind": "outer",
+      "to": [0.5625, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.8125, 0.5],
+      "id": "wall:2f:library-east",
+      "kind": "outer",
+      "to": [0.8125, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5625, 0.75],
+      "id": "wall:2f:library-south-1",
+      "kind": "outer",
+      "to": [0.65625, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.71875, 0.75],
+      "id": "wall:2f:library-south-2",
+      "kind": "outer",
+      "to": [0.8125, 0.75]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.1875, 0.25],
+      "id": "wall:2f:office-north-1",
+      "kind": "outer",
+      "to": [0.28125, 0.25]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.34375, 0.25],
+      "id": "wall:2f:office-north-2",
+      "kind": "outer",
+      "to": [0.4375, 0.25]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.1875, 0.25],
+      "id": "wall:2f:office-west-1",
+      "kind": "outer",
+      "to": [0.1875, 0.34375]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.1875, 0.40625],
+      "id": "wall:2f:office-west-2",
+      "kind": "outer",
+      "to": [0.1875, 0.5]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "practice-depot",
+  "name": "Depot (practice)",
+  "contentRev": "y11s3",
+  "floors": [
+    {
+      "id": "b",
+      "label": "B",
+      "order": 0
+    },
+    {
+      "id": "1f",
+      "label": "1F",
+      "order": 1
+    },
+    {
+      "id": "2f",
+      "label": "2F",
+      "order": 2
+    }
+  ],
+  "sites": {
+    "server-generator": {
+      "name": "Server / Generator"
+    },
+    "workshop-canteen": {
+      "name": "Workshop / Canteen"
+    },
+    "director-lounge": {
+      "name": "Director / Lounge"
+    }
+  }
+}

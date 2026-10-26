@@ -1,5 +1,4 @@
 import { commitStroke, type LiveStroke, newObjectId, rdp } from '@planted/client';
-import { TEST_FLOOR } from '@planted/schema';
 import type * as Y from 'yjs';
 import type { CameraController } from '../camera';
 import { type Point, screenPxToMap, screenToMap } from '../coords';
@@ -21,6 +20,8 @@ export type PenContext = {
   live: LocalLiveStroke;
   /** Current user name and colour, read at stroke start (colour) and commit (name). */
   identity: () => { name: string; colour: string };
+  /** The floor in view; a stroke is committed to the floor it was drawn on. */
+  floor: () => string;
   /** Screen position of a client point, relative to the canvas. */
   toScreen: (clientX: number, clientY: number) => Point;
   /** Publish this user's live stroke (or null) through awareness. */
@@ -29,6 +30,7 @@ export type PenContext = {
 
 type Drawing = {
   id: string;
+  floor: string;
   pointerId: number;
   colour: string;
   width: number;
@@ -68,6 +70,7 @@ export class PenTool {
     const width = Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, screenPxToMap(camera.camera, WIDTH_PX)));
     const drawing: Drawing = {
       id: newObjectId(),
+      floor: this.#ctx.floor(),
       pointerId: event.pointerId,
       colour: this.#ctx.identity().colour,
       width,
@@ -132,7 +135,7 @@ export class PenTool {
     this.#drawing = null;
     commitStroke(this.#ctx.doc, {
       id: drawing.id,
-      floor: TEST_FLOOR,
+      floor: drawing.floor,
       colour: drawing.colour,
       width: drawing.width,
       points: drawing.points,

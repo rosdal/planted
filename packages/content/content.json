@@ -1,0 +1,20 @@
+{
+  "season": "y11s3",
+  "build": 1,
+  "maps": ["practice-annex", "practice-depot", "practice-lighthouse"],
+  "upcoming": [
+    { "id": "bank", "name": "Bank" },
+    { "id": "border", "name": "Border" },
+    { "id": "chalet", "name": "Chalet" },
+    { "id": "clubhouse", "name": "Clubhouse" },
+    { "id": "coastline", "name": "Coastline" },
+    { "id": "consulate", "name": "Consulate" },
+    { "id": "kafe-dostoyevsky", "name": "Kafe Dostoyevsky" },
+    { "id": "lair", "name": "Lair" },
+    { "id": "nighthaven-labs", "name": "Nighthaven Labs" },
+    { "id": "oregon", "name": "Oregon" },
+    { "id": "skyscraper", "name": "Skyscraper" },
+    { "id": "theme-park", "name": "Theme Park" },
+    { "id": "villa", "name": "Villa" }
+  ]
+}

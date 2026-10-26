@@ -1,0 +1,36 @@
+{
+  "name": "@planted/content",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "dev": "tsx scripts/build.ts && tsx scripts/serve.ts",
+    "typecheck": "tsc --noEmit",
+    "content:extract": "tsx scripts/extract.ts",
+    "content:check": "tsx scripts/check.ts",
+    "content:build": "tsx scripts/build.ts",
+    "content:release": "tsx scripts/release.ts",
+    "content:serve": "tsx scripts/serve.ts"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-s3": "^3.1156.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/node": "catalog:",
+    "@types/svg-path-parser": "^1.1.6",
+    "free-tex-packer-core": "^0.3.9",
+    "sharp": "^0.35.5",
+    "svg-path-parser": "^1.1.0",
+    "svgo": "^4.1.0",
+    "svgson": "^5.3.1",
+    "tsx": "^4.23.15",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
