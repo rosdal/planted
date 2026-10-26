@@ -30,6 +30,23 @@ async function problemsOf(input: { meta: unknown; sources: FloorSource[] }): Pro
 }
 
 describe('extractMap', () => {
+  it('accepts the floor template, so new floors start from something that extracts', async () => {
+    const svg = await readFile(join(import.meta.dirname, '..', 'templates', 'floor.svg'), 'utf8');
+    const meta = {
+      id: 'template',
+      name: 'Template',
+      contentRev: 'y11s3',
+      floors: [{ id: '1f', label: '1F', order: 1 }],
+      sites: { example: { name: 'Example' } },
+    };
+    const { map } = await extractMap(meta, [{ floorId: '1f', file: 'floor.svg', svg }]);
+    expect(map.walls).toHaveLength(4);
+    expect(map.sites[0]?.objectives.map((o) => o.roomId)).toEqual([
+      'room:1f:example-west',
+      'room:1f:example-east',
+    ]);
+  });
+
   it('turns the tiny fixture into the expected map.json, byte for byte', async () => {
     const { meta, sources } = await tiny();
     const { map } = await extractMap(meta, sources);
