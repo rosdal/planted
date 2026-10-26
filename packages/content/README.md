@@ -5,7 +5,6 @@ Planted's maps, icons and game catalogues, built into versioned files on a CDN. 
 ## Ground rules
 
 These keep the project clear of anyone else's IP. Every contributor follows them.
-
 - **Never commit anything taken from the game, Ubisoft's site or press kits.** No ripped textures, icons, blueprint images or screenshots, not even as a temporary reference.
 - **Maps are your own vector drawings of the layout**, in Planted's style. Use your own gameplay and custom-game walkthroughs as reference, and keep your notes and screenshots outside the repo. Don't trace official blueprint images.
 - **Icons are original designs** (see [icons/STYLE.md](icons/STYLE.md)). Operators appear as generated badges, never portraits.
@@ -16,13 +15,13 @@ The three maps in `maps/` today are fictional practice layouts (`practice-annex`
 
 ## Commands
 
-| Command | What it does |
-| --- | --- |
-| `pnpm content:extract [mapId…]` | Floor SVGs + `meta.json` → `map.json`, `art/<floor>.svg`, and `src/maps.gen.ts` |
-| `pnpm content:check` | Everything CI checks; see below |
-| `pnpm content:build [--out dir]` | Builds `dist/<version>/` and `dist/latest.json` |
-| `pnpm content:serve` | Serves `dist/` on http://localhost:5174 like the CDN (set `VITE_CONTENT_URL` to it) |
-| `pnpm content:release` | Uploads a build to R2; CI runs it on a `content-v*` tag |
+| Command                          | What it does                                                                        |
+| -------------------------------- | ----------------------------------------------------------------------------------- |
+| `pnpm content:extract [mapId…]`  | Floor SVGs + `meta.json` → `map.json`, `art/<floor>.svg`, and `src/maps.gen.ts`     |
+| `pnpm content:check`             | Everything CI checks; see below                                                     |
+| `pnpm content:build [--out dir]` | Builds `dist/<version>/` and `dist/latest.json`                                     |
+| `pnpm content:serve`             | Serves `dist/` on http://localhost:5174 like the CDN (set `VITE_CONTENT_URL` to it) |
+| `pnpm content:release`           | Uploads a build to R2; CI runs it on a `content-v*` tag                             |
 
 Run them from the repo root with `pnpm --filter @planted/content <command>`, or from this folder.
 
@@ -39,16 +38,15 @@ map.json, art/       written by content:extract; never edit them
 
 Start each floor from [templates/floor.svg](templates/floor.svg). It has every layer, a legend and the style colours. The canvas is `viewBox="0 0 4096 4096"`; map space is that divided by 4096. Align floors so stairs and hatches line up when stacked.
 
-| Layer (group id) | Contains | Element id |
-| --- | --- | --- |
-| `art` | Everything visual: floor fill, walls, stairs, a few props | anything |
-| `rooms` | One closed `path`, `polygon` or `rect` per room | `room:<slug>` with `data-callout="Gym"` |
-| `walls` | One `line` per wall segment that can change state | `wall:<floor>:<slug>` with `data-kind` |
-| `hatches` | One `circle` per hatch | `hatch:<floor>:<slug>` |
-| `openings` | One `line` per door, window or vault | `door:<floor>:<slug>`, `window:…`, `vault:…` |
-| `sites` | One `circle` per objective | `obj:<site>:A` or `obj:<site>:B`, with `data-room="<room slug>"` |
-| `spawns` | One `circle` per spawn | `spawn:attack:<slug>` or `spawn:defence:<slug>`, optional `data-name` |
-
+| Layer (group id) | Contains                                                  | Element id                                                            |
+| ---------------- | --------------------------------------------------------- | --------------------------------------------------------------------- |
+| `art`            | Everything visual: floor fill, walls, stairs, a few props | anything                                                              |
+| `rooms`          | One closed `path`, `polygon` or `rect` per room           | `room:<slug>` with `data-callout="Gym"`                               |
+| `walls`          | One `line` per wall segment that can change state         | `wall:<floor>:<slug>` with `data-kind`                                |
+| `hatches`        | One `circle` per hatch                                    | `hatch:<floor>:<slug>`                                                |
+| `openings`       | One `line` per door, window or vault                      | `door:<floor>:<slug>`, `window:…`, `vault:…`                          |
+| `sites`          | One `circle` per objective                                | `obj:<site>:A` or `obj:<site>:B`, with `data-room="<room slug>"`      |
+| `spawns`         | One `circle` per spawn                                    | `spawn:attack:<slug>` or `spawn:defence:<slug>`, optional `data-name` |
 - `data-kind` is `soft`, `reinforceable`, `hard` or `outer`.
 - Wall slugs come from room names (`wall:2f:gym-north`) and **must not change between seasons**: stamps and wall states point at them. Removing or renaming one needs an entry in `migrations/<rev>.json`, `{ "wall:2f:gym-north": null }` or `{ "<old>": "<new>" }`, or `content:check` fails.
 - Room slugs only need to be unique per floor; in `map.json` they become `room:<floor>:<slug>`.

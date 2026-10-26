@@ -31,10 +31,10 @@ The build runs svgo, then produces one SVG sprite (`<symbol id="icon-<iconId>">`
 
 ## Set (v1)
 
-| Group | Icons |
-| --- | --- |
-| Weapon classes | `weapon-ar`, `weapon-smg`, `weapon-shotgun`, `weapon-dmr`, `weapon-lmg`, `weapon-mp`, `weapon-handgun`, `weapon-shield` |
-| Board basics | `reinforcement`, `rotate`, `breach-mark`, `hatch-open`, `barricade`, `drone`, `camera`, `objective`, `spawn` |
-| Attack secondaries | `breach-charge`, `claymore`, `frag`, `smoke`, `stun`, `impact-emp`, `hard-breach` |
+| Group               | Icons                                                                                                                              |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Weapon classes      | `weapon-ar`, `weapon-smg`, `weapon-shotgun`, `weapon-dmr`, `weapon-lmg`, `weapon-mp`, `weapon-handgun`, `weapon-shield`            |
+| Board basics        | `reinforcement`, `rotate`, `breach-mark`, `hatch-open`, `barricade`, `drone`, `camera`, `objective`, `spawn`                       |
+| Attack secondaries  | `breach-charge`, `claymore`, `frag`, `smoke`, `stun`, `impact-emp`, `hard-breach`                                                  |
 | Defence secondaries | `barbed-wire`, `deployable-shield`, `nitro-cell`, `impact-grenade`, `bulletproof-camera`, `proximity-alarm`, `observation-blocker` |
-| Unique gadgets | `unique` |
+| Unique gadgets      | `unique`                                                                                                                           |
