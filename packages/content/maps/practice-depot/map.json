@@ -1,0 +1,1054 @@
+{
+  "contentRev": "y11s3",
+  "floors": [
+    {
+      "art": "art/b.svg",
+      "id": "b",
+      "label": "B",
+      "order": 0
+    },
+    {
+      "art": "art/1f.svg",
+      "id": "1f",
+      "label": "1F",
+      "order": 1
+    },
+    {
+      "art": "art/2f.svg",
+      "id": "2f",
+      "label": "2F",
+      "order": 2
+    }
+  ],
+  "hatches": [
+    {
+      "at": [0.25, 0.3125],
+      "floorId": "1f",
+      "id": "hatch:1f:loading"
+    },
+    {
+      "at": [0.6875, 0.3125],
+      "floorId": "2f",
+      "id": "hatch:2f:meeting"
+    }
+  ],
+  "id": "practice-depot",
+  "name": "Depot (practice)",
+  "openings": [
+    {
+      "floorId": "1f",
+      "from": [0.66406, 0.5625],
+      "id": "door:1f:canteen-corridor",
+      "kind": "door",
+      "to": [0.71094, 0.5625]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.875, 0.47266],
+      "id": "door:1f:corridor-east",
+      "kind": "door",
+      "to": [0.875, 0.52734]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.28906, 0.4375],
+      "id": "door:1f:corridor-loading",
+      "kind": "door",
+      "to": [0.33594, 0.4375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.66406, 0.4375],
+      "id": "door:1f:corridor-reception",
+      "kind": "door",
+      "to": [0.71094, 0.4375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.125, 0.47266],
+      "id": "door:1f:corridor-west",
+      "kind": "door",
+      "to": [0.125, 0.52734]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.28906, 0.5625],
+      "id": "door:1f:corridor-workshop",
+      "kind": "door",
+      "to": [0.33594, 0.5625]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.28516, 0.1875],
+      "id": "door:1f:loading-north",
+      "kind": "door",
+      "to": [0.33984, 0.1875]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5, 0.28906],
+      "id": "door:1f:loading-reception",
+      "kind": "door",
+      "to": [0.5, 0.33594]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5, 0.66406],
+      "id": "door:2f:director-lounge",
+      "kind": "door",
+      "to": [0.5, 0.71094]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.28906, 0.5625],
+      "id": "door:2f:director-walkway",
+      "kind": "door",
+      "to": [0.33594, 0.5625]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.66406, 0.5625],
+      "id": "door:2f:lounge-walkway",
+      "kind": "door",
+      "to": [0.71094, 0.5625]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.66406, 0.4375],
+      "id": "door:2f:meeting-walkway",
+      "kind": "door",
+      "to": [0.71094, 0.4375]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.28906, 0.4375],
+      "id": "door:2f:offices-walkway",
+      "kind": "door",
+      "to": [0.33594, 0.4375]
+    },
+    {
+      "floorId": "b",
+      "from": [0.375, 0.63281],
+      "id": "door:b:archives-tunnel",
+      "kind": "door",
+      "to": [0.375, 0.67969]
+    },
+    {
+      "floorId": "b",
+      "from": [0.375, 0.32031],
+      "id": "door:b:boiler-tunnel",
+      "kind": "door",
+      "to": [0.375, 0.36719]
+    },
+    {
+      "floorId": "b",
+      "from": [0.66406, 0.5],
+      "id": "door:b:generator-server",
+      "kind": "door",
+      "to": [0.71094, 0.5]
+    },
+    {
+      "floorId": "b",
+      "from": [0.5, 0.63281],
+      "id": "door:b:generator-tunnel",
+      "kind": "door",
+      "to": [0.5, 0.67969]
+    },
+    {
+      "floorId": "b",
+      "from": [0.5, 0.32031],
+      "id": "door:b:server-tunnel",
+      "kind": "door",
+      "to": [0.5, 0.36719]
+    },
+    {
+      "floorId": "b",
+      "from": [0.41016, 0.8125],
+      "id": "door:b:tunnel-south",
+      "kind": "door",
+      "to": [0.46484, 0.8125]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5, 0.66797],
+      "id": "vault:1f:canteen-workshop",
+      "kind": "vault",
+      "to": [0.5, 0.70703]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.875, 0.65625],
+      "id": "window:1f:canteen-east",
+      "kind": "window",
+      "to": [0.875, 0.71875]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.65625, 0.8125],
+      "id": "window:1f:canteen-south",
+      "kind": "window",
+      "to": [0.71875, 0.8125]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.875, 0.28125],
+      "id": "window:1f:reception-east",
+      "kind": "window",
+      "to": [0.875, 0.34375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.65625, 0.1875],
+      "id": "window:1f:reception-north",
+      "kind": "window",
+      "to": [0.71875, 0.1875]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.125, 0.65625],
+      "id": "window:1f:workshop-west",
+      "kind": "window",
+      "to": [0.125, 0.71875]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.28125, 0.8125],
+      "id": "window:2f:director-south",
+      "kind": "window",
+      "to": [0.34375, 0.8125]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.125, 0.65625],
+      "id": "window:2f:director-west",
+      "kind": "window",
+      "to": [0.125, 0.71875]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.65625, 0.8125],
+      "id": "window:2f:lounge-south",
+      "kind": "window",
+      "to": [0.71875, 0.8125]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.875, 0.28125],
+      "id": "window:2f:meeting-east",
+      "kind": "window",
+      "to": [0.875, 0.34375]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.65625, 0.1875],
+      "id": "window:2f:meeting-north",
+      "kind": "window",
+      "to": [0.71875, 0.1875]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.28125, 0.1875],
+      "id": "window:2f:offices-north",
+      "kind": "window",
+      "to": [0.34375, 0.1875]
+    }
+  ],
+  "rooms": [
+    {
+      "callout": "Canteen",
+      "floorId": "1f",
+      "id": "room:1f:canteen",
+      "polygon": [
+        [0.5, 0.5625],
+        [0.875, 0.5625],
+        [0.875, 0.8125],
+        [0.5, 0.8125]
+      ]
+    },
+    {
+      "callout": "Corridor",
+      "floorId": "1f",
+      "id": "room:1f:corridor",
+      "polygon": [
+        [0.125, 0.4375],
+        [0.875, 0.4375],
+        [0.875, 0.5625],
+        [0.125, 0.5625]
+      ]
+    },
+    {
+      "callout": "Loading Bay",
+      "floorId": "1f",
+      "id": "room:1f:loading",
+      "polygon": [
+        [0.125, 0.1875],
+        [0.5, 0.1875],
+        [0.5, 0.4375],
+        [0.125, 0.4375]
+      ]
+    },
+    {
+      "callout": "Reception",
+      "floorId": "1f",
+      "id": "room:1f:reception",
+      "polygon": [
+        [0.5, 0.1875],
+        [0.875, 0.1875],
+        [0.875, 0.4375],
+        [0.5, 0.4375]
+      ]
+    },
+    {
+      "callout": "Workshop",
+      "floorId": "1f",
+      "id": "room:1f:workshop",
+      "polygon": [
+        [0.125, 0.5625],
+        [0.5, 0.5625],
+        [0.5, 0.8125],
+        [0.125, 0.8125]
+      ]
+    },
+    {
+      "callout": "Director",
+      "floorId": "2f",
+      "id": "room:2f:director",
+      "polygon": [
+        [0.125, 0.5625],
+        [0.5, 0.5625],
+        [0.5, 0.8125],
+        [0.125, 0.8125]
+      ]
+    },
+    {
+      "callout": "Lounge",
+      "floorId": "2f",
+      "id": "room:2f:lounge",
+      "polygon": [
+        [0.5, 0.5625],
+        [0.875, 0.5625],
+        [0.875, 0.8125],
+        [0.5, 0.8125]
+      ]
+    },
+    {
+      "callout": "Meeting Room",
+      "floorId": "2f",
+      "id": "room:2f:meeting",
+      "polygon": [
+        [0.5, 0.1875],
+        [0.875, 0.1875],
+        [0.875, 0.4375],
+        [0.5, 0.4375]
+      ]
+    },
+    {
+      "callout": "Open Office",
+      "floorId": "2f",
+      "id": "room:2f:offices",
+      "polygon": [
+        [0.125, 0.1875],
+        [0.5, 0.1875],
+        [0.5, 0.4375],
+        [0.125, 0.4375]
+      ]
+    },
+    {
+      "callout": "Walkway",
+      "floorId": "2f",
+      "id": "room:2f:walkway",
+      "polygon": [
+        [0.125, 0.4375],
+        [0.875, 0.4375],
+        [0.875, 0.5625],
+        [0.125, 0.5625]
+      ]
+    },
+    {
+      "callout": "Archives",
+      "floorId": "b",
+      "id": "room:b:archives",
+      "polygon": [
+        [0.125, 0.5],
+        [0.375, 0.5],
+        [0.375, 0.8125],
+        [0.125, 0.8125]
+      ]
+    },
+    {
+      "callout": "Boiler",
+      "floorId": "b",
+      "id": "room:b:boiler",
+      "polygon": [
+        [0.125, 0.1875],
+        [0.375, 0.1875],
+        [0.375, 0.5],
+        [0.125, 0.5]
+      ]
+    },
+    {
+      "callout": "Generator",
+      "floorId": "b",
+      "id": "room:b:generator",
+      "polygon": [
+        [0.5, 0.5],
+        [0.875, 0.5],
+        [0.875, 0.8125],
+        [0.5, 0.8125]
+      ]
+    },
+    {
+      "callout": "Server Room",
+      "floorId": "b",
+      "id": "room:b:server",
+      "polygon": [
+        [0.5, 0.1875],
+        [0.875, 0.1875],
+        [0.875, 0.5],
+        [0.5, 0.5]
+      ]
+    },
+    {
+      "callout": "Tunnel",
+      "floorId": "b",
+      "id": "room:b:tunnel",
+      "polygon": [
+        [0.375, 0.1875],
+        [0.5, 0.1875],
+        [0.5, 0.8125],
+        [0.375, 0.8125]
+      ]
+    }
+  ],
+  "sites": [
+    {
+      "floorId": "2f",
+      "id": "site:director-lounge",
+      "name": "Director / Lounge",
+      "objectives": [
+        {
+          "at": [0.3125, 0.6875],
+          "label": "A",
+          "roomId": "room:2f:director"
+        },
+        {
+          "at": [0.6875, 0.6875],
+          "label": "B",
+          "roomId": "room:2f:lounge"
+        }
+      ]
+    },
+    {
+      "floorId": "b",
+      "id": "site:server-generator",
+      "name": "Server / Generator",
+      "objectives": [
+        {
+          "at": [0.6875, 0.34375],
+          "label": "A",
+          "roomId": "room:b:server"
+        },
+        {
+          "at": [0.6875, 0.65625],
+          "label": "B",
+          "roomId": "room:b:generator"
+        }
+      ]
+    },
+    {
+      "floorId": "1f",
+      "id": "site:workshop-canteen",
+      "name": "Workshop / Canteen",
+      "objectives": [
+        {
+          "at": [0.3125, 0.6875],
+          "label": "A",
+          "roomId": "room:1f:workshop"
+        },
+        {
+          "at": [0.6875, 0.6875],
+          "label": "B",
+          "roomId": "room:1f:canteen"
+        }
+      ]
+    }
+  ],
+  "spawns": [
+    {
+      "at": [0.0625, 0.75],
+      "floorId": "1f",
+      "id": "spawn:attack:car-park",
+      "name": "Car Park",
+      "side": "attack"
+    },
+    {
+      "at": [0.9375, 0.5625],
+      "floorId": "1f",
+      "id": "spawn:attack:rail",
+      "name": "Rail Line",
+      "side": "attack"
+    },
+    {
+      "at": [0.5, 0.09375],
+      "floorId": "1f",
+      "id": "spawn:attack:yard",
+      "name": "Yard",
+      "side": "attack"
+    }
+  ],
+  "walls": [
+    {
+      "floorId": "1f",
+      "from": [0.5, 0.5625],
+      "id": "wall:1f:canteen-corridor-1",
+      "kind": "reinforceable",
+      "to": [0.66406, 0.5625]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.71094, 0.5625],
+      "id": "wall:1f:canteen-corridor-2",
+      "kind": "reinforceable",
+      "to": [0.875, 0.5625]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.875, 0.5625],
+      "id": "wall:1f:canteen-east-1",
+      "kind": "outer",
+      "to": [0.875, 0.65625]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.875, 0.71875],
+      "id": "wall:1f:canteen-east-2",
+      "kind": "outer",
+      "to": [0.875, 0.8125]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5, 0.8125],
+      "id": "wall:1f:canteen-south-1",
+      "kind": "outer",
+      "to": [0.65625, 0.8125]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.71875, 0.8125],
+      "id": "wall:1f:canteen-south-2",
+      "kind": "outer",
+      "to": [0.875, 0.8125]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5, 0.5625],
+      "id": "wall:1f:canteen-workshop-1",
+      "kind": "reinforceable",
+      "to": [0.5, 0.66797]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5, 0.70703],
+      "id": "wall:1f:canteen-workshop-2",
+      "kind": "reinforceable",
+      "to": [0.5, 0.8125]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.875, 0.4375],
+      "id": "wall:1f:corridor-east-1",
+      "kind": "outer",
+      "to": [0.875, 0.47266]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.875, 0.52734],
+      "id": "wall:1f:corridor-east-2",
+      "kind": "outer",
+      "to": [0.875, 0.5625]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.125, 0.4375],
+      "id": "wall:1f:corridor-loading-1",
+      "kind": "soft",
+      "to": [0.28906, 0.4375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.33594, 0.4375],
+      "id": "wall:1f:corridor-loading-2",
+      "kind": "soft",
+      "to": [0.5, 0.4375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5, 0.4375],
+      "id": "wall:1f:corridor-reception-1",
+      "kind": "soft",
+      "to": [0.66406, 0.4375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.71094, 0.4375],
+      "id": "wall:1f:corridor-reception-2",
+      "kind": "soft",
+      "to": [0.875, 0.4375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.125, 0.4375],
+      "id": "wall:1f:corridor-west-1",
+      "kind": "outer",
+      "to": [0.125, 0.47266]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.125, 0.52734],
+      "id": "wall:1f:corridor-west-2",
+      "kind": "outer",
+      "to": [0.125, 0.5625]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.125, 0.5625],
+      "id": "wall:1f:corridor-workshop-1",
+      "kind": "reinforceable",
+      "to": [0.28906, 0.5625]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.33594, 0.5625],
+      "id": "wall:1f:corridor-workshop-2",
+      "kind": "reinforceable",
+      "to": [0.5, 0.5625]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.125, 0.1875],
+      "id": "wall:1f:loading-north-1",
+      "kind": "outer",
+      "to": [0.28516, 0.1875]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.33984, 0.1875],
+      "id": "wall:1f:loading-north-2",
+      "kind": "outer",
+      "to": [0.5, 0.1875]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5, 0.1875],
+      "id": "wall:1f:loading-reception-1",
+      "kind": "hard",
+      "to": [0.5, 0.28906]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5, 0.33594],
+      "id": "wall:1f:loading-reception-2",
+      "kind": "hard",
+      "to": [0.5, 0.4375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.125, 0.1875],
+      "id": "wall:1f:loading-west",
+      "kind": "outer",
+      "to": [0.125, 0.4375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.875, 0.1875],
+      "id": "wall:1f:reception-east-1",
+      "kind": "outer",
+      "to": [0.875, 0.28125]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.875, 0.34375],
+      "id": "wall:1f:reception-east-2",
+      "kind": "outer",
+      "to": [0.875, 0.4375]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.5, 0.1875],
+      "id": "wall:1f:reception-north-1",
+      "kind": "outer",
+      "to": [0.65625, 0.1875]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.71875, 0.1875],
+      "id": "wall:1f:reception-north-2",
+      "kind": "outer",
+      "to": [0.875, 0.1875]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.125, 0.8125],
+      "id": "wall:1f:workshop-south",
+      "kind": "outer",
+      "to": [0.5, 0.8125]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.125, 0.5625],
+      "id": "wall:1f:workshop-west-1",
+      "kind": "outer",
+      "to": [0.125, 0.65625]
+    },
+    {
+      "floorId": "1f",
+      "from": [0.125, 0.71875],
+      "id": "wall:1f:workshop-west-2",
+      "kind": "outer",
+      "to": [0.125, 0.8125]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5, 0.5625],
+      "id": "wall:2f:director-lounge-1",
+      "kind": "reinforceable",
+      "to": [0.5, 0.66406]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5, 0.71094],
+      "id": "wall:2f:director-lounge-2",
+      "kind": "reinforceable",
+      "to": [0.5, 0.8125]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.125, 0.8125],
+      "id": "wall:2f:director-south-1",
+      "kind": "outer",
+      "to": [0.28125, 0.8125]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.34375, 0.8125],
+      "id": "wall:2f:director-south-2",
+      "kind": "outer",
+      "to": [0.5, 0.8125]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.125, 0.5625],
+      "id": "wall:2f:director-walkway-1",
+      "kind": "reinforceable",
+      "to": [0.28906, 0.5625]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.33594, 0.5625],
+      "id": "wall:2f:director-walkway-2",
+      "kind": "reinforceable",
+      "to": [0.5, 0.5625]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.125, 0.5625],
+      "id": "wall:2f:director-west-1",
+      "kind": "outer",
+      "to": [0.125, 0.65625]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.125, 0.71875],
+      "id": "wall:2f:director-west-2",
+      "kind": "outer",
+      "to": [0.125, 0.8125]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.875, 0.5625],
+      "id": "wall:2f:lounge-east",
+      "kind": "outer",
+      "to": [0.875, 0.8125]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5, 0.8125],
+      "id": "wall:2f:lounge-south-1",
+      "kind": "outer",
+      "to": [0.65625, 0.8125]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.71875, 0.8125],
+      "id": "wall:2f:lounge-south-2",
+      "kind": "outer",
+      "to": [0.875, 0.8125]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5, 0.5625],
+      "id": "wall:2f:lounge-walkway-1",
+      "kind": "reinforceable",
+      "to": [0.66406, 0.5625]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.71094, 0.5625],
+      "id": "wall:2f:lounge-walkway-2",
+      "kind": "reinforceable",
+      "to": [0.875, 0.5625]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.875, 0.1875],
+      "id": "wall:2f:meeting-east-1",
+      "kind": "outer",
+      "to": [0.875, 0.28125]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.875, 0.34375],
+      "id": "wall:2f:meeting-east-2",
+      "kind": "outer",
+      "to": [0.875, 0.4375]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5, 0.1875],
+      "id": "wall:2f:meeting-north-1",
+      "kind": "outer",
+      "to": [0.65625, 0.1875]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.71875, 0.1875],
+      "id": "wall:2f:meeting-north-2",
+      "kind": "outer",
+      "to": [0.875, 0.1875]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5, 0.1875],
+      "id": "wall:2f:meeting-offices",
+      "kind": "hard",
+      "to": [0.5, 0.4375]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.5, 0.4375],
+      "id": "wall:2f:meeting-walkway-1",
+      "kind": "soft",
+      "to": [0.66406, 0.4375]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.71094, 0.4375],
+      "id": "wall:2f:meeting-walkway-2",
+      "kind": "soft",
+      "to": [0.875, 0.4375]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.125, 0.1875],
+      "id": "wall:2f:offices-north-1",
+      "kind": "outer",
+      "to": [0.28125, 0.1875]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.34375, 0.1875],
+      "id": "wall:2f:offices-north-2",
+      "kind": "outer",
+      "to": [0.5, 0.1875]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.125, 0.4375],
+      "id": "wall:2f:offices-walkway-1",
+      "kind": "soft",
+      "to": [0.28906, 0.4375]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.33594, 0.4375],
+      "id": "wall:2f:offices-walkway-2",
+      "kind": "soft",
+      "to": [0.5, 0.4375]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.125, 0.1875],
+      "id": "wall:2f:offices-west",
+      "kind": "outer",
+      "to": [0.125, 0.4375]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.875, 0.4375],
+      "id": "wall:2f:walkway-east",
+      "kind": "outer",
+      "to": [0.875, 0.5625]
+    },
+    {
+      "floorId": "2f",
+      "from": [0.125, 0.4375],
+      "id": "wall:2f:walkway-west",
+      "kind": "outer",
+      "to": [0.125, 0.5625]
+    },
+    {
+      "floorId": "b",
+      "from": [0.125, 0.5],
+      "id": "wall:b:archives-boiler",
+      "kind": "hard",
+      "to": [0.375, 0.5]
+    },
+    {
+      "floorId": "b",
+      "from": [0.125, 0.8125],
+      "id": "wall:b:archives-south",
+      "kind": "outer",
+      "to": [0.375, 0.8125]
+    },
+    {
+      "floorId": "b",
+      "from": [0.375, 0.5],
+      "id": "wall:b:archives-tunnel-1",
+      "kind": "soft",
+      "to": [0.375, 0.63281]
+    },
+    {
+      "floorId": "b",
+      "from": [0.375, 0.67969],
+      "id": "wall:b:archives-tunnel-2",
+      "kind": "soft",
+      "to": [0.375, 0.8125]
+    },
+    {
+      "floorId": "b",
+      "from": [0.125, 0.5],
+      "id": "wall:b:archives-west",
+      "kind": "outer",
+      "to": [0.125, 0.8125]
+    },
+    {
+      "floorId": "b",
+      "from": [0.125, 0.1875],
+      "id": "wall:b:boiler-north",
+      "kind": "outer",
+      "to": [0.375, 0.1875]
+    },
+    {
+      "floorId": "b",
+      "from": [0.375, 0.1875],
+      "id": "wall:b:boiler-tunnel-1",
+      "kind": "soft",
+      "to": [0.375, 0.32031]
+    },
+    {
+      "floorId": "b",
+      "from": [0.375, 0.36719],
+      "id": "wall:b:boiler-tunnel-2",
+      "kind": "soft",
+      "to": [0.375, 0.5]
+    },
+    {
+      "floorId": "b",
+      "from": [0.125, 0.1875],
+      "id": "wall:b:boiler-west",
+      "kind": "outer",
+      "to": [0.125, 0.5]
+    },
+    {
+      "floorId": "b",
+      "from": [0.875, 0.5],
+      "id": "wall:b:generator-east",
+      "kind": "outer",
+      "to": [0.875, 0.8125]
+    },
+    {
+      "floorId": "b",
+      "from": [0.5, 0.5],
+      "id": "wall:b:generator-server-1",
+      "kind": "reinforceable",
+      "to": [0.66406, 0.5]
+    },
+    {
+      "floorId": "b",
+      "from": [0.71094, 0.5],
+      "id": "wall:b:generator-server-2",
+      "kind": "reinforceable",
+      "to": [0.875, 0.5]
+    },
+    {
+      "floorId": "b",
+      "from": [0.5, 0.8125],
+      "id": "wall:b:generator-south",
+      "kind": "outer",
+      "to": [0.875, 0.8125]
+    },
+    {
+      "floorId": "b",
+      "from": [0.5, 0.5],
+      "id": "wall:b:generator-tunnel-1",
+      "kind": "reinforceable",
+      "to": [0.5, 0.63281]
+    },
+    {
+      "floorId": "b",
+      "from": [0.5, 0.67969],
+      "id": "wall:b:generator-tunnel-2",
+      "kind": "reinforceable",
+      "to": [0.5, 0.8125]
+    },
+    {
+      "floorId": "b",
+      "from": [0.875, 0.1875],
+      "id": "wall:b:server-east",
+      "kind": "outer",
+      "to": [0.875, 0.5]
+    },
+    {
+      "floorId": "b",
+      "from": [0.5, 0.1875],
+      "id": "wall:b:server-north",
+      "kind": "outer",
+      "to": [0.875, 0.1875]
+    },
+    {
+      "floorId": "b",
+      "from": [0.5, 0.1875],
+      "id": "wall:b:server-tunnel-1",
+      "kind": "reinforceable",
+      "to": [0.5, 0.32031]
+    },
+    {
+      "floorId": "b",
+      "from": [0.5, 0.36719],
+      "id": "wall:b:server-tunnel-2",
+      "kind": "reinforceable",
+      "to": [0.5, 0.5]
+    },
+    {
+      "floorId": "b",
+      "from": [0.375, 0.1875],
+      "id": "wall:b:tunnel-north",
+      "kind": "outer",
+      "to": [0.5, 0.1875]
+    },
+    {
+      "floorId": "b",
+      "from": [0.375, 0.8125],
+      "id": "wall:b:tunnel-south-1",
+      "kind": "outer",
+      "to": [0.41016, 0.8125]
+    },
+    {
+      "floorId": "b",
+      "from": [0.46484, 0.8125],
+      "id": "wall:b:tunnel-south-2",
+      "kind": "outer",
+      "to": [0.5, 0.8125]
+    }
+  ]
+}

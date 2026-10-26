@@ -1,0 +1,25 @@
+{
+  "id": "practice-annex",
+  "name": "Annex (practice)",
+  "contentRev": "y11s3",
+  "floors": [
+    {
+      "id": "1f",
+      "label": "1F",
+      "order": 1
+    },
+    {
+      "id": "2f",
+      "label": "2F",
+      "order": 2
+    }
+  ],
+  "sites": {
+    "kitchen-storage": {
+      "name": "Kitchen / Storage"
+    },
+    "office-library": {
+      "name": "Office / Library"
+    }
+  }
+}

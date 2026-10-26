@@ -1,0 +1,38 @@
+{
+  "id": "practice-lighthouse",
+  "name": "Lighthouse (practice)",
+  "contentRev": "y11s3",
+  "floors": [
+    {
+      "id": "b",
+      "label": "B",
+      "order": 0
+    },
+    {
+      "id": "1f",
+      "label": "1F",
+      "order": 1
+    },
+    {
+      "id": "2f",
+      "label": "2F",
+      "order": 2
+    },
+    {
+      "id": "roof",
+      "label": "Roof",
+      "order": 3
+    }
+  ],
+  "sites": {
+    "pump-vault": {
+      "name": "Pump Room / Vault"
+    },
+    "gallery-shop": {
+      "name": "Gallery / Gift Shop"
+    },
+    "keeper-radio": {
+      "name": "Keeper's Room / Radio"
+    }
+  }
+}

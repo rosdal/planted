@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Annex (practice), floor 2F. A fictional practice layout for testing the Planted content pipeline; not based on any real map. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4096 4096" width="4096" height="4096">
+  <g id="art">
+    <rect x="768" y="1024" width="2560" height="2048" fill="#ffffff" fill-opacity="0.05"/>
+    <rect x="768" y="1024" width="1024" height="1024" fill="#ffffff" fill-opacity="0.03"/>
+    <rect x="2304" y="2048" width="1024" height="1024" fill="#ffffff" fill-opacity="0.03"/>
+    <path d="M768 1024L1152 1024M1408 1024L1792 1024M1792 1024L2304 1024M2304 1024L3328 1024M768 3072L1152 3072M1408 3072L1792 3072M1792 3072L2304 3072M2304 3072L2688 3072M2944 3072L3328 3072M768 1024L768 1408M768 1664L768 2048M768 2048L768 3072M3328 1024L3328 1408M3328 1664L3328 2048M3328 2048L3328 3072" fill="none" stroke="#ffffff" stroke-width="40" stroke-linecap="square"/>
+    <path d="M768 2048L1184 2048M1376 2048L1792 2048M2304 2048L3328 2048M1792 1024L1792 1440M1792 1632L1792 2048M1792 2048L1792 2464M1792 2656L1792 3072M2304 1024L2304 1440M2304 1632L2304 2048M2304 2048L2304 2464M2304 2656L2304 3072" fill="none" stroke="#ffffff" stroke-width="16" stroke-linecap="square"/>
+    <path d="M1152 1014L1408 1014M1152 1034L1408 1034M1152 3062L1408 3062M1152 3082L1408 3082M2688 3062L2944 3062M2688 3082L2944 3082M758 1408L758 1664M778 1408L778 1664M3318 1408L3318 1664M3338 1408L3338 1664" fill="none" stroke="#ffffff" stroke-width="6"/>
+    <rect x="1856" y="2560" width="384" height="448" fill="none" stroke="#ffffff" stroke-width="8"/>
+    <path d="M1856 2608L2240 2608M1856 2656L2240 2656M1856 2704L2240 2704M1856 2752L2240 2752M1856 2800L2240 2800M1856 2848L2240 2848M1856 2896L2240 2896M1856 2944L2240 2944M1856 2992L2240 2992" fill="none" stroke="#ffffff" stroke-width="4" stroke-opacity="0.6"/>
+    <rect x="1216" y="1472" width="128" height="128" fill="none" stroke="#ffffff" stroke-width="8"/>
+    <rect x="2752" y="2496" width="128" height="128" fill="none" stroke="#ffffff" stroke-width="8"/>
+    <rect x="1024" y="1280" width="384" height="192" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-width="6" stroke-opacity="0.5"/>
+    <rect x="2560" y="2304" width="512" height="128" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-width="6" stroke-opacity="0.5"/>
+    <rect x="2560" y="2688" width="512" height="128" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-width="6" stroke-opacity="0.5"/>
+  </g>
+  <g id="rooms" fill="#4c9aff" fill-opacity="0.15" stroke="#4c9aff" stroke-width="4">
+    <path id="room:office" data-callout="Office" d="M768 1024H1792V2048H768Z"/>
+    <path id="room:landing" data-callout="Landing" d="M1792 1024H2304V3072H1792Z"/>
+    <path id="room:bedroom" data-callout="Bedroom" d="M2304 1024H3328V2048H2304Z"/>
+    <path id="room:bathroom" data-callout="Bathroom" d="M768 2048H1792V3072H768Z"/>
+    <path id="room:library" data-callout="Library" d="M2304 2048H3328V3072H2304Z"/>
+  </g>
+  <g id="walls" stroke-width="12">
+    <line id="wall:2f:office-north-1" data-kind="outer" x1="768" y1="1024" x2="1152" y2="1024" stroke="#d7dae0"/>
+    <line id="wall:2f:office-north-2" data-kind="outer" x1="1408" y1="1024" x2="1792" y2="1024" stroke="#d7dae0"/>
+    <line id="wall:2f:landing-north" data-kind="outer" x1="1792" y1="1024" x2="2304" y2="1024" stroke="#d7dae0"/>
+    <line id="wall:2f:bedroom-north" data-kind="outer" x1="2304" y1="1024" x2="3328" y2="1024" stroke="#d7dae0"/>
+    <line id="wall:2f:bathroom-office-1" data-kind="reinforceable" x1="768" y1="2048" x2="1184" y2="2048" stroke="#e06c75"/>
+    <line id="wall:2f:bathroom-office-2" data-kind="reinforceable" x1="1376" y1="2048" x2="1792" y2="2048" stroke="#e06c75"/>
+    <line id="wall:2f:bedroom-library" data-kind="hard" x1="2304" y1="2048" x2="3328" y2="2048" stroke="#8a8f98"/>
+    <line id="wall:2f:bathroom-south-1" data-kind="outer" x1="768" y1="3072" x2="1152" y2="3072" stroke="#d7dae0"/>
+    <line id="wall:2f:bathroom-south-2" data-kind="outer" x1="1408" y1="3072" x2="1792" y2="3072" stroke="#d7dae0"/>
+    <line id="wall:2f:landing-south" data-kind="outer" x1="1792" y1="3072" x2="2304" y2="3072" stroke="#d7dae0"/>
+    <line id="wall:2f:library-south-1" data-kind="outer" x1="2304" y1="3072" x2="2688" y2="3072" stroke="#d7dae0"/>
+    <line id="wall:2f:library-south-2" data-kind="outer" x1="2944" y1="3072" x2="3328" y2="3072" stroke="#d7dae0"/>
+    <line id="wall:2f:office-west-1" data-kind="outer" x1="768" y1="1024" x2="768" y2="1408" stroke="#d7dae0"/>
+    <line id="wall:2f:office-west-2" data-kind="outer" x1="768" y1="1664" x2="768" y2="2048" stroke="#d7dae0"/>
+    <line id="wall:2f:bathroom-west" data-kind="outer" x1="768" y1="2048" x2="768" y2="3072" stroke="#d7dae0"/>
+    <line id="wall:2f:landing-office-1" data-kind="reinforceable" x1="1792" y1="1024" x2="1792" y2="1440" stroke="#e06c75"/>
+    <line id="wall:2f:landing-office-2" data-kind="reinforceable" x1="1792" y1="1632" x2="1792" y2="2048" stroke="#e06c75"/>
+    <line id="wall:2f:bathroom-landing-1" data-kind="soft" x1="1792" y1="2048" x2="1792" y2="2464" stroke="#e5c07b"/>
+    <line id="wall:2f:bathroom-landing-2" data-kind="soft" x1="1792" y1="2656" x2="1792" y2="3072" stroke="#e5c07b"/>
+    <line id="wall:2f:bedroom-landing-1" data-kind="soft" x1="2304" y1="1024" x2="2304" y2="1440" stroke="#e5c07b"/>
+    <line id="wall:2f:bedroom-landing-2" data-kind="soft" x1="2304" y1="1632" x2="2304" y2="2048" stroke="#e5c07b"/>
+    <line id="wall:2f:landing-library-1" data-kind="reinforceable" x1="2304" y1="2048" x2="2304" y2="2464" stroke="#e06c75"/>
+    <line id="wall:2f:landing-library-2" data-kind="reinforceable" x1="2304" y1="2656" x2="2304" y2="3072" stroke="#e06c75"/>
+    <line id="wall:2f:bedroom-east-1" data-kind="outer" x1="3328" y1="1024" x2="3328" y2="1408" stroke="#d7dae0"/>
+    <line id="wall:2f:bedroom-east-2" data-kind="outer" x1="3328" y1="1664" x2="3328" y2="2048" stroke="#d7dae0"/>
+    <line id="wall:2f:library-east" data-kind="outer" x1="3328" y1="2048" x2="3328" y2="3072" stroke="#d7dae0"/>
+  </g>
+  <g id="hatches" fill="#d19a66">
+    <circle id="hatch:2f:office" cx="1280" cy="1536" r="48"/>
+    <circle id="hatch:2f:library" cx="2816" cy="2560" r="48"/>
+  </g>
+  <g id="openings" stroke-width="16">
+    <line id="window:2f:office-north" x1="1152" y1="1024" x2="1408" y2="1024" stroke="#61afef"/>
+    <line id="door:2f:bathroom-office" x1="1184" y1="2048" x2="1376" y2="2048" stroke="#98c379"/>
+    <line id="window:2f:bathroom-south" x1="1152" y1="3072" x2="1408" y2="3072" stroke="#61afef"/>
+    <line id="window:2f:library-south" x1="2688" y1="3072" x2="2944" y2="3072" stroke="#61afef"/>
+    <line id="window:2f:office-west" x1="768" y1="1408" x2="768" y2="1664" stroke="#61afef"/>
+    <line id="door:2f:landing-office" x1="1792" y1="1440" x2="1792" y2="1632" stroke="#98c379"/>
+    <line id="door:2f:bathroom-landing" x1="1792" y1="2464" x2="1792" y2="2656" stroke="#98c379"/>
+    <line id="door:2f:bedroom-landing" x1="2304" y1="1440" x2="2304" y2="1632" stroke="#98c379"/>
+    <line id="door:2f:landing-library" x1="2304" y1="2464" x2="2304" y2="2656" stroke="#98c379"/>
+    <line id="window:2f:bedroom-east" x1="3328" y1="1408" x2="3328" y2="1664" stroke="#61afef"/>
+  </g>
+  <g id="sites" fill="#ff5c8a">
+    <circle id="obj:office-library:A" data-room="office" cx="1280" cy="1536" r="56"/>
+    <circle id="obj:office-library:B" data-room="library" cx="2816" cy="2560" r="56"/>
+  </g>
+  <g id="spawns">
+  </g>
+</svg>
