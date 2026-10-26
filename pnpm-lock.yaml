@@ -278,6 +278,12 @@ importers:
       '@fastify/websocket':
         specifier: ^11.3.4
         version: 11.3.4
+      '@planted/client':
+        specifier: workspace:*
+        version: link:../../packages/client
+      '@planted/content':
+        specifier: workspace:*
+        version: link:../../packages/content
       '@planted/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -318,9 +324,6 @@ importers:
         specifier: 'catalog:'
         version: 4.6.7
     devDependencies:
-      '@planted/client':
-        specifier: workspace:*
-        version: link:../../packages/client
       '@planted/scripts':
         specifier: workspace:*
         version: link:../../scripts
@@ -552,6 +555,9 @@ importers:
       '@planted/client':
         specifier: workspace:*
         version: link:../packages/client
+      '@planted/content':
+        specifier: workspace:*
+        version: link:../packages/content
       '@planted/db':
         specifier: workspace:*
         version: link:../packages/db

@@ -8,8 +8,15 @@ export function allowedRoots(dev: boolean): ReadonlySet<string> {
 
 export type ObjectIssue = { id: string; issues: string[] };
 
-/** Null when `value` (what `objects.get(id)` holds) is a valid board object. */
-export function checkObject(id: string, value: unknown): ObjectIssue | null {
+/**
+ * Null when `value` (what `objects.get(id)` holds) is a valid board object on one of `floors`,
+ * the floors of the room's map.
+ */
+export function checkObject(
+  id: string,
+  value: unknown,
+  floors: ReadonlySet<string>,
+): ObjectIssue | null {
   const issues: string[] = [];
   if (!ObjectId.safeParse(id).success) issues.push('id: not a 12-character base62 id');
   if (!(value instanceof Y.Map)) {
@@ -20,6 +27,8 @@ export function checkObject(id: string, value: unknown): ObjectIssue | null {
       for (const issue of parsed.error.issues) {
         issues.push(`${issue.path.join('.') || '(root)'}: ${issue.message}`);
       }
+    } else if (!floors.has(parsed.data.floor)) {
+      issues.push(`floor: ${parsed.data.floor} is not a floor of this map`);
     }
   }
   return issues.length > 0 ? { id, issues } : null;

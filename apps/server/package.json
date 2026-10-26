@@ -14,6 +14,8 @@
     "@fastify/helmet": "^13.2.0",
     "@fastify/rate-limit": "^11.2.1",
     "@fastify/websocket": "^11.3.4",
+    "@planted/client": "workspace:*",
+    "@planted/content": "workspace:*",
     "@planted/db": "workspace:*",
     "@planted/protocol": "workspace:*",
     "@planted/schema": "workspace:*",
@@ -29,7 +31,6 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@planted/client": "workspace:*",
     "@planted/scripts": "workspace:*",
     "@types/node": "catalog:",
     "@types/ws": "catalog:",

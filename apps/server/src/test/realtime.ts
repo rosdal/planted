@@ -39,8 +39,12 @@ export async function listen(app: App, port = 0): Promise<string> {
   return `ws://127.0.0.1:${address.port}`;
 }
 
-export async function createRoom(app: App): Promise<TestRoom> {
-  const res = await app.inject({ method: 'POST', url: '/rooms' });
+/** The map test rooms are created on, and a floor of it that strokes may use. */
+export const TEST_MAP_ID = 'practice-annex';
+export const TEST_MAP_FLOOR = '1f';
+
+export async function createRoom(app: App, mapId = TEST_MAP_ID): Promise<TestRoom> {
+  const res = await app.inject({ method: 'POST', url: '/rooms', payload: { mapId } });
   const { roomId, editKey, viewKey } = CreateRoomResponse.parse(res.json());
   return { roomId, editKey, viewKey };
 }

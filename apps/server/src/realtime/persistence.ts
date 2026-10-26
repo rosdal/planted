@@ -1,3 +1,4 @@
+import { initialDocState } from '@planted/client';
 import { type Db, roomDocs, rooms } from '@planted/db';
 import type { RoomId } from '@planted/schema';
 import { eq, sql } from 'drizzle-orm';
@@ -34,7 +35,7 @@ export interface RoomStore {
    * it into, and retrying would never succeed.
    */
   save(roomId: RoomId, state: Uint8Array): Promise<'saved' | 'gone'>;
-  /** Replaces the doc with an empty one and bumps the epoch; returns the new epoch. */
+  /** Replaces the doc with a fresh one (just its meta) and bumps the epoch; returns the new epoch. */
   clear(roomId: RoomId): Promise<number>;
 }
 
@@ -83,14 +84,25 @@ export class PgRoomStore implements RoomStore {
         .update(rooms)
         .set({ epoch: sql`${rooms.epoch} + 1`, lastActiveAt: sql`now()` })
         .where(eq(rooms.id, roomId))
-        .returning({ epoch: rooms.epoch });
+        .returning({
+          epoch: rooms.epoch,
+          mapId: rooms.mapId,
+          contentVersion: rooms.contentVersion,
+          createdAt: rooms.createdAt,
+        });
       if (!room) throw new Error(`room ${roomId} not found`);
+      // The map and pinned version survive a clear; only the board is emptied.
+      const { mapId, contentVersion } = room;
+      const ydoc =
+        mapId && contentVersion
+          ? initialDocState({ mapId, contentVersion, createdAt: room.createdAt.toISOString() })
+          : EMPTY_DOC;
       await tx
         .insert(roomDocs)
-        .values({ roomId, ydoc: EMPTY_DOC, version: 1 })
+        .values({ roomId, ydoc, version: 1 })
         .onConflictDoUpdate({
           target: roomDocs.roomId,
-          set: { ydoc: EMPTY_DOC, version: sql`${roomDocs.version} + 1`, updatedAt: sql`now()` },
+          set: { ydoc, version: sql`${roomDocs.version} + 1`, updatedAt: sql`now()` },
         });
       return room.epoch;
     });
