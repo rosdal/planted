@@ -1,0 +1,7 @@
+{
+  "id": "tiny",
+  "name": "Tiny",
+  "contentRev": "y11s3",
+  "floors": [{ "id": "1f", "label": "1F", "order": 1 }],
+  "sites": { "lab": { "name": "Lab" } }
+}
