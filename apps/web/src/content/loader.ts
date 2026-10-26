@@ -71,6 +71,8 @@ export type LoadedMap = {
   map: MapData;
   /** Floor id → absolute URL of its display SVG. */
   floorArt: Record<string, string>;
+  /** Pixi spritesheet JSON of the version's icons, at 1× (64 px) and 2× (128 px); null if none. */
+  iconAtlas: { x1: string; x2: string } | null;
 };
 
 const maps = new Map<string, Promise<LoadedMap>>();
@@ -88,7 +90,14 @@ export function loadMap(version: string, mapId: string): Promise<LoadedMap> {
       const floorArt = Object.fromEntries(
         map.floors.map((f) => [f.id, contentUrl(version, f.art)]),
       );
-      return { version, map, floorArt };
+      const iconAtlas =
+        manifest.files['icons/atlas-64.json'] && manifest.files['icons/atlas-128.json']
+          ? {
+              x1: fileOf(manifest, 'icons/atlas-64.json'),
+              x2: fileOf(manifest, 'icons/atlas-128.json'),
+            }
+          : null;
+      return { version, map, floorArt, iconAtlas };
     })();
     pending.catch(() => maps.delete(key));
     maps.set(key, pending);

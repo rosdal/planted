@@ -22,6 +22,7 @@ declare global {
       visibleStrokes: () => number;
       visibleCallouts: () => string[];
       hoverCallout: () => string | null;
+      iconCount: () => number;
     };
   }
 }
@@ -81,6 +82,7 @@ export function BoardCanvas({
             visibleStrokes: () => board.visibleStrokeCount,
             visibleCallouts: () => board.visibleCallouts,
             hoverCallout: () => board.hoverCallout,
+            iconCount: () => board.iconCount,
           };
         }
       })

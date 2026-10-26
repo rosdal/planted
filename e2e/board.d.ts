@@ -12,5 +12,6 @@ interface Window {
     visibleStrokes: () => number;
     visibleCallouts: () => string[];
     hoverCallout: () => string | null;
+    iconCount: () => number;
   };
 }

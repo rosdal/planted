@@ -20,4 +20,5 @@ export const LEGACY_MAP: LoadedMap = {
     spawns: [],
   },
   floorArt: { [TEST_FLOOR]: '/dev/test-floor.svg' },
+  iconAtlas: null,
 };

@@ -5,7 +5,15 @@ import {
   objectsOf,
   type RoomClient,
 } from '@planted/client';
-import { Application, Container, CullerPlugin, extensions, type Ticker } from 'pixi.js';
+import {
+  Application,
+  Assets,
+  Container,
+  CullerPlugin,
+  extensions,
+  type Spritesheet,
+  type Ticker,
+} from 'pixi.js';
 import * as Y from 'yjs';
 import type { LoadedMap } from '../content/loader';
 import { CameraController } from './camera';
@@ -173,6 +181,8 @@ export class Board {
   #overlay: MapOverlay | null = null;
   #hover: HoverCallout | null = null;
   #pen: PenTool | null = null;
+  /** The content version's icons as Pixi textures; stamps (0.6) draw from it. */
+  #icons: Spritesheet | null = null;
   readonly #app = new Application();
   readonly #frames = new FrameStats();
   readonly #presence: Presence;
@@ -323,9 +333,27 @@ export class Board {
     return this.#overlay?.visibleCallouts ?? [];
   }
 
+  /** Icon textures loaded from the content atlas; 0 until it has loaded. */
+  get iconCount(): number {
+    return this.#icons ? Object.keys(this.#icons.textures).length : 0;
+  }
+
   /** The hover callout's text, or null when it is hidden. */
   get hoverCallout(): string | null {
     return this.#hover?.text ?? null;
+  }
+
+  async #loadIcons(): Promise<void> {
+    const atlas = this.#content.iconAtlas;
+    if (!atlas) return;
+    // High-density screens get the 128 px sheet; its frames are in 64 px units (meta.scale 2).
+    const url = (window.devicePixelRatio || 1) > 1 ? atlas.x2 : atlas.x1;
+    try {
+      const sheet = await Assets.load<Spritesheet>(url);
+      if (!this.#destroyed) this.#icons = sheet;
+    } catch (err) {
+      console.error('board: icon atlas failed to load', err);
+    }
   }
 
   #setView(view: BoardView): void {
@@ -413,6 +441,7 @@ export class Board {
       () =>
         requestAnimationFrame(() => {
           for (const id of this.floorIds) if (id !== first) void floors.load(id).catch(() => {});
+          void this.#loadIcons();
         }),
       () => {},
     );

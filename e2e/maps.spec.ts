@@ -56,6 +56,8 @@ test('the picker lists every map with a thumbnail, and picking one opens the boa
   await expect(page.getByRole('status').filter({ hasText: 'Live' })).toBeVisible();
   await expect(page.getByText(`${target.name} · content`)).toBeVisible();
   await page.waitForFunction(() => window.__board !== undefined);
+  // The icon atlas loads in the background once the first floor has painted.
+  await expect.poll(() => page.evaluate(() => window.__board?.iconCount())).toBe(32);
 });
 
 test('every map: every floor switches, and strokes show only on their own floor', async ({
