@@ -11,20 +11,37 @@ describe('room DTOs', () => {
   const viewKey = 'b-_'.repeat(14).concat('c');
 
   it('CreateRoomResponse survives JSON', () => {
-    const dto = CreateRoomResponse.parse({ roomId, createdAt, editKey, viewKey });
+    const dto = CreateRoomResponse.parse({
+      roomId,
+      createdAt,
+      mapId: 'clubhouse',
+      contentVersion: 'y11s3.1',
+      editKey,
+      viewKey,
+    });
     expect(CreateRoomResponse.parse(roundTrip(dto))).toEqual(dto);
   });
 
   it('GetRoomResponse survives JSON, with and without a map', () => {
-    for (const mapId of [null, 'clubhouse']) {
-      const dto = GetRoomResponse.parse({ roomId, createdAt, mapId });
+    for (const [mapId, contentVersion] of [
+      [null, null],
+      ['clubhouse', 'y11s3.1'],
+    ]) {
+      const dto = GetRoomResponse.parse({ roomId, createdAt, mapId, contentVersion });
       expect(GetRoomResponse.parse(roundTrip(dto))).toEqual(dto);
     }
   });
 
   it('rejects a createdAt that is not an ISO datetime', () => {
     expect(
-      CreateRoomResponse.safeParse({ roomId, createdAt: 'yesterday', editKey, viewKey }).success,
+      CreateRoomResponse.safeParse({
+        roomId,
+        createdAt: 'yesterday',
+        mapId: 'clubhouse',
+        contentVersion: 'y11s3.1',
+        editKey,
+        viewKey,
+      }).success,
     ).toBe(false);
   });
 
