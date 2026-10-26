@@ -1,0 +1,1054 @@
+[
+  {
+    "id": "sledge",
+    "name": "Sledge",
+    "side": "attack",
+    "badge": "SL",
+    "roles": ["soft-breach", "vertical"],
+    "uniqueGadget": {
+      "gadgetId": "tactical-breaching-hammer",
+      "count": 25
+    },
+    "secondaryGadgetOptions": ["frag-grenade", "stun-grenade", "impact-emp"],
+    "weaponClasses": ["ar", "shotgun", "handgun", "mp"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "thatcher",
+    "name": "Thatcher",
+    "side": "attack",
+    "badge": "TH",
+    "roles": ["anti-gadget", "support"],
+    "uniqueGadget": {
+      "gadgetId": "emp-grenade",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["breach-charge", "claymore"],
+    "weaponClasses": ["ar", "shotgun", "handgun"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "ash",
+    "name": "Ash",
+    "side": "attack",
+    "badge": "AS",
+    "roles": ["entry", "soft-breach"],
+    "uniqueGadget": {
+      "gadgetId": "breaching-rounds",
+      "count": 2
+    },
+    "secondaryGadgetOptions": ["breach-charge", "claymore"],
+    "weaponClasses": ["ar", "handgun"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "thermite",
+    "name": "Thermite",
+    "side": "attack",
+    "badge": "TM",
+    "roles": ["hard-breach"],
+    "uniqueGadget": {
+      "gadgetId": "exothermic-charge",
+      "count": 2
+    },
+    "secondaryGadgetOptions": ["claymore", "stun-grenade"],
+    "weaponClasses": ["ar", "shotgun", "handgun"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "twitch",
+    "name": "Twitch",
+    "side": "attack",
+    "badge": "TW",
+    "roles": ["anti-gadget", "intel"],
+    "uniqueGadget": {
+      "gadgetId": "shock-drones",
+      "count": 2
+    },
+    "secondaryGadgetOptions": ["smoke-grenade", "claymore"],
+    "weaponClasses": ["ar", "dmr", "shotgun", "handgun"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "montagne",
+    "name": "Montagne",
+    "side": "attack",
+    "badge": "MO",
+    "roles": ["shield", "support"],
+    "uniqueGadget": {
+      "gadgetId": "extendable-shield",
+      "count": 1
+    },
+    "secondaryGadgetOptions": ["smoke-grenade", "hard-breach-charge", "impact-emp"],
+    "weaponClasses": ["shield", "handgun"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "glaz",
+    "name": "Glaz",
+    "side": "attack",
+    "badge": "GZ",
+    "roles": ["support", "map-control"],
+    "uniqueGadget": {
+      "gadgetId": "flip-sight",
+      "count": 1
+    },
+    "secondaryGadgetOptions": ["smoke-grenade", "frag-grenade", "claymore"],
+    "weaponClasses": ["dmr", "handgun", "mp"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "fuze",
+    "name": "Fuze",
+    "side": "attack",
+    "badge": "FU",
+    "roles": ["crowd-control"],
+    "uniqueGadget": {
+      "gadgetId": "cluster-charge",
+      "count": 4
+    },
+    "secondaryGadgetOptions": ["breach-charge", "hard-breach-charge"],
+    "weaponClasses": ["lmg", "ar", "shield", "handgun"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "blitz",
+    "name": "Blitz",
+    "side": "attack",
+    "badge": "BZ",
+    "roles": ["shield", "entry"],
+    "uniqueGadget": {
+      "gadgetId": "flash-shield",
+      "count": 1
+    },
+    "secondaryGadgetOptions": ["smoke-grenade", "breach-charge"],
+    "weaponClasses": ["shield", "handgun"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "iq",
+    "name": "IQ",
+    "side": "attack",
+    "badge": "IQ",
+    "roles": ["intel", "anti-gadget"],
+    "uniqueGadget": {
+      "gadgetId": "electronics-detector",
+      "count": 1
+    },
+    "secondaryGadgetOptions": ["breach-charge", "claymore", "frag-grenade"],
+    "weaponClasses": ["ar", "lmg", "handgun"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "buck",
+    "name": "Buck",
+    "side": "attack",
+    "badge": "BU",
+    "roles": ["soft-breach", "vertical"],
+    "uniqueGadget": {
+      "gadgetId": "skeleton-key",
+      "count": 1
+    },
+    "secondaryGadgetOptions": ["stun-grenade", "hard-breach-charge"],
+    "weaponClasses": ["ar", "dmr", "handgun"],
+    "seasonAdded": "y1s1"
+  },
+  {
+    "id": "blackbeard",
+    "name": "Blackbeard",
+    "side": "attack",
+    "badge": "BB",
+    "roles": ["map-control"],
+    "uniqueGadget": {
+      "gadgetId": "rifle-shield",
+      "count": 1
+    },
+    "secondaryGadgetOptions": ["claymore", "stun-grenade"],
+    "weaponClasses": ["ar", "dmr", "handgun"],
+    "seasonAdded": "y1s2"
+  },
+  {
+    "id": "capitao",
+    "name": "Capitão",
+    "side": "attack",
+    "badge": "CP",
+    "roles": ["area-denial", "support"],
+    "uniqueGadget": {
+      "gadgetId": "tactical-crossbow",
+      "count": 2
+    },
+    "secondaryGadgetOptions": ["claymore", "hard-breach-charge"],
+    "weaponClasses": ["ar", "lmg", "handgun"],
+    "seasonAdded": "y1s3"
+  },
+  {
+    "id": "hibana",
+    "name": "Hibana",
+    "side": "attack",
+    "badge": "HB",
+    "roles": ["hard-breach"],
+    "uniqueGadget": {
+      "gadgetId": "x-kairos",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["stun-grenade", "breach-charge"],
+    "weaponClasses": ["ar", "shotgun", "handgun", "mp"],
+    "seasonAdded": "y1s4"
+  },
+  {
+    "id": "jackal",
+    "name": "Jackal",
+    "side": "attack",
+    "badge": "JA",
+    "roles": ["intel", "roam-clear"],
+    "uniqueGadget": {
+      "gadgetId": "eyenox",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["claymore", "smoke-grenade"],
+    "weaponClasses": ["ar", "smg", "shotgun", "handgun"],
+    "seasonAdded": "y2s1"
+  },
+  {
+    "id": "ying",
+    "name": "Ying",
+    "side": "attack",
+    "badge": "YI",
+    "roles": ["crowd-control", "entry"],
+    "uniqueGadget": {
+      "gadgetId": "candela",
+      "count": 4
+    },
+    "secondaryGadgetOptions": ["smoke-grenade", "hard-breach-charge"],
+    "weaponClasses": ["lmg", "shotgun", "handgun"],
+    "seasonAdded": "y2s3"
+  },
+  {
+    "id": "zofia",
+    "name": "Zofia",
+    "side": "attack",
+    "badge": "ZO",
+    "roles": ["soft-breach", "crowd-control"],
+    "uniqueGadget": {
+      "gadgetId": "ks79-lifeline",
+      "count": 4
+    },
+    "secondaryGadgetOptions": ["breach-charge", "claymore"],
+    "weaponClasses": ["lmg", "ar", "handgun"],
+    "seasonAdded": "y2s4"
+  },
+  {
+    "id": "dokkaebi",
+    "name": "Dokkaebi",
+    "side": "attack",
+    "badge": "DO",
+    "roles": ["intel", "roam-clear"],
+    "uniqueGadget": {
+      "gadgetId": "logic-bomb",
+      "count": 1
+    },
+    "secondaryGadgetOptions": ["smoke-grenade", "stun-grenade"],
+    "weaponClasses": ["dmr", "shotgun", "mp"],
+    "seasonAdded": "y2s4"
+  },
+  {
+    "id": "lion",
+    "name": "Lion",
+    "side": "attack",
+    "badge": "LI",
+    "roles": ["intel", "roam-clear"],
+    "uniqueGadget": {
+      "gadgetId": "ee-one-d",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["stun-grenade", "claymore"],
+    "weaponClasses": ["ar", "dmr", "shotgun", "handgun"],
+    "seasonAdded": "y3s1"
+  },
+  {
+    "id": "finka",
+    "name": "Finka",
+    "side": "attack",
+    "badge": "FI",
+    "roles": ["support"],
+    "uniqueGadget": {
+      "gadgetId": "adrenal-surge",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["smoke-grenade", "stun-grenade"],
+    "weaponClasses": ["ar", "lmg", "shotgun", "handgun"],
+    "seasonAdded": "y3s1"
+  },
+  {
+    "id": "maverick",
+    "name": "Maverick",
+    "side": "attack",
+    "badge": "MV",
+    "roles": ["hard-breach"],
+    "uniqueGadget": {
+      "gadgetId": "breaching-torch",
+      "count": 5
+    },
+    "secondaryGadgetOptions": ["stun-grenade", "claymore"],
+    "weaponClasses": ["ar", "dmr", "handgun"],
+    "seasonAdded": "y3s3"
+  },
+  {
+    "id": "nomad",
+    "name": "Nomad",
+    "side": "attack",
+    "badge": "NO",
+    "roles": ["flank-watch"],
+    "uniqueGadget": {
+      "gadgetId": "airjab",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["stun-grenade", "breach-charge"],
+    "weaponClasses": ["ar", "handgun"],
+    "seasonAdded": "y3s4"
+  },
+  {
+    "id": "gridlock",
+    "name": "Gridlock",
+    "side": "attack",
+    "badge": "GR",
+    "roles": ["flank-watch", "area-denial"],
+    "uniqueGadget": {
+      "gadgetId": "trax-stingers",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["smoke-grenade", "impact-emp"],
+    "weaponClasses": ["ar", "lmg", "handgun"],
+    "seasonAdded": "y4s1"
+  },
+  {
+    "id": "nokk",
+    "name": "Nøkk",
+    "side": "attack",
+    "badge": "NK",
+    "roles": ["roam-clear"],
+    "uniqueGadget": {
+      "gadgetId": "hel-presence",
+      "count": 1
+    },
+    "secondaryGadgetOptions": ["frag-grenade", "hard-breach-charge"],
+    "weaponClasses": ["smg", "shotgun", "handgun", "mp"],
+    "seasonAdded": "y4s2"
+  },
+  {
+    "id": "amaru",
+    "name": "Amaru",
+    "side": "attack",
+    "badge": "AM",
+    "roles": ["entry", "vertical"],
+    "uniqueGadget": {
+      "gadgetId": "garra-hook",
+      "count": 4
+    },
+    "secondaryGadgetOptions": ["stun-grenade", "hard-breach-charge"],
+    "weaponClasses": ["lmg", "shotgun", "handgun", "mp"],
+    "seasonAdded": "y4s3"
+  },
+  {
+    "id": "kali",
+    "name": "Kali",
+    "side": "attack",
+    "badge": "KA",
+    "roles": ["anti-gadget", "map-control"],
+    "uniqueGadget": {
+      "gadgetId": "lv-explosive-lance",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["breach-charge", "claymore"],
+    "weaponClasses": ["dmr", "handgun", "mp"],
+    "seasonAdded": "y4s4"
+  },
+  {
+    "id": "iana",
+    "name": "Iana",
+    "side": "attack",
+    "badge": "IA",
+    "roles": ["intel"],
+    "uniqueGadget": {
+      "gadgetId": "gemini-replicator",
+      "count": 1
+    },
+    "secondaryGadgetOptions": ["frag-grenade", "smoke-grenade"],
+    "weaponClasses": ["ar", "handgun"],
+    "seasonAdded": "y5s1"
+  },
+  {
+    "id": "ace",
+    "name": "Ace",
+    "side": "attack",
+    "badge": "AC",
+    "roles": ["hard-breach"],
+    "uniqueGadget": {
+      "gadgetId": "selma",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["breach-charge", "claymore"],
+    "weaponClasses": ["ar", "handgun"],
+    "seasonAdded": "y5s2"
+  },
+  {
+    "id": "zero",
+    "name": "Zero",
+    "side": "attack",
+    "badge": "ZE",
+    "roles": ["intel", "anti-gadget"],
+    "uniqueGadget": {
+      "gadgetId": "argus",
+      "count": 4
+    },
+    "secondaryGadgetOptions": ["hard-breach-charge", "claymore"],
+    "weaponClasses": ["ar", "smg", "handgun"],
+    "seasonAdded": "y5s3"
+  },
+  {
+    "id": "flores",
+    "name": "Flores",
+    "side": "attack",
+    "badge": "FL",
+    "roles": ["anti-gadget"],
+    "uniqueGadget": {
+      "gadgetId": "rce-ratero",
+      "count": 4
+    },
+    "secondaryGadgetOptions": ["stun-grenade", "claymore"],
+    "weaponClasses": ["ar", "dmr", "handgun"],
+    "seasonAdded": "y6s1"
+  },
+  {
+    "id": "osa",
+    "name": "Osa",
+    "side": "attack",
+    "badge": "OS",
+    "roles": ["shield", "support"],
+    "uniqueGadget": {
+      "gadgetId": "talon-shield",
+      "count": 2
+    },
+    "secondaryGadgetOptions": ["claymore", "smoke-grenade"],
+    "weaponClasses": ["ar", "smg", "handgun"],
+    "seasonAdded": "y6s3"
+  },
+  {
+    "id": "sens",
+    "name": "Sens",
+    "side": "attack",
+    "badge": "SE",
+    "roles": ["crowd-control", "support"],
+    "uniqueGadget": {
+      "gadgetId": "rou-projector",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["frag-grenade", "claymore"],
+    "weaponClasses": ["ar", "dmr", "handgun"],
+    "seasonAdded": "y7s2"
+  },
+  {
+    "id": "grim",
+    "name": "Grim",
+    "side": "attack",
+    "badge": "GM",
+    "roles": ["intel"],
+    "uniqueGadget": {
+      "gadgetId": "kawan-hive",
+      "count": 5
+    },
+    "secondaryGadgetOptions": ["breach-charge", "claymore"],
+    "weaponClasses": ["ar", "shotgun", "handgun"],
+    "seasonAdded": "y7s3"
+  },
+  {
+    "id": "brava",
+    "name": "Brava",
+    "side": "attack",
+    "badge": "BR",
+    "roles": ["anti-gadget", "intel"],
+    "uniqueGadget": {
+      "gadgetId": "kludge-drone",
+      "count": 2
+    },
+    "secondaryGadgetOptions": ["smoke-grenade", "claymore"],
+    "weaponClasses": ["ar", "dmr", "handgun"],
+    "seasonAdded": "y8s1"
+  },
+  {
+    "id": "ram",
+    "name": "Ram",
+    "side": "attack",
+    "badge": "RA",
+    "roles": ["soft-breach", "vertical"],
+    "uniqueGadget": {
+      "gadgetId": "bu-gi-auto-breacher",
+      "count": 4
+    },
+    "secondaryGadgetOptions": ["stun-grenade", "smoke-grenade"],
+    "weaponClasses": ["ar", "lmg", "shotgun", "handgun"],
+    "seasonAdded": "y8s3"
+  },
+  {
+    "id": "deimos",
+    "name": "Deimos",
+    "side": "attack",
+    "badge": "DE",
+    "roles": ["intel", "roam-clear"],
+    "uniqueGadget": {
+      "gadgetId": "deathmark-tracker",
+      "count": 1
+    },
+    "secondaryGadgetOptions": ["frag-grenade", "hard-breach-charge"],
+    "weaponClasses": ["ar", "dmr", "handgun"],
+    "seasonAdded": "y9s1"
+  },
+  {
+    "id": "striker",
+    "name": "Striker",
+    "side": "attack",
+    "badge": "ST",
+    "roles": ["flex"],
+    "uniqueGadget": {
+      "gadgetId": "striker-extra-gadget",
+      "count": 1
+    },
+    "secondaryGadgetOptions": [
+      "breach-charge",
+      "claymore",
+      "frag-grenade",
+      "smoke-grenade",
+      "stun-grenade",
+      "impact-emp",
+      "hard-breach-charge"
+    ],
+    "weaponClasses": ["ar", "smg", "shotgun", "handgun"],
+    "seasonAdded": "y9s2"
+  },
+  {
+    "id": "smoke",
+    "name": "Smoke",
+    "side": "defence",
+    "badge": "SM",
+    "roles": ["area-denial", "anchor"],
+    "uniqueGadget": {
+      "gadgetId": "compound-z8",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["barbed-wire", "proximity-alarm"],
+    "weaponClasses": ["smg", "shotgun", "handgun", "mp"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "mute",
+    "name": "Mute",
+    "side": "defence",
+    "badge": "MU",
+    "roles": ["anti-gadget", "anti-intel"],
+    "uniqueGadget": {
+      "gadgetId": "signal-disruptor",
+      "count": 4
+    },
+    "secondaryGadgetOptions": ["nitro-cell", "bulletproof-camera"],
+    "weaponClasses": ["ar", "smg", "shotgun", "handgun", "mp"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "castle",
+    "name": "Castle",
+    "side": "defence",
+    "badge": "CA",
+    "roles": ["area-denial"],
+    "uniqueGadget": {
+      "gadgetId": "armor-panel",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["proximity-alarm", "impact-grenade"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "pulse",
+    "name": "Pulse",
+    "side": "defence",
+    "badge": "PU",
+    "roles": ["intel", "roamer"],
+    "uniqueGadget": {
+      "gadgetId": "cardiac-sensor",
+      "count": 1
+    },
+    "secondaryGadgetOptions": ["barbed-wire", "nitro-cell", "observation-blocker"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "doc",
+    "name": "Doc",
+    "side": "defence",
+    "badge": "DC",
+    "roles": ["support", "anchor"],
+    "uniqueGadget": {
+      "gadgetId": "stim-pistol",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["barbed-wire", "bulletproof-camera"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "rook",
+    "name": "Rook",
+    "side": "defence",
+    "badge": "RO",
+    "roles": ["support", "anchor"],
+    "uniqueGadget": {
+      "gadgetId": "armor-pack",
+      "count": 5
+    },
+    "secondaryGadgetOptions": ["proximity-alarm", "impact-grenade", "observation-blocker"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "kapkan",
+    "name": "Kapkan",
+    "side": "defence",
+    "badge": "KP",
+    "roles": ["trapper"],
+    "uniqueGadget": {
+      "gadgetId": "entry-denial-device",
+      "count": 5
+    },
+    "secondaryGadgetOptions": ["nitro-cell", "impact-grenade", "observation-blocker"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "tachanka",
+    "name": "Tachanka",
+    "side": "defence",
+    "badge": "TC",
+    "roles": ["area-denial", "anchor"],
+    "uniqueGadget": {
+      "gadgetId": "shumikha-launcher",
+      "count": 1
+    },
+    "secondaryGadgetOptions": ["barbed-wire", "proximity-alarm"],
+    "weaponClasses": ["lmg", "smg", "handgun"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "jager",
+    "name": "Jäger",
+    "side": "defence",
+    "badge": "JG",
+    "roles": ["anti-gadget"],
+    "uniqueGadget": {
+      "gadgetId": "active-defense-system",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["barbed-wire", "observation-blocker"],
+    "weaponClasses": ["ar", "shotgun", "handgun"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "bandit",
+    "name": "Bandit",
+    "side": "defence",
+    "badge": "BN",
+    "roles": ["anti-breach"],
+    "uniqueGadget": {
+      "gadgetId": "shock-wire",
+      "count": 4
+    },
+    "secondaryGadgetOptions": ["barbed-wire", "nitro-cell"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y0s0"
+  },
+  {
+    "id": "frost",
+    "name": "Frost",
+    "side": "defence",
+    "badge": "FR",
+    "roles": ["trapper"],
+    "uniqueGadget": {
+      "gadgetId": "welcome-mat",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["deployable-shield", "bulletproof-camera"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y1s1"
+  },
+  {
+    "id": "valkyrie",
+    "name": "Valkyrie",
+    "side": "defence",
+    "badge": "VA",
+    "roles": ["intel"],
+    "uniqueGadget": {
+      "gadgetId": "black-eye",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["impact-grenade", "nitro-cell"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y1s2"
+  },
+  {
+    "id": "caveira",
+    "name": "Caveira",
+    "side": "defence",
+    "badge": "CV",
+    "roles": ["roamer", "intel"],
+    "uniqueGadget": {
+      "gadgetId": "silent-step",
+      "count": 1
+    },
+    "secondaryGadgetOptions": ["impact-grenade", "proximity-alarm", "observation-blocker"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y1s3"
+  },
+  {
+    "id": "echo",
+    "name": "Echo",
+    "side": "defence",
+    "badge": "EC",
+    "roles": ["intel", "anti-plant"],
+    "uniqueGadget": {
+      "gadgetId": "yokai",
+      "count": 2
+    },
+    "secondaryGadgetOptions": ["deployable-shield", "impact-grenade"],
+    "weaponClasses": ["smg", "shotgun", "handgun", "mp"],
+    "seasonAdded": "y1s4"
+  },
+  {
+    "id": "mira",
+    "name": "Mira",
+    "side": "defence",
+    "badge": "MI",
+    "roles": ["anchor", "intel"],
+    "uniqueGadget": {
+      "gadgetId": "black-mirror",
+      "count": 2
+    },
+    "secondaryGadgetOptions": ["nitro-cell", "proximity-alarm"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y2s1"
+  },
+  {
+    "id": "lesion",
+    "name": "Lesion",
+    "side": "defence",
+    "badge": "LE",
+    "roles": ["trapper", "intel"],
+    "uniqueGadget": {
+      "gadgetId": "gu-mines",
+      "count": 8
+    },
+    "secondaryGadgetOptions": ["observation-blocker", "bulletproof-camera"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y2s3"
+  },
+  {
+    "id": "ela",
+    "name": "Ela",
+    "side": "defence",
+    "badge": "EL",
+    "roles": ["trapper", "roamer"],
+    "uniqueGadget": {
+      "gadgetId": "grzmot-mine",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["barbed-wire", "deployable-shield", "impact-grenade"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y2s3"
+  },
+  {
+    "id": "vigil",
+    "name": "Vigil",
+    "side": "defence",
+    "badge": "VI",
+    "roles": ["roamer", "anti-intel"],
+    "uniqueGadget": {
+      "gadgetId": "eree",
+      "count": 1
+    },
+    "secondaryGadgetOptions": ["impact-grenade", "bulletproof-camera"],
+    "weaponClasses": ["smg", "shotgun", "handgun", "mp"],
+    "seasonAdded": "y2s4"
+  },
+  {
+    "id": "maestro",
+    "name": "Maestro",
+    "side": "defence",
+    "badge": "MA",
+    "roles": ["intel", "anchor"],
+    "uniqueGadget": {
+      "gadgetId": "evil-eye",
+      "count": 2
+    },
+    "secondaryGadgetOptions": ["barbed-wire", "impact-grenade", "observation-blocker"],
+    "weaponClasses": ["lmg", "shotgun", "handgun"],
+    "seasonAdded": "y3s2"
+  },
+  {
+    "id": "alibi",
+    "name": "Alibi",
+    "side": "defence",
+    "badge": "AL",
+    "roles": ["intel", "roamer"],
+    "uniqueGadget": {
+      "gadgetId": "prisma",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["impact-grenade", "deployable-shield", "observation-blocker"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y3s2"
+  },
+  {
+    "id": "clash",
+    "name": "Clash",
+    "side": "defence",
+    "badge": "CL",
+    "roles": ["shield", "area-denial"],
+    "uniqueGadget": {
+      "gadgetId": "cce-shield",
+      "count": 1
+    },
+    "secondaryGadgetOptions": ["barbed-wire", "impact-grenade"],
+    "weaponClasses": ["shield", "smg", "shotgun", "handgun"],
+    "seasonAdded": "y3s3"
+  },
+  {
+    "id": "kaid",
+    "name": "Kaid",
+    "side": "defence",
+    "badge": "KD",
+    "roles": ["anti-breach"],
+    "uniqueGadget": {
+      "gadgetId": "rtila-electroclaw",
+      "count": 2
+    },
+    "secondaryGadgetOptions": ["barbed-wire", "nitro-cell"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y3s4"
+  },
+  {
+    "id": "mozzie",
+    "name": "Mozzie",
+    "side": "defence",
+    "badge": "MZ",
+    "roles": ["anti-intel"],
+    "uniqueGadget": {
+      "gadgetId": "pest",
+      "count": 4
+    },
+    "secondaryGadgetOptions": ["barbed-wire", "nitro-cell"],
+    "weaponClasses": ["ar", "smg", "handgun"],
+    "seasonAdded": "y4s1"
+  },
+  {
+    "id": "warden",
+    "name": "Warden",
+    "side": "defence",
+    "badge": "WA",
+    "roles": ["anchor"],
+    "uniqueGadget": {
+      "gadgetId": "glance-smart-glasses",
+      "count": 1
+    },
+    "secondaryGadgetOptions": ["deployable-shield", "nitro-cell"],
+    "weaponClasses": ["smg", "shotgun", "handgun", "mp"],
+    "seasonAdded": "y4s2"
+  },
+  {
+    "id": "goyo",
+    "name": "Goyo",
+    "side": "defence",
+    "badge": "GO",
+    "roles": ["area-denial"],
+    "uniqueGadget": {
+      "gadgetId": "volcan-shield",
+      "count": 2
+    },
+    "secondaryGadgetOptions": ["nitro-cell", "proximity-alarm"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y4s3"
+  },
+  {
+    "id": "wamai",
+    "name": "Wamai",
+    "side": "defence",
+    "badge": "WM",
+    "roles": ["anti-gadget"],
+    "uniqueGadget": {
+      "gadgetId": "mag-net",
+      "count": 6
+    },
+    "secondaryGadgetOptions": ["impact-grenade", "proximity-alarm"],
+    "weaponClasses": ["ar", "smg", "handgun"],
+    "seasonAdded": "y4s4"
+  },
+  {
+    "id": "oryx",
+    "name": "Oryx",
+    "side": "defence",
+    "badge": "OR",
+    "roles": ["roamer"],
+    "uniqueGadget": {
+      "gadgetId": "remah-dash",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["barbed-wire", "proximity-alarm"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y5s1"
+  },
+  {
+    "id": "melusi",
+    "name": "Melusi",
+    "side": "defence",
+    "badge": "ME",
+    "roles": ["area-denial", "intel"],
+    "uniqueGadget": {
+      "gadgetId": "banshee",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["impact-grenade", "bulletproof-camera"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y5s2"
+  },
+  {
+    "id": "aruni",
+    "name": "Aruni",
+    "side": "defence",
+    "badge": "AR",
+    "roles": ["anti-gadget", "area-denial"],
+    "uniqueGadget": {
+      "gadgetId": "surya-gate",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["barbed-wire", "bulletproof-camera"],
+    "weaponClasses": ["smg", "dmr", "handgun"],
+    "seasonAdded": "y5s4"
+  },
+  {
+    "id": "thunderbird",
+    "name": "Thunderbird",
+    "side": "defence",
+    "badge": "TB",
+    "roles": ["support"],
+    "uniqueGadget": {
+      "gadgetId": "kona-station",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["barbed-wire", "bulletproof-camera"],
+    "weaponClasses": ["ar", "shotgun", "handgun", "mp"],
+    "seasonAdded": "y6s2"
+  },
+  {
+    "id": "thorn",
+    "name": "Thorn",
+    "side": "defence",
+    "badge": "TO",
+    "roles": ["trapper"],
+    "uniqueGadget": {
+      "gadgetId": "razorbloom-shell",
+      "count": 3
+    },
+    "secondaryGadgetOptions": ["deployable-shield", "barbed-wire"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y6s4"
+  },
+  {
+    "id": "azami",
+    "name": "Azami",
+    "side": "defence",
+    "badge": "AZ",
+    "roles": ["support", "anchor"],
+    "uniqueGadget": {
+      "gadgetId": "kiba-barrier",
+      "count": 5
+    },
+    "secondaryGadgetOptions": ["impact-grenade", "barbed-wire"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y7s1"
+  },
+  {
+    "id": "solis",
+    "name": "Solis",
+    "side": "defence",
+    "badge": "SO",
+    "roles": ["anti-gadget", "intel"],
+    "uniqueGadget": {
+      "gadgetId": "spec-io",
+      "count": 1
+    },
+    "secondaryGadgetOptions": ["impact-grenade", "bulletproof-camera"],
+    "weaponClasses": ["smg", "shotgun", "mp"],
+    "seasonAdded": "y7s4"
+  },
+  {
+    "id": "fenrir",
+    "name": "Fenrir",
+    "side": "defence",
+    "badge": "FE",
+    "roles": ["trapper", "area-denial"],
+    "uniqueGadget": {
+      "gadgetId": "f-natt-dread-mine",
+      "count": 4
+    },
+    "secondaryGadgetOptions": ["bulletproof-camera", "observation-blocker"],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y8s2"
+  },
+  {
+    "id": "tubarao",
+    "name": "Tubarão",
+    "side": "defence",
+    "badge": "TU",
+    "roles": ["anti-breach"],
+    "uniqueGadget": {
+      "gadgetId": "zoto-canister",
+      "count": 4
+    },
+    "secondaryGadgetOptions": ["nitro-cell", "proximity-alarm"],
+    "weaponClasses": ["smg", "dmr", "handgun"],
+    "seasonAdded": "y8s4"
+  },
+  {
+    "id": "sentry",
+    "name": "Sentry",
+    "side": "defence",
+    "badge": "SN",
+    "roles": ["flex"],
+    "uniqueGadget": {
+      "gadgetId": "sentry-extra-gadget",
+      "count": 1
+    },
+    "secondaryGadgetOptions": [
+      "barbed-wire",
+      "deployable-shield",
+      "nitro-cell",
+      "impact-grenade",
+      "bulletproof-camera",
+      "proximity-alarm",
+      "observation-blocker"
+    ],
+    "weaponClasses": ["smg", "shotgun", "handgun"],
+    "seasonAdded": "y9s2"
+  },
+  {
+    "id": "skopos",
+    "name": "Skopós",
+    "side": "defence",
+    "badge": "SK",
+    "roles": ["intel", "anchor"],
+    "uniqueGadget": {
+      "gadgetId": "v10-pantheon-shells",
+      "count": 2
+    },
+    "secondaryGadgetOptions": ["impact-grenade", "proximity-alarm"],
+    "weaponClasses": ["ar", "handgun"],
+    "seasonAdded": "y9s3"
+  }
+]

@@ -12,7 +12,11 @@
       "!pnpm-lock.yaml",
       "!apps/web/src/routeTree.gen.ts",
       "!packages/db/migrations",
-      "!apps/web/public/dev/*.svg"
+      "!apps/web/public/dev/*.svg",
+      "!packages/content/**/*.svg",
+      "!packages/content/maps/*/map.json",
+      "!packages/content/src/maps.gen.ts",
+      "!packages/content/test/fixtures/*/expected-map.json"
     ]
   },
   "formatter": {
