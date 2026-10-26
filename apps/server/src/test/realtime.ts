@@ -9,6 +9,7 @@ import {
 import { decodeFrame, type Frame } from '@planted/protocol';
 import { CreateRoomResponse, type RoomId, RoomTokenResponse } from '@planted/schema';
 import { EvilClient } from '@planted/scripts/evil-client';
+import { DEFAULT_FLOOR, DEFAULT_MAP_ID } from '@planted/scripts/rooms';
 import WebSocket from 'ws';
 import type { App } from '../app';
 
@@ -39,9 +40,12 @@ export async function listen(app: App, port = 0): Promise<string> {
   return `ws://127.0.0.1:${address.port}`;
 }
 
-/** The map test rooms are created on, and a floor of it that strokes may use. */
-export const TEST_MAP_ID = 'practice-annex';
-export const TEST_MAP_FLOOR = '1f';
+/**
+ * The map test rooms are created on, and a floor of it that strokes may use: the same pair the
+ * evil client's `strokeFields()` defaults to, so reordering content.json can't split them.
+ */
+export const TEST_MAP_ID = DEFAULT_MAP_ID;
+export const TEST_MAP_FLOOR = DEFAULT_FLOOR;
 
 export async function createRoom(app: App, mapId = TEST_MAP_ID): Promise<TestRoom> {
   const res = await app.inject({ method: 'POST', url: '/rooms', payload: { mapId } });

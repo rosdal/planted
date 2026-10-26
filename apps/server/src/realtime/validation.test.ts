@@ -162,6 +162,22 @@ describe('validation after apply', () => {
     expect(server?.getMap(META).has('extra')).toBe(false);
   });
 
+  it('keeps a client whose update touches meta but leaves it as loaded', async () => {
+    // What an honest peer re-sends after a server lost an edit and its revert before saving
+    // them: meta items that end with exactly the loaded values.
+    const room = await createRoom(t.app);
+    const evil = await evilEditor(room);
+    const mapId = readMeta(evil.doc)?.mapId;
+    expect(mapId).toBe(TEST_MAP_ID);
+    evil.update((doc) => doc.getMap(META).set('mapId', mapId));
+    evil.update((doc) => doc.getArray('debug-items').push(['after']));
+    await until(
+      () => t.app.realtime.get(room.roomId as RoomId)?.doc.getArray('debug-items').length === 1,
+    );
+    expect(evil.socket.readyState).toBe(evil.socket.OPEN);
+    expect(evil.errors()).toEqual([]);
+  });
+
   it('closes the sender with 4400 for a new unknown root type', async () => {
     const room = await createRoom(t.app);
     const evil = await evilEditor(room);

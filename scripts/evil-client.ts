@@ -240,7 +240,8 @@ async function main(): Promise<void> {
     case 'flood': {
       await evil.join(await token());
       const timer = setInterval(() => {
-        for (let i = 0; i < 50; i++) evil.update((doc) => doc.getMap('meta').set('n', i));
+        // A dev server's debug list: `meta` is server-owned and would close on the first frame.
+        for (let i = 0; i < 50; i++) evil.update((doc) => doc.getArray('debug-items').push([i]));
       }, 50);
       void evil.closed.then(() => clearInterval(timer));
       break;

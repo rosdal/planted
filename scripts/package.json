@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./evil-client": "./evil-client.ts"
+    "./evil-client": "./evil-client.ts",
+    "./rooms": "./rooms.ts"
   },
   "scripts": {
     "bots": "tsx bots.ts",

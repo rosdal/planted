@@ -314,7 +314,9 @@ export class Room {
     this.#approxBytes += update.byteLength;
 
     const unknownRoots = [...held.roots].filter((name) => !this.#roots.has(name));
-    const touchedMeta = held.roots.has(META);
+    // Re-sent meta items that leave it as loaded (a peer resyncing after the server lost an
+    // edit and its revert) change nothing; only an actual change is reverted and closed.
+    const touchedMeta = held.roots.has(META) && !this.#metaAsLoaded();
     const invalid = [...touched].flatMap((id) => {
       const value = this.#objects.get(id);
       // Gone again by the end of the transaction (or a delete): nothing to check.
@@ -390,6 +392,14 @@ export class Room {
       });
     }
     if (this.#approxBytes > MAX_DOC_BYTES) this.#setFull(true);
+  }
+
+  /** True when `meta` holds exactly the keys and values it was loaded with. */
+  #metaAsLoaded(): boolean {
+    const now = this.doc.getMap(META).toJSON();
+    const want: Record<string, unknown> = { ...this.#meta };
+    const keys = Object.keys(now);
+    return keys.length === Object.keys(want).length && keys.every((k) => now[k] === want[k]);
   }
 
   /**
